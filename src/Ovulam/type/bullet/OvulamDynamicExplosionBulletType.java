@@ -1,0 +1,26 @@
+package Ovulam.type.bullet;
+
+import Ovulam.type.OvulamDynamicExplosion;
+import mindustry.entities.bullet.BulletType;
+import mindustry.gen.Bullet;
+
+public class OvulamDynamicExplosionBulletType extends BulletType {
+    float flammability, explosiveness, radioactivity, charge;
+    public OvulamDynamicExplosionBulletType(
+            float flammability, float explosiveness,
+            float radioactivity, float charge){
+        this.flammability = flammability;
+        this.explosiveness = explosiveness;
+        this.radioactivity = radioactivity;
+        this.charge = charge;
+        lifetime = 1f;
+        speed = 1f;
+    }
+
+    @Override
+    public void despawned(Bullet b){
+        new OvulamDynamicExplosion(b.x, b.y, b.team, flammability, explosiveness, radioactivity, charge);
+        super.despawned(b);
+    }
+
+}
