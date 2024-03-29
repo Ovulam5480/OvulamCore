@@ -60,6 +60,11 @@ public class ItemStackTurret extends Turret {
         }
 
         @Override
+        public boolean shouldConsume(){
+            return isShooting() || reloadCounter < reload;
+        }
+
+        @Override
         public void draw(){
             super.draw();
             Font font = Fonts.outline;

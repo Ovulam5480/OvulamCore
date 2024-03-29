@@ -134,6 +134,7 @@ public class ItemRepeater extends Block {
 
         @Override
         public void updateTile(){
+            //Vars.content.block("duo").region = Core.atlas.find("ovulam-mortar-pod");
         }
 
         @Override

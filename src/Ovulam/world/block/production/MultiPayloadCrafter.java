@@ -18,6 +18,7 @@ import arc.math.geom.Vec2;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
+import arc.scene.ui.layout.Stack;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.Align;
@@ -175,17 +176,23 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         //todo A
         public void buildConfiguration(Table table) {
+            table.setWidth(40 * 5 + 32 * tableRows);
             table.setBackground(Styles.black3);
+
+            Stack stack = new Stack();
 
             Table recipeShow = new Table(Styles.accentDrawable).top().left().marginRight(15).marginLeft(15);
             recipeShow.setWidth(40 * 5);
+
+
+            Table rightCont = new Table().marginLeft(200);
 
             Table cont = new Table(Styles.black9).top().right().marginRight(5);
             cont.setWidth(32 * tableRows);
 
             cont.defaults().size(40);
 
-            if(currentPlan > -1){
+            if (currentPlan > -1) {
                 for (int j = 0; j < getInputItems().size; j++) {
                     ItemStack itemStack = getInputItems().get(j);
                     recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
@@ -201,34 +208,23 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                     ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
                             control.input.config.hideConfig()).tooltip(plan.name).get();
 
-                    button.update(() -> {
-                        button.setChecked(currentPlan == index);
-                        button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
-                        button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
-                        if(hoveredPlan != -1)return;
-                        button.hovered(() -> hoveredPlan = index);
+                    //  button.update(() -> {
+                    button.setChecked(currentPlan == index);
+                    button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
+                    button.changed(() -> {
+                        currentPlan = (button.isChecked() ? index : -1);
                     });
+                    if (hoveredPlan != -1) return;
+                    button.hovered(() -> {
+                        hoveredPlan = index;
+                        updateRecipeTable(recipeShow);
+                    });
+                    //});
                     if (i % tableRows == tableRows - 1) cont.row();
                 }
 
-                recipeShow.update(() -> {
-                    recipeShow.clear();
-                    if(hoveredPlan == -1 && currentPlan == -1)return;
 
-                    MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
-
-                    Recipe inputRecipe = plan.inputRecipe;
-
-                    for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
-                        ItemStack itemStack = inputRecipe.itemStacks.get(j);
-                        recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
-                        if (j % 5 == 4) recipeShow.row();
-                    }
-                    hoveredPlan = -1;
-
-                    WWWWW = table.getWidth();
-                });
-                table.add(recipeShow).growY();
+                stack.add(recipeShow);//.growY();
             };
 
             rebuild.run();
@@ -243,7 +239,27 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             pane.setOverscroll(false, true);
             scrollPane.add(pane).maxHeight(tableColumns * 40);
 
-            table.add(scrollPane);
+            rightCont.add(scrollPane);
+            stack.add(rightCont);
+            table.add(stack);
+        }
+
+        private void updateRecipeTable(Table table) {
+            table.clear();
+            if (hoveredPlan == -1 && currentPlan == -1) return;
+
+            MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
+
+            Recipe inputRecipe = plan.inputRecipe;
+
+            for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
+                ItemStack itemStack = inputRecipe.itemStacks.get(j);
+                table.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
+                if (j % 5 == 4) table.row();
+            }
+            hoveredPlan = -1;
+            WWWWW = table.getWidth();
+
         }
 
 

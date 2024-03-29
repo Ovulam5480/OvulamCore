@@ -15,6 +15,7 @@ import Ovulam.world.block.production.PayloadDrill;
 import Ovulam.world.block.storage.PayloadDeconstructorStorage;
 import Ovulam.world.draw.DrawBatchFactory;
 import Ovulam.world.draw.DrawMultiConstruct;
+import Ovulam.world.draw.DrawOrganize;
 import Ovulam.world.move.MoveCustomP16;
 import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.Moved4;
@@ -29,6 +30,7 @@ import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
+import mindustry.gen.Sounds;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.PayloadStack;
@@ -92,8 +94,11 @@ public class OvulamBlocks {
         }};
 
         order = new ItemStackTurret("order"){{
+            shootSound = Sounds.shootBig;
             bullet = new BasicBulletType(7f, 75f);
+
             size = 4;
+            reload = 200f;
             requirements(Category.defense, new ItemStack[]{});
 
             flammabilityMultiplier = 1f;
@@ -103,8 +108,16 @@ public class OvulamBlocks {
         }};
 
         organize = new ItemStackTurret("organize"){{
-            bullet = new MortarBulletType();
+            bullet = new MortarBulletType(this){{
+                lifetime = 240f;
+                height = 2f;
+                offsideMultiplier = 2f;
+            }};
+
+            drawer = new DrawOrganize();
+
             size = 4;
+            reload = 300f;
             requirements(Category.defense, new ItemStack[]{});
 
             flammabilityMultiplier = 1f;
@@ -152,8 +165,8 @@ public class OvulamBlocks {
                                             new PayloadStack(Blocks.thoriumWallLarge, 5)),
                                     0),
                             new Recipe(
-                                    null,
-                                    null,
+                                    Seq.with(),
+                                    Seq.with(),
                                     Seq.with(new PayloadStack(Blocks.surgeWallLarge, 1),
                                             new PayloadStack(Blocks.titaniumWallLarge, 4)),
                                     0),

@@ -6,11 +6,9 @@ import Ovulam.world.block.payload.MultiPayloadBlock;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Font;
 import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
-import arc.util.Align;
 import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Fx;
@@ -24,7 +22,6 @@ import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.Item;
-import mindustry.ui.Fonts;
 import mindustry.world.blocks.ControlBlock;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
@@ -33,18 +30,17 @@ import static arc.math.Angles.randLenVectors;
 import static mindustry.Vars.tilesize;
 
 public class Mortar extends MultiPayloadBlock {
-    public float podDamage, podSplashDamage, podSplashDamageRadius;
     //炮弹持续时间
     public float totalTime = 600f;
-    public float minLaunch = 256;
+    public float minLaunch = 16;
     public float range = 999;
-    public TextureRegion region, arrowRegion, topRegion, topLightRegion, iconRegion;
+    public TextureRegion region, arrowRegion, topRegion, topLightRegion, iconRegion, podThrustersRegion;
     public TextureRegion podRegion;
     public TextureRegion podIconRegion;
     public int podSize = 8;
     public float payloadCapacity = 64f;
     //集齐物资后的准备发射时间
-    public float launchTime = 600f;
+    public float launchTime = 100f;
 
     public Mortar(String name){
         super(name);
@@ -62,6 +58,7 @@ public class Mortar extends MultiPayloadBlock {
         iconRegion = Core.atlas.find(name + "-icon");
         podRegion = Core.atlas.find(name + "-pod");
         podIconRegion = Core.atlas.find(name + "-pod-icon");
+        podThrustersRegion = Core.atlas.find(name + "-pod-thrusters");
     }
 
     @Override
@@ -140,10 +137,6 @@ public class Mortar extends MultiPayloadBlock {
 
             Draw.reset();
 
-            Font font = Fonts.outline;
-            font.draw(String.valueOf(podSplashDamageRadius), x, y - 20, Align.center);
-            font.draw(String.valueOf(podSplashDamage), x, y - 50, Align.center);
-
         }
 
         @Override
@@ -200,24 +193,22 @@ public class Mortar extends MultiPayloadBlock {
 
             mortarPodLaunch.at(x, y, rotation, this);
 
-            float distance = Mathf.dst(target.x() - x, target.y() - y);
             float angle = Mathf.angle(target.x() - x, target.y() - y);
 
-            MortarBulletType pod = new MortarBulletType(name){{
+            MortarBulletType pod = new MortarBulletType(block){{
+                damage = health;
                 fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
                 height = 4f;
-                hitEffect = Fx.none;
-                despawnEffect = Fx.none;
                 hitSize = Mathf.sqr(podSize);
                 lifetime = totalTime;
-                //???
-                speed = distance * tilesize / totalTime;
+                podBulletRegion = podRegion;
+                podBulletIconRegion = podIconRegion;
+                podBulletThrustersRegion = podThrustersRegion;
             }};
 
-            pod.create(this, team, x, y, angle, podDamage, 1f, 1f, null);
+            pod.create(this, team, x, y, angle, 1f, 1f, 1f, null, null, target.x(), target.y());
 
             flammability = explosiveness = radioactivity = charge = health = podUsed = launchCounter = 0;
-
         }
 
         public Effect mortarPodLaunch = new Effect(150, e -> {
