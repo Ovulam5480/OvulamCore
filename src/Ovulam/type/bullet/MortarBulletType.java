@@ -21,16 +21,12 @@ import static mindustry.Vars.tilesize;
 
 public class MortarBulletType extends BulletType {
     public float rotation;
-    public float distance;
-    public float angle;
     public String name;
     public float height;
 
     public TextureRegion podRegion, podIconRegion, podThrustersRegion;
 
-    public MortarBulletType(float distance, float angle, String name){
-        this.distance = distance / tilesize;
-        this.angle = angle;
+    public MortarBulletType(String name){
         this.name = name;
 
         fragBullet = new OvulamDynamicExplosionBulletType(0 , 0 , 0 , 0);
@@ -42,8 +38,8 @@ public class MortarBulletType extends BulletType {
         collidesTiles = false;
     }
 
-    public MortarBulletType(float distance, float angle){
-        this(distance, angle ,"b");
+    public MortarBulletType(){
+        this("b");
     }
 
 
@@ -78,12 +74,9 @@ public class MortarBulletType extends BulletType {
         float scl = 1 + 2 * aFloat(progress);
         scl(scl);
 
-        Drawf.spinSprite(podRegion, b.x, b.y, rotation);
-        Drawf.spinSprite(podThrustersRegion, b.x, b.y, rotation);
-        Draw.rect(podIconRegion, b.x, b.y, rotation);
-
-        Font font = Fonts.outline;
-        font.draw(String.valueOf(b.hit()), b.x, b.y - 20, Align.center);
+        if(podRegion != null) Drawf.spinSprite(podRegion, b.x, b.y, rotation);
+        if(podThrustersRegion != null) Drawf.spinSprite(podThrustersRegion, b.x, b.y, rotation);
+        if(podIconRegion != null) Draw.rect(podIconRegion, b.x, b.y, rotation);
 
         Draw.z(Layer.playerName + 1f);
         for (int i = 0; i < 4; i++){
@@ -91,16 +84,19 @@ public class MortarBulletType extends BulletType {
 
             Tmp.v1.setLength(((Mathf.sqrt(hitSize) + 4f) * tilesize / 2f) * scl);
             Draw.color(b.team.color);
-            Fill.circle(Tmp.v1.x + b.x, Tmp.v1.y + b.y, 2f * 8 * scl * sin);
+            Fill.circle(Tmp.v1.x + b.x, Tmp.v1.y + b.y, 2f * Mathf.sqrt(hitSize) * scl * sin);
 
             Tmp.v1.setLength((((Mathf.sqrt(hitSize) + 3f) * tilesize / 2f) * scl));
             Draw.color(Color.white);
-            Fill.circle(Tmp.v1.x + b.x, Tmp.v1.y + b.y, 1.3f * 8 * scl * sin);
+            Fill.circle(Tmp.v1.x + b.x, Tmp.v1.y + b.y, 1.3f * Mathf.sqrt(hitSize) * scl * sin);
         }
+
+        Font font = Fonts.outline;
+        font.draw(String.valueOf(name), b.x, b.y - 20, Align.center);
+
         Draw.reset();
     }
 
-    //感谢高亮
     public Effect highlight = new Effect(120, e -> {
         Draw.color(Pal.accent);
         Draw.alpha(e.fout());

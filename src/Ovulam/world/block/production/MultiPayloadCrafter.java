@@ -12,14 +12,16 @@ import Ovulam.world.other.RecipeMover;
 import arc.Core;
 import arc.Events;
 import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.Font;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.geom.Vec2;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
+import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
+import arc.util.Align;
 import arc.util.Eachable;
-import arc.util.Nullable;
 import mindustry.content.Fx;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.units.BuildPlan;
@@ -30,8 +32,7 @@ import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.*;
-import mindustry.ui.Bar;
-import mindustry.ui.Styles;
+import mindustry.ui.*;
 import mindustry.world.Block;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
@@ -53,6 +54,11 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     public boolean ignorePayloadFullness = false;
     public boolean continuouslyOutput = true;
     public boolean changeClear;
+
+    //行
+    public int tableRows = 8;
+    //列
+    public int tableColumns = 8;
 
     public MovePayload moveInMover = new MoveCustomP9(16);
     public MovePayload moveCapital = new MoveSize();
@@ -142,7 +148,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         public RecipeMover[] recipeMover;
         public DrawBlock drawBlock;
 
-        public MultiPayloadPlan(float craftTime, float warmup, String name, Recipe inputRecipe, @Nullable Recipe outputRecipe,
+        public MultiPayloadPlan(float craftTime, float warmup, String name, Recipe inputRecipe, Recipe outputRecipe,
                                 RecipeMover[] recipeMover, DrawBlock drawBlock) {
             this.craftTime = craftTime;
             this.warmup = warmup;
@@ -158,42 +164,86 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     public class MultiPayloadCrafterBuild extends MultiPayloadBlockBuild {
         public int previousPlan = -1;
         public int currentPlan = -1;
+        public int hoveredPlan = -1;
         public float progress;
         public Seq<PositionPayload> inputPositionPayloads = new Seq<>();
         public Seq<PositionPayload> craftPositionPayloads = new Seq<>();
         public Seq<PositionPayload> remover = new Seq<>();
+        public float WWWWW = 0;
 
         public HashMap<PositionPayload, Integer> outputPositionPayloads = new HashMap<>();
 
-        //todo 1
-        public void buildConfiguration(Table table, float sadi) {
-            //ItemSelection
+        //todo A
+        public void buildConfiguration(Table table) {
+            table.setBackground(Styles.black3);
 
-            table.top();
-            table.fill(Styles.black6, table1 -> {
+            Table recipeShow = new Table(Styles.accentDrawable).top().left().marginRight(15).marginLeft(15);
+            recipeShow.setWidth(40 * 5);
 
-            });
+            Table cont = new Table(Styles.black9).top().right().marginRight(5);
+            cont.setWidth(32 * tableRows);
+
+            cont.defaults().size(40);
+
+            if(currentPlan > -1){
+                for (int j = 0; j < getInputItems().size; j++) {
+                    ItemStack itemStack = getInputItems().get(j);
+                    recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
+                    if (j % 5 == 4) recipeShow.row();
+                }
+            }
+
             Runnable rebuild = () -> {
-
-                for (int i = 0; i < plans.size; i++){
+                for (int i = 0; i < plans.size; i++) {
+                    int index = i;
                     MultiPayloadPlan plan = plans.get(i);
 
-                    ImageButton button = table.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
+                    ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
                             control.input.config.hideConfig()).tooltip(plan.name).get();
-                    button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
-                    button.changed(() -> currentPlan = (button.isChecked() ? plans.indexOf(plan) : -1));
-                    button.update(() -> button.setChecked(currentPlan == plans.indexOf(plan)));
 
-                    if(i++ % 5 == 4) table.row();
+                    button.update(() -> {
+                        button.setChecked(currentPlan == index);
+                        button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
+                        button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
+                        if(hoveredPlan != -1)return;
+                        button.hovered(() -> hoveredPlan = index);
+                    });
+                    if (i % tableRows == tableRows - 1) cont.row();
                 }
+
+                recipeShow.update(() -> {
+                    recipeShow.clear();
+                    if(hoveredPlan == -1 && currentPlan == -1)return;
+
+                    MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
+
+                    Recipe inputRecipe = plan.inputRecipe;
+
+                    for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
+                        ItemStack itemStack = inputRecipe.itemStacks.get(j);
+                        recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
+                        if (j % 5 == 4) recipeShow.row();
+                    }
+                    hoveredPlan = -1;
+
+                    WWWWW = table.getWidth();
+                });
+                table.add(recipeShow).growY();
             };
 
             rebuild.run();
-        }
 
-        @Override
-        public void buildConfiguration(Table table) {
-            buildConfiguration(table, 1f);
+            Table scrollPane = new Table();
+            ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
+            pane.setScrollingDisabled(false, false);
+
+            pane.setScrollYForce(block.selectScroll);
+            pane.update(() -> block.selectScroll = pane.getScrollY());
+
+            pane.setOverscroll(false, true);
+            scrollPane.add(pane).maxHeight(tableColumns * 40);
+
+            table.add(scrollPane);
         }
 
 
@@ -216,6 +266,9 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
             Draw.z(Layer.blockOver);
             drawPayload();
+
+            Font font = Fonts.outline;
+            font.draw(String.valueOf(WWWWW), x, y + 140, Align.center);
         }
 
         //必须空间 和 混合空间

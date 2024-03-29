@@ -20,15 +20,14 @@ public class OvulamMod extends Mod{
 
     @Override
     public void init() {
-    }
-
-    @Override
-    public void loadContent(){
         OvulamShaders.init();
 
         OvulamCacheLayer.init();
         OvulamCacheLayer.load();
+    }
 
+    @Override
+    public void loadContent(){
         OvulamBlocks.load();
         OvulamItems.load();
         OvulamUnits.load();

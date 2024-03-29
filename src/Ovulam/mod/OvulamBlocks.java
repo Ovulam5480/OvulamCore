@@ -1,10 +1,12 @@
 package Ovulam.mod;
 
-import Ovulam.world.block.No9527.点激光加范围伤害BulletType;
+import Ovulam.type.bullet.MortarBulletType;
 import Ovulam.world.block.No9527.加damage;
+import Ovulam.world.block.No9527.点激光加范围伤害BulletType;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.defense.AblationTower;
+import Ovulam.world.block.defense.ItemStackTurret;
 import Ovulam.world.block.defense.Mortar;
 import Ovulam.world.block.defense.PositionPayloadAmmoTurret;
 import Ovulam.world.block.production.Drill9527;
@@ -26,6 +28,7 @@ import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.entities.bullet.ArtilleryBulletType;
+import mindustry.entities.bullet.BasicBulletType;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.PayloadStack;
@@ -40,7 +43,7 @@ public class OvulamBlocks {
             GrapheneBlockLarge,
             metaglassBlockLarge, graphiteBlockLarge, PayloadOreLarge, batchFactory,
     //工厂
-    巨型高温玻璃熔炼炉, 巨型石墨烯制造机,
+    巨型高温玻璃熔炼炉, 巨型石墨烯制造机,organize,order,
     //
     PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase, SSSSSS, QQQQQ, SSSSSSS,
     //测试
@@ -58,11 +61,6 @@ public class OvulamBlocks {
         }
 
          */
-
-
-
-        //Vars.state.teams.get(Team.sharded).getBuildings(Blocks.constructor).clear();
-
 
         SSSSS = new ContinuousTurret("SSSSS"){{
             rotateSpeed = 15f;
@@ -91,6 +89,28 @@ public class OvulamBlocks {
             side = 8;
             size = 4;
             requirements(Category.defense, new ItemStack[]{});
+        }};
+
+        order = new ItemStackTurret("order"){{
+            bullet = new BasicBulletType(7f, 75f);
+            size = 4;
+            requirements(Category.defense, new ItemStack[]{});
+
+            flammabilityMultiplier = 1f;
+            explosivenessMultiplier = 1f;
+            radioactivityMultiplier = 1f;
+            chargeMultiplier = 1f;
+        }};
+
+        organize = new ItemStackTurret("organize"){{
+            bullet = new MortarBulletType();
+            size = 4;
+            requirements(Category.defense, new ItemStack[]{});
+
+            flammabilityMultiplier = 1f;
+            explosivenessMultiplier = 1f;
+            radioactivityMultiplier = 1f;
+            chargeMultiplier = 1f;
         }};
 
         SSSS = new MultiPayloadCrafter("SSSS") {{
@@ -155,6 +175,8 @@ public class OvulamBlocks {
             requirements(Category.defense, new ItemStack[]{new ItemStack(Items.sand, 1000)});
         }};
 
+
+
         Mortar = new Mortar("mortar") {{
             requirements(Category.defense, new ItemStack[]{});
             size = 15;
@@ -189,25 +211,10 @@ public class OvulamBlocks {
 
             plans = new Seq<>();
             for (UnitType unitType : Vars.content.units()) {
-                int amount;
-                int dis;
-                if (unitType.hitSize <= 2.5f) {
-                    amount = 16;
-                    dis = 16;
-                } else if (unitType.hitSize < 4.5f) {
-                    amount = 9;
-                    dis = 24;
-                } else {
-                    amount = 4;
-                    dis = 32;
-                }
-                Seq<ItemStack> totalRequirements = new Seq<>(unitType.getTotalRequirements());
-
-                totalRequirements.forEach(itemStack -> itemStack.amount = itemStack.amount * amount);
                 plans.add(
                         new MultiPayloadPlan(900f, 1f, "批量生产-" + unitType,
                                 new Recipe(
-                                        totalRequirements,
+                                        new Seq<>(unitType.getTotalRequirements()),
                                         Seq.with(),
                                         Seq.with(),
                                         0),
@@ -219,7 +226,7 @@ public class OvulamBlocks {
                                         0),
 
                                 new RecipeMover[]{
-                                        new RecipeMover(unitType, new MoveCustomP16(dis))
+                                        new RecipeMover(unitType, new MoveCustomP16(16))
                                 },
                                 new DrawMultiConstruct()
                         ));

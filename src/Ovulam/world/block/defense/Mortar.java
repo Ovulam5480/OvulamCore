@@ -203,7 +203,7 @@ public class Mortar extends MultiPayloadBlock {
             float distance = Mathf.dst(target.x() - x, target.y() - y);
             float angle = Mathf.angle(target.x() - x, target.y() - y);
 
-            MortarBulletType pod = new MortarBulletType(distance, angle, name){{
+            MortarBulletType pod = new MortarBulletType(name){{
                 fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
                 height = 4f;
                 hitEffect = Fx.none;
@@ -212,7 +212,6 @@ public class Mortar extends MultiPayloadBlock {
                 lifetime = totalTime;
                 //???
                 speed = distance * tilesize / totalTime;
-
             }};
 
             pod.create(this, team, x, y, angle, podDamage, 1f, 1f, null);
