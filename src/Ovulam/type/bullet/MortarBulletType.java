@@ -40,7 +40,6 @@ public class MortarBulletType extends BulletType {
         fragBullets = 1;
         hittable = false;
         reflectable = false;
-        absorbable = false;
         despawnHit = true;
         collidesTiles = false;
     }

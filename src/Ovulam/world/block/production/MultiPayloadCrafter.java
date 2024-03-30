@@ -2,6 +2,7 @@ package Ovulam.world.block.production;
 
 import Ovulam.world.block.payload.MultiPayloadBlock;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
+import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
 import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.MoveOut;
 import Ovulam.world.move.MovePayload;
@@ -12,28 +13,30 @@ import Ovulam.world.other.RecipeMover;
 import arc.Core;
 import arc.Events;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Font;
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Mathf;
 import arc.math.geom.Vec2;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
-import arc.scene.ui.layout.Stack;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
-import arc.util.Align;
 import arc.util.Eachable;
 import mindustry.content.Fx;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.units.BuildPlan;
 import mindustry.game.EventType;
 import mindustry.gen.Building;
+import mindustry.gen.Icon;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.*;
-import mindustry.ui.*;
+import mindustry.ui.Bar;
+import mindustry.ui.ItemImage;
+import mindustry.ui.ReqImage;
+import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
@@ -42,6 +45,7 @@ import mindustry.world.consumers.ConsumeItemDynamic;
 import mindustry.world.consumers.ConsumeLiquidsDynamic;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
+import mindustry.world.meta.Stat;
 
 import java.util.HashMap;
 
@@ -53,9 +57,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     public DrawBlock drawer = new DrawDefault();
     public Seq<MultiPayloadPlan> plans = new Seq<>(5);
     public boolean ignorePayloadFullness = false;
-    public boolean continuouslyOutput = true;
     public boolean changeClear;
-
     //行
     public int tableRows = 8;
     //列
@@ -90,15 +92,15 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         consume(new ConsumeItemDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
                 plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.itemStacks.toArray() : ItemStack.empty));
 
+        //todo 完全消耗
         consume(new ConsumeLiquidsDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
                 plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.liquidStacks.toArray() : LiquidStack.empty));
 
         consume(new ConsumePositionPayloadsDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
                 plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.payloadStacks : emptyPayloadStacks));
 
-        //todo 电力真的麻烦麻烦麻烦
-        //consume(new ConsumePowerDDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
-        //        plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.Power : 0));
+        consume(new ConsumePowerDynamicCanBeNegative((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
+                plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.Power : 0));
     }
 
     @Override
@@ -106,6 +108,9 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         for (MultiPayloadPlan plan : plans) {
             for (ItemStack stack : plan.inputRecipe.itemStacks) {
                 itemCapacity = Math.max(itemCapacity, stack.amount * 2);
+            }
+            for (LiquidStack stack : plan.inputRecipe.liquidStacks){
+                liquidCapacity = Math.max(liquidCapacity, stack.amount);
             }
         }
         super.init();
@@ -170,98 +175,130 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         public Seq<PositionPayload> inputPositionPayloads = new Seq<>();
         public Seq<PositionPayload> craftPositionPayloads = new Seq<>();
         public Seq<PositionPayload> remover = new Seq<>();
-        public float WWWWW = 0;
 
         public HashMap<PositionPayload, Integer> outputPositionPayloads = new HashMap<>();
 
         //todo A
         public void buildConfiguration(Table table) {
-            table.setWidth(40 * 5 + 32 * tableRows);
-            table.setBackground(Styles.black3);
+            table.table(configTable -> {
 
-            Stack stack = new Stack();
+                Table recipeShow = new Table(Styles.black3);
+                recipeShow.defaults().size(48, 48).left();
 
-            Table recipeShow = new Table(Styles.accentDrawable).top().left().marginRight(15).marginLeft(15);
-            recipeShow.setWidth(40 * 5);
+                Table topCont = new Table();
+                int col = Mathf.ceil((float) plans.size / tableColumns);
 
+                Table cont = new Table(Styles.black9);
+                cont.defaults().size(40);
 
-            Table rightCont = new Table().marginLeft(200);
+                hoveredPlan = currentPlan;
+                updateRecipeTable(recipeShow);
 
-            Table cont = new Table(Styles.black9).top().right().marginRight(5);
-            cont.setWidth(32 * tableRows);
+                Runnable rebuild = () -> {
+                    for (int i = 0; i < plans.size; i++) {
+                        int index = i;
+                        MultiPayloadPlan plan = plans.get(i);
 
-            cont.defaults().size(40);
+                        ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
+                                control.input.config.hideConfig()).tooltip(plan.name).get();
 
-            if (currentPlan > -1) {
-                for (int j = 0; j < getInputItems().size; j++) {
-                    ItemStack itemStack = getInputItems().get(j);
-                    recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
-                    if (j % 5 == 4) recipeShow.row();
-                }
-            }
+                        button.setChecked(currentPlan == index);
+                        button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
+                        button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
 
-            Runnable rebuild = () -> {
-                for (int i = 0; i < plans.size; i++) {
-                    int index = i;
-                    MultiPayloadPlan plan = plans.get(i);
-
-                    ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
-                            control.input.config.hideConfig()).tooltip(plan.name).get();
-
-                    //  button.update(() -> {
-                    button.setChecked(currentPlan == index);
-                    button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
-                    button.changed(() -> {
-                        currentPlan = (button.isChecked() ? index : -1);
+                        button.hovered(() -> {
+                            hoveredPlan = index;
+                            updateRecipeTable(recipeShow);
+                        });
+                        if (i % tableRows == tableRows - 1) cont.row();
+                    }
+                    table.fill(table1 -> {
+                        table1.top();
+                        table1.setPosition(0,- 40 * col);
+                        table1.add(recipeShow);
                     });
-                    if (hoveredPlan != -1) return;
-                    button.hovered(() -> {
-                        hoveredPlan = index;
-                        updateRecipeTable(recipeShow);
-                    });
-                    //});
-                    if (i % tableRows == tableRows - 1) cont.row();
-                }
+                };
+                rebuild.run();
 
+                Table scrollPane = new Table();
+                ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
+                pane.setScrollingDisabled(false, false);
+                pane.setScrollYForce(block.selectScroll);
+                pane.update(() -> block.selectScroll = pane.getScrollY());
+                pane.setOverscroll(false, true);
+                scrollPane.add(pane).maxHeight(tableColumns * 40);
+                topCont.add(scrollPane);
 
-                stack.add(recipeShow);//.growY();
-            };
-
-            rebuild.run();
-
-            Table scrollPane = new Table();
-            ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
-            pane.setScrollingDisabled(false, false);
-
-            pane.setScrollYForce(block.selectScroll);
-            pane.update(() -> block.selectScroll = pane.getScrollY());
-
-            pane.setOverscroll(false, true);
-            scrollPane.add(pane).maxHeight(tableColumns * 40);
-
-            rightCont.add(scrollPane);
-            stack.add(rightCont);
-            table.add(stack);
+                table.add(topCont);
+            });
         }
 
         private void updateRecipeTable(Table table) {
             table.clear();
-            if (hoveredPlan == -1 && currentPlan == -1) return;
+            if (hoveredPlan == -1) return;
+            table.margin(10);
 
-            MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
-
+            MultiPayloadPlan plan = plans.get(hoveredPlan);
             Recipe inputRecipe = plan.inputRecipe;
 
-            for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
-                ItemStack itemStack = inputRecipe.itemStacks.get(j);
-                table.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
-                if (j % 5 == 4) table.row();
+            table.add(Stat.input.localized()).height(48).row();
+
+            for (int i = 0; i < inputRecipe.itemStacks.size; i++) {
+                ItemStack itemStack = inputRecipe.itemStacks.get(i);
+                ItemImage itemImage = new ItemImage(itemStack.item.uiIcon, itemStack.amount);
+
+                table.add(itemImage).center();
+                if (i % 4 == 3) table.row();
             }
+            table.row();
+            for (int i = 0; i < inputRecipe.liquidStacks.size; i++) {
+                LiquidStack liquidStacks = inputRecipe.liquidStacks.get(i);
+                table.add(new ReqImage(liquidStacks.liquid.uiIcon, () -> true)).center();
+                if (i % 4 == 3) table.row();
+            }
+
+            table.row();
+            for (int i = 0; i < inputRecipe.payloadStacks.size; i++) {
+                PayloadStack payloadStack = inputRecipe.payloadStacks.get(i);
+                table.add(new ReqImage(payloadStack.item.uiIcon, () -> true)).center();
+                if (i % 4 == 3) table.row();
+            }
+            table.row();
+
+            table.image(Icon.power.tint(Pal.accent)).size(32);
+            table.add(String.valueOf(inputRecipe.Power)).size(32);
+            table.row();
+
+            Recipe outputRecipe = plan.outputRecipe;
+            table.add(Stat.output.localized()).height(48).row();
+
+            for (int i = 0; i < outputRecipe.itemStacks.size; i++) {
+                ItemStack itemStack = outputRecipe.itemStacks.get(i);
+                ItemImage itemImage = new ItemImage(itemStack.item.uiIcon, itemStack.amount);
+
+                table.add(itemImage).center();
+                if (i % 4 == 3) table.row();
+            }
+            table.row();
+            for (int i = 0; i < outputRecipe.liquidStacks.size; i++) {
+                LiquidStack liquidStacks = outputRecipe.liquidStacks.get(i);
+                table.add(new ReqImage(liquidStacks.liquid.uiIcon, () -> true)).center();
+                if (i % 4 == 3) table.row();
+            }
+
+            table.row();
+            for (int i = 0; i < outputRecipe.payloadStacks.size; i++) {
+                PayloadStack payloadStack = outputRecipe.payloadStacks.get(i);
+                table.add(new ReqImage(payloadStack.item.uiIcon, () -> true)).center();
+                if (i % 4 == 3) table.row();
+            }
+            table.row();
+            table.image(Icon.power.tint(Pal.accent)).size(32);
+            table.add(String.valueOf(outputRecipe.Power)).size(32);
+            table.row();
+
             hoveredPlan = -1;
-            WWWWW = table.getWidth();
-
         }
-
 
         @Override
         public int getMaximumAccepted(Item item) {
@@ -282,9 +319,6 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
             Draw.z(Layer.blockOver);
             drawPayload();
-
-            Font font = Fonts.outline;
-            font.draw(String.valueOf(WWWWW), x, y + 140, Align.center);
         }
 
         //必须空间 和 混合空间
@@ -404,7 +438,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 MultiPayloadPlan plan = getCurrentPlan();
                 if (efficiency > 0) {
                     progress += delta();
-                    if (continuouslyOutput) {
+                    if (!getCurrentPlan().outputRecipe.liquidCompletely) {
                         getOutputLiquids().forEach(liquidStack ->
                                 handleLiquid(this, liquidStack.liquid, delta() * liquidStack.amount));
                     }
@@ -611,7 +645,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             }
 
 
-            if (!continuouslyOutput) {
+            if (!getCurrentPlan().outputRecipe.liquidCompletely) {
                 for (var output : getOutputLiquids()) {
                     this.handleLiquid(this, output.liquid, output.amount * getCurrentPlan().craftTime);
                 }
