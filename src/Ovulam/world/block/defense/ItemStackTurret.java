@@ -1,14 +1,11 @@
 package Ovulam.world.block.defense;
 
 import Ovulam.type.bullet.OvulamDynamicExplosionBulletType;
-import arc.graphics.g2d.Font;
-import arc.util.Align;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Building;
 import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.ui.Bar;
-import mindustry.ui.Fonts;
 import mindustry.world.blocks.defense.turrets.Turret;
 
 public class ItemStackTurret extends Turret {
@@ -59,26 +56,6 @@ public class ItemStackTurret extends Turret {
             super.updateTile();
         }
 
-        @Override
-        public boolean shouldConsume(){
-            return isShooting() || reloadCounter < reload;
-        }
-
-        @Override
-        public void draw(){
-            super.draw();
-            Font font = Fonts.outline;
-
-            float flammability = items.sum((item, amount) -> item.flammability * amount);
-            float explosiveness = items.sum((item, amount) -> item.explosiveness * amount);
-            float radioactivity = items.sum((item, amount) -> item.radioactivity * amount);
-            float charge = items.sum((item, amount) -> item.charge * amount);
-
-            font.draw(String.valueOf(flammability), x, y - 20, Align.center);
-            font.draw(String.valueOf(explosiveness), x, y - 40, Align.center);
-            font.draw(String.valueOf(radioactivity), x, y - 60, Align.center);
-            font.draw(String.valueOf(charge), x, y - 80, Align.center);
-        }
 
         @Override
         public BulletType useAmmo(){
@@ -106,6 +83,7 @@ public class ItemStackTurret extends Turret {
             float charge = items.sum((item, amount) -> item.charge * amount * chargeMultiplier);
 
             bulletType.fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
+            bulletType.fragBullets = 1;
 
             return bulletType;
         }
