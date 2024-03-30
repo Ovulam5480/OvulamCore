@@ -2,6 +2,9 @@ name: Pull Request Testing
 
 on: [pull_request]
 
+permissions:
+  contents: write
+
 jobs:
   buildJar:
     runs-on: ubuntu-latest

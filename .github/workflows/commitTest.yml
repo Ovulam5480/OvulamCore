@@ -2,6 +2,9 @@ name: Commit Testing
 
 on: [push]
 
+permissions:
+  contents: write
+
 jobs:
   buildJar:
     runs-on: ubuntu-latest
