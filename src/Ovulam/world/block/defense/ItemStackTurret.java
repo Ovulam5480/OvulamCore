@@ -16,6 +16,7 @@ public class ItemStackTurret extends Turret {
     public ItemStackTurret(String name) {
         super(name);
         hasItems = true;
+        separateItemCapacity = true;
         maxAmmo = 150;
         range = 400;
     }

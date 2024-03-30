@@ -24,6 +24,6 @@ public class DrawOrganize extends DrawBlock {
 
     @Override
     public TextureRegion[] icons(Block block){
-        return new TextureRegion[]{region};
+        return new TextureRegion[]{region, podRegion};
     }
 }

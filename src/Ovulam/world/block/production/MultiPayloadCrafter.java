@@ -109,7 +109,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             for (ItemStack stack : plan.inputRecipe.itemStacks) {
                 itemCapacity = Math.max(itemCapacity, stack.amount * 2);
             }
-            for (LiquidStack stack : plan.inputRecipe.liquidStacks){
+            for (LiquidStack stack : plan.inputRecipe.liquidStacks) {
                 liquidCapacity = Math.max(liquidCapacity, stack.amount);
             }
         }
@@ -178,7 +178,6 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         public HashMap<PositionPayload, Integer> outputPositionPayloads = new HashMap<>();
 
-        //todo A
         public void buildConfiguration(Table table) {
             table.table(configTable -> {
 
@@ -214,7 +213,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                     }
                     table.fill(table1 -> {
                         table1.top();
-                        table1.setPosition(0,- 40 * col);
+                        table1.setPosition(0, -40 * col);
                         table1.add(recipeShow);
                     });
                 };
@@ -265,9 +264,11 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             }
             table.row();
 
-            table.image(Icon.power.tint(Pal.accent)).size(32);
-            table.add(String.valueOf(inputRecipe.Power)).size(32);
-            table.row();
+            if (inputRecipe.Power > 0) {
+                table.image(Icon.power.tint(Pal.accent)).size(32);
+                table.add(String.valueOf(inputRecipe.Power)).size(32);
+                table.row();
+            }
 
             Recipe outputRecipe = plan.outputRecipe;
             table.add(Stat.output.localized()).height(48).row();
@@ -293,9 +294,12 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 if (i % 4 == 3) table.row();
             }
             table.row();
-            table.image(Icon.power.tint(Pal.accent)).size(32);
-            table.add(String.valueOf(outputRecipe.Power)).size(32);
-            table.row();
+
+            if (outputRecipe.Power > 0) {
+                table.image(Icon.power.tint(Pal.accent)).size(32);
+                table.add(String.valueOf(outputRecipe.Power)).size(32);
+                table.row();
+            }
 
             hoveredPlan = -1;
         }

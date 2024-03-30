@@ -16,7 +16,7 @@ public class ConsumePowerDynamicCanBeNegative extends ConsumePower {
 
     @Override
     public float efficiency(Building build){
-        if(usage.get(build) < 0)return 1;
+        if(usage.get(build) <= 0)return 1;
         return build.power.status;
     }
 

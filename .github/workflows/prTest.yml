@@ -16,8 +16,7 @@ jobs:
       with:
         java-version: 16
     - name: Build mod jar
-      run: git update-index --chmod=+x <file>
-           ./gradlew deploy
+      run: ./gradlew deploy
     - name: Upload built jar file
       uses: actions/upload-artifact@v2
       with:

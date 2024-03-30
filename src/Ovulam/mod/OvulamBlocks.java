@@ -1,19 +1,17 @@
 package Ovulam.mod;
 
 import Ovulam.type.bullet.MortarBulletType;
-import Ovulam.type.bullet.PierceContinuousBulletType;
-import Ovulam.world.block.No9527.加damage;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.defense.ItemStackTurret;
 import Ovulam.world.block.defense.Mortar;
-import Ovulam.world.block.defense.PositionPayloadAmmoTurret;
 import Ovulam.world.block.production.Drill9527;
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.block.production.PayloadDrill;
 import Ovulam.world.block.storage.PayloadDeconstructorStorage;
 import Ovulam.world.draw.DrawBatchFactory;
+import Ovulam.world.draw.DrawMixer;
 import Ovulam.world.draw.DrawMultiConstruct;
 import Ovulam.world.draw.DrawOrganize;
 import Ovulam.world.move.MoveCustomP16;
@@ -22,13 +20,11 @@ import Ovulam.world.move.Moved4;
 import Ovulam.world.move.Moved8edge;
 import Ovulam.world.other.Recipe;
 import Ovulam.world.other.RecipeMover;
-import arc.graphics.Color;
 import arc.struct.Seq;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
-import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
@@ -36,53 +32,23 @@ import mindustry.type.ItemStack;
 import mindustry.type.PayloadStack;
 import mindustry.type.UnitType;
 import mindustry.world.Block;
-import mindustry.world.blocks.defense.turrets.ItemTurret;
 
 public class OvulamBlocks {
+    //大型垃圾堆
     public static Block[] itemBlocks;
     public static Block
             //方块
             GrapheneBlockLarge,
             metaglassBlockLarge, graphiteBlockLarge, PayloadOreLarge, batchFactory,
     //工厂
-    巨型高温玻璃熔炼炉, 巨型石墨烯制造机,organize,order,
+    organize,order,mixer,
     //
-    PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase, SSSSSS, QQQQQ, SSSSSSS,
+    PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase,
     //测试
-    SSSS, SSS, PDS, SS, sepcore, ekcore, sepcoree, ck, Drill9527, PayloadOre, S,
+    SSSS, SSS, PDS, SS, Drill9527, PayloadOre, S,
             q1;
 
     public static void load() {
-        /*
-        Seq<Item> items = Vars.content.items();
-        itemBlocks = new Block[items.size];
-        for (int i = 0; i < items.size; i++) {
-            itemBlocks[i] = new ItemBlock(items.get(i), 2) {{
-                requirements(Category.defense, new ItemStack[]{});
-            }};
-        }
-
-         */
-
-        ((ItemTurret)Blocks.duo).ammo(Items.copper, new PierceContinuousBulletType(){{
-            damage = 30;
-            lifetime = 1200;
-            hitColor = Color.cyan;
-        }});
-
-        S = new 加damage("s") {{
-            size = 1;
-            requirements(Category.defense, new ItemStack[]{});
-        }};
-
-        SS = new PositionPayloadAmmoTurret("SS") {{
-            requirements(Category.defense, new ItemStack[]{});
-            size = 15;
-            range = 1000;
-
-            ammo(Blocks.thoriumWallLarge, new ArtilleryBulletType());
-        }};
-
         AblationTower = new AblationTower("AblationTower") {{
             side = 8;
             size = 4;
@@ -124,9 +90,10 @@ public class OvulamBlocks {
             chargeMultiplier = 1f;
         }};
 
-        SSSS = new MultiPayloadCrafter("SSSS") {{
+        mixer = new MultiPayloadCrafter("mixer") {{
             requirements(Category.defense, new ItemStack[]{});
             size = 15;
+            drawer = new DrawMixer();
             plans = Seq.with(
                     new MultiPayloadPlan(180f, 1f, "123",
                             new Recipe(

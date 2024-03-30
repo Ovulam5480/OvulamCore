@@ -23,11 +23,11 @@ public class DrawMultiConstruct extends DrawBlock {
         for (var output : outputs){
             for (int i = 0; i < output.amount; i++){
                 MovePayload movePayload = crafterBuild.findMovePayload(output.item);
-                Vec2 vec2 = movePayload == null?Vec2.ZERO:crafterBuild.setTargetPosition(i, movePayload);
+                Vec2 vec2 = movePayload == null ? Vec2.ZERO : crafterBuild.setTargetPosition(i, movePayload);
 
                 Draw.draw(Layer.blockOver + 1f,() ->
                         Drawf.construct(vec2.x + build.x, vec2.y + build.y,output.item.fullIcon,
-                        build.rotdeg() - 90,build.progress(),1f, Time.time));
+                        build.block.rotate ? build.rotdeg() - 90 : 0, build.progress(),1f, Time.time));
 
             }
         }
