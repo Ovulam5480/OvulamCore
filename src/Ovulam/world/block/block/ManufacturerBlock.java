@@ -19,13 +19,17 @@ import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.type.PayloadStack;
 import mindustry.ui.Bar;
+import mindustry.ui.ItemImage;
+import mindustry.ui.ReqImage;
+import mindustry.ui.Styles;
 import mindustry.world.Block;
+import mindustry.world.meta.Stat;
 
 import static mindustry.world.blocks.ConstructBlock.constructed;
 
 public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     public Block targetBlock = Blocks.router;
-    public Seq<ManufacturerStage> stage = new Seq<>(5);
+    public Seq<ManufacturerStage> stages = new Seq<>(5);
     public TextureRegion[] stageRegion = new TextureRegion[5];
 
     public ManufacturerBlock(String name) {
@@ -47,10 +51,63 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     @Override
     public void load() {
         super.load();
-        stageRegion = new TextureRegion[stage.size + 1];
-        for (int i = 0; i <= stage.size; i++) {
+        stageRegion = new TextureRegion[stages.size + 1];
+        for (int i = 0; i <= stages.size; i++) {
             stageRegion[i] = Core.atlas.find(targetBlock.name + "-stage-" + i);
         }
+    }
+
+    @Override
+    public void setStats(){
+        super.setStats();
+        stats.add(Stat.input, table -> {
+            table.row();
+            for(int i = 0; i < stages.size; i++){
+                ManufacturerStage stage = stages.get(i);
+                int index = i;
+
+                table.table(stageTable -> {
+                    stageTable.setBackground(Styles.grayPanel);
+                    stageTable.marginBottom(15);
+
+                    stageTable.add("stage-" + index).center().marginBottom(5).row();
+
+                    stageTable.table(itemTable -> {
+                        itemTable.marginTop(10);
+                        for (int j = 0; j < stage.inputRecipe.itemStacks.size; j++){
+                            itemTable.add(new ItemImage(stage.inputRecipe.itemStacks.get(j)));
+                            if(j % 8 == 7)itemTable.row();
+                        }
+                        stageTable.row();
+                    });
+
+
+
+                    stageTable.table(liquidTable -> {
+                        liquidTable.marginTop(10);
+                        for (int j = 0; j < stage.inputRecipe.liquidStacks.size; j++){
+                            liquidTable.add(new ReqImage(stage.inputRecipe.liquidStacks.get(j).liquid.uiIcon, () -> true));
+                            if(j % 8 == 7)liquidTable.row();
+                        }
+                        stageTable.row();
+                    });
+
+
+                    stageTable.table(payloadTable -> {
+                        payloadTable.marginTop(10);
+                        for (int j = 0; j < stage.inputRecipe.payloadStacks.size; j++){
+                            payloadTable.add(new ItemImage(stage.inputRecipe.payloadStacks.get(j)));
+                            if(j % 8 == 7)payloadTable.row();
+                        }
+                        stageTable.row();
+                    });
+                    //todo power
+
+                    table.row();
+
+                }).growX();
+            }
+        });
     }
 
 
@@ -78,7 +135,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public float progress() {
-            return progress / stage.get(currentStage).craftTime;
+            return progress / stages.get(currentStage).craftTime;
         }
 
         @Override
@@ -87,7 +144,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
             if (efficiency > 0) progress += delta();
 
-            if (progress >= stage.get(currentStage).craftTime) {
+            if (progress >= stages.get(currentStage).craftTime) {
 
                 positionPayloads.forEach(positionPayload ->
                         Fx.placeBlock.at(positionPayload.currentPosition.x + x,
@@ -98,7 +155,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
                 progress %= 1f;
 
                 //Fx.placeBlock.at(x, y, size);
-                if (currentStage + 1 == stage.size) {
+                if (currentStage + 1 == stages.size) {
                     if (!Vars.net.client()) {
                         constructed(tile, targetBlock, null, (byte) rotation, team, null);
                     }
@@ -112,7 +169,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             Draw.rect(stageRegion[0], x, y);
 
             Draw.draw(Layer.blockOver - 1f, () -> {
-                for (int i = 0; i < stage.size; i++) {
+                for (int i = 0; i < stages.size; i++) {
                     float stageProgress;
 
                     if (i == currentStage) stageProgress = progress();
@@ -141,7 +198,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         }
 
         public Recipe getRecipe() {
-            return stage.get(currentStage).inputRecipe;
+            return stages.get(currentStage).inputRecipe;
         }
 
         @Override
@@ -161,7 +218,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public RecipeMover[] getMoveInMover() {
-            return stage.get(currentStage).recipeMover;
+            return stages.get(currentStage).recipeMover;
         }
     }
 

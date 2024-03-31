@@ -4,6 +4,7 @@ import Ovulam.mod.OvulamBlocks;
 import Ovulam.mod.OvulamEvents;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
+import Ovulam.world.graphics.OvulamShaders;
 import arc.util.Log;
 import mindustry.mod.Mod;
 
@@ -19,8 +20,6 @@ public class OvulamMod extends Mod{
     @Override
     public void init() {
         /*
-        OvulamShaders.init();
-
         OvulamCacheLayer.init();
         OvulamCacheLayer.load();
 
@@ -34,6 +33,8 @@ public class OvulamMod extends Mod{
         OvulamUnits.load();
 
         OvulamEvents.load();
+        OvulamShaders.init();
+
         //OvulamUI.init();
     }
 }

@@ -43,7 +43,7 @@ public class OvulamBlocks {
     //工厂
     organize,order,mixer,
     //
-    PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase,
+    PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase,mixerBase,
     //测试
     SSSS, SSS, PDS, SS, Drill9527, PayloadOre, S,
             q1;
@@ -209,11 +209,49 @@ public class OvulamBlocks {
             }
         }};
 
+        mixerBase = new ManufacturerBlock("mixer-base") {{
+            buildCost = 300f;
+            requirements(Category.defense, new ItemStack[]{});
+            targetBlock = mixer;
+            stages.add(
+                    new ManufacturerStage(300f,
+                            new Recipe(Seq.with(), Seq.with(), Seq.with(
+                                    new PayloadStack(Blocks.titaniumWallLarge, 8),
+                                    new PayloadStack(Blocks.copperWallLarge, 8)
+                            ), 0, true),
+                            new RecipeMover[]{
+                                    new RecipeMover(Blocks.titaniumWallLarge,
+                                            new MoveCustomP16(new int[]{0, 3, 5, 6, 9, 10, 12, 15}, 24)),
+                                    new RecipeMover(Blocks.copperWallLarge,
+                                            new MoveCustomP16(new int[]{1, 2, 4, 7, 8, 11, 13, 14}, 24))
+                            }
+                    ),
+                    new ManufacturerStage(300f,
+                            new Recipe(Seq.with(), Seq.with(), Seq.with(
+                                    new PayloadStack(Blocks.surgeWallLarge, 12)
+                            ), 0, true),
+                            new RecipeMover[]{
+                                    new RecipeMover(Blocks.surgeWallLarge,
+                                            new MoveCustomP16(new int[]{0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15}, 24))
+                            }
+                    ),
+                    new ManufacturerStage(300f,
+                            new Recipe(Seq.with(), Seq.with(), Seq.with(
+                                    new PayloadStack(Blocks.plastaniumWallLarge, 16)
+                            ), 0, true),
+                            new RecipeMover[]{
+                                    new RecipeMover(Blocks.plastaniumWallLarge,
+                                            new MoveCustomP16(new int[]{0, 3, 5, 6, 9, 10, 12, 15}, 24))
+                            }
+                    )
+            );
+        }};
+
         batchFactoryBase = new ManufacturerBlock("batch-factory-base") {{
             buildCost = 300f;
             requirements(Category.defense, new ItemStack[]{});
             targetBlock = batchFactory;
-            stage.add(
+            stages.add(
                     new ManufacturerStage(300f,
                             new Recipe(Seq.with(), Seq.with(), Seq.with(
                                     new PayloadStack(Blocks.titaniumWallLarge, 8),

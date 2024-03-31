@@ -259,7 +259,8 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             table.row();
             for (int i = 0; i < inputRecipe.payloadStacks.size; i++) {
                 PayloadStack payloadStack = inputRecipe.payloadStacks.get(i);
-                table.add(new ReqImage(payloadStack.item.uiIcon, () -> true)).center();
+                ItemImage payloadImage = new ItemImage(payloadStack.item.uiIcon, payloadStack.amount);
+                table.add(payloadImage).center();
                 if (i % 4 == 3) table.row();
             }
             table.row();

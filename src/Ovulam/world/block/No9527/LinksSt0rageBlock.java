@@ -1,4 +1,4 @@
-package Ovulam.world.block.storage;
+package Ovulam.world.block.No9527;
 
 import arc.struct.Seq;
 import mindustry.gen.Building;

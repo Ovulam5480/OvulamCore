@@ -12,6 +12,7 @@ public class Recipe {
     public float Power;
     public boolean liquidCompletely;
 
+    //todo contentStacks?
     public Recipe(Seq<ItemStack> itemStacks, Seq<LiquidStack> liquidStacks, Seq<PayloadStack> payloadStacks,
                   float Power, boolean liquidCompletely) {
         this.itemStacks = itemStacks;

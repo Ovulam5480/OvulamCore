@@ -139,6 +139,16 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
+            //Vars.world.tiles.eachTile(tile1 => {if(tile1.build instanceof ConstructBlock.ConstructBuild)tile1.build.remove();});
+
+            /*
+            Vars.player.unit().type.speed = 21;
+            Vars.player.unit().type.omniMovement = true;
+            Vars.player.unit().type.rotateMoveFirst = false;
+            Vars.player.unit().type.flying = true;
+            Vars.player.unit().rotation = Time.time * 20;
+
+             */
         }
     }
 }
