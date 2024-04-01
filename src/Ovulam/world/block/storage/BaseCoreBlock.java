@@ -106,14 +106,13 @@ public class BaseCoreBlock extends CoreBlock{
 
         @Override
         public void requestSpawn(Player player){
-            Building b = proximity.find(building -> building instanceof UnitSpawnStorage.UnitSpawnStorageBuild s
+            Building b = proximity.find(building -> building instanceof PlayerSpawnStorage.UnitSpawnStorageBuild s
             && s.getUnitType().supportsEnv(Vars.state.rules.env) && (s.spawnPlayer == null || s.spawnPlayer == player));
 
             if(b != null){
-                ((UnitSpawnStorage.UnitSpawnStorageBuild)b).requestSpawn(player);
+                ((PlayerSpawnStorage.UnitSpawnStorageBuild)b).requestSpawn(player);
                 return;
             }
-
 
             if(!unitType.supportsEnv(Vars.state.rules.env) || !(spawnPlayer == null || spawnPlayer == player)) return;
             spawnPlayer = player;

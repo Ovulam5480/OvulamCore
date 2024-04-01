@@ -1,11 +1,16 @@
 package Ovulam;
 
+import Ovulam.UI.StoryTable;
 import Ovulam.mod.OvulamBlocks;
-import Ovulam.mod.OvulamEvents;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
+import Ovulam.type.unit.InvitationUnitEntity;
+import Ovulam.world.block.No9527.CT3PlanetDialog;
 import Ovulam.world.graphics.OvulamShaders;
+import arc.Events;
 import arc.util.Log;
+import mindustry.Vars;
+import mindustry.content.UnitTypes;
 import mindustry.mod.Mod;
 
 public class OvulamMod extends Mod{
@@ -19,11 +24,7 @@ public class OvulamMod extends Mod{
 
     @Override
     public void init() {
-        /*
-        OvulamCacheLayer.init();
-        OvulamCacheLayer.load();
-
-         */
+        Vars.ui.planet = new CT3PlanetDialog();
     }
 
     @Override
@@ -32,8 +33,9 @@ public class OvulamMod extends Mod{
         OvulamItems.load();
         OvulamUnits.load();
 
-        OvulamEvents.load();
         OvulamShaders.init();
+
+        Events.on(InvitationUnitEntity.class, invitationUnitEntity -> new StoryTable(UnitTypes.mono.fullIcon,"AAAAAA"));
 
         //OvulamUI.init();
     }

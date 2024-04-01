@@ -15,13 +15,13 @@ import mindustry.type.UnitType;
 import mindustry.ui.Fonts;
 
 
-public class UnitSpawnStorage extends BaseStorageBlock{
+public class PlayerSpawnStorage extends BaseStorageBlock{
     public UnitType unitType = UnitTypes.alpha;
     public float spawnTime = 200f;
 
 
 
-    public UnitSpawnStorage(String name) {
+    public PlayerSpawnStorage(String name) {
         super(name);
     }
 

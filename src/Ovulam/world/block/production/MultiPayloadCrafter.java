@@ -32,6 +32,7 @@ import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
+import mindustry.logic.LAccess;
 import mindustry.type.*;
 import mindustry.ui.Bar;
 import mindustry.ui.ItemImage;
@@ -146,7 +147,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     ////////////////////////
     public static class MultiPayloadPlan {
         public float craftTime;
-        public float warmup;
+        public float warmupSpeed;
         public String name;
         public TextureRegion icon = new TextureRegion();
         public Recipe inputRecipe;
@@ -154,10 +155,10 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         public RecipeMover[] recipeMover;
         public DrawBlock drawBlock;
 
-        public MultiPayloadPlan(float craftTime, float warmup, String name, Recipe inputRecipe, Recipe outputRecipe,
+        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, Recipe inputRecipe, Recipe outputRecipe,
                                 RecipeMover[] recipeMover, DrawBlock drawBlock) {
             this.craftTime = craftTime;
-            this.warmup = warmup;
+            this.warmupSpeed = warmupSpeed;
             this.name = name;
             this.inputRecipe = inputRecipe;
             this.outputRecipe = outputRecipe;
@@ -171,7 +172,10 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         public int previousPlan = -1;
         public int currentPlan = -1;
         public int hoveredPlan = -1;
+        //todo warmup
         public float progress;
+        public float totalProgress;
+        public float warmup;
         public Seq<PositionPayload> inputPositionPayloads = new Seq<>();
         public Seq<PositionPayload> craftPositionPayloads = new Seq<>();
         public Seq<PositionPayload> remover = new Seq<>();
@@ -306,6 +310,12 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         }
 
         @Override
+        public void control(LAccess type, double p1, double p2, double p3, double p4) {
+            if (type == LAccess.config) currentPlan = (int) p1;
+            super.control(type, p1, p2, p3, p4);
+        }
+
+        @Override
         public int getMaximumAccepted(Item item) {
             ItemStack itemStack1 = getInputItems().find(itemStack -> itemStack.item == item);
             return itemStack1 == null ? 0 : itemStack1.amount * 2;
@@ -315,6 +325,16 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         @Override
         public float progress() {
             return currentPlan == -1 ? 0 : progress / getCurrentPlan().craftTime;
+        }
+
+        @Override
+        public float totalProgress(){
+            return totalProgress;
+        }
+
+        @Override
+        public float warmup(){
+            return warmup;
         }
 
         @Override
@@ -441,8 +461,10 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
             if (currentPlan != -1) {
                 MultiPayloadPlan plan = getCurrentPlan();
+                warmup = Mathf.approachDelta(warmup, efficiency, getCurrentPlan().warmupSpeed * delta());
                 if (efficiency > 0) {
-                    progress += delta();
+                    progress += warmup * delta();
+                    totalProgress += warmup * delta();
                     if (!getCurrentPlan().outputRecipe.liquidCompletely) {
                         getOutputLiquids().forEach(liquidStack ->
                                 handleLiquid(this, liquidStack.liquid, delta() * liquidStack.amount));

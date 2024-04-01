@@ -95,7 +95,7 @@ public class OvulamBlocks {
             size = 15;
             drawer = new DrawMixer();
             plans = Seq.with(
-                    new MultiPayloadPlan(180f, 1f, "123",
+                    new MultiPayloadPlan(1800f, 1f, "123",
                             new Recipe(
                                     Seq.with(),
                                     Seq.with(),
@@ -119,7 +119,7 @@ public class OvulamBlocks {
                             new DrawMultiConstruct()
                     ),
 
-                    new MultiPayloadPlan(180f, 1f, "12345",
+                    new MultiPayloadPlan(1800f, 1f, "12345",
                             new Recipe(
                                     Seq.with(),
                                     Seq.with(),

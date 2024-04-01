@@ -25,7 +25,7 @@ import mindustry.world.meta.Env;
 
 import static mindustry.Vars.*;
 
-public class DamageForceProjector extends Block{
+public class ShowShowDamageForceProjector extends Block{
     public final int timerUse = timers++;
     //布的消耗时间（帧数）
     //半径
@@ -40,14 +40,14 @@ public class DamageForceProjector extends Block{
     protected static final Cons<Bullet> shieldConsumer = bullet -> {
         if(bullet.team != paramEntity.team 
                 && bullet.type.absorbable 
-                && Intersector.isInRegularPolygon(((DamageForceProjector)(paramEntity.block)).sides, paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, 0, bullet.x, bullet.y)){
+                && Intersector.isInRegularPolygon(((ShowShowDamageForceProjector)(paramEntity.block)).sides, paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, 0, bullet.x, bullet.y)){
             bullet.absorb();
             paramEffect.at(bullet);
             paramEntity.buildup += bullet.damage;
         }
     };
 
-    public DamageForceProjector(String name){
+    public ShowShowDamageForceProjector(String name){
         super(name);
         update = true;
         solid = true;
