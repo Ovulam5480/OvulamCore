@@ -56,7 +56,9 @@ import static mindustry.Vars.control;
 public class MultiPayloadCrafter extends MultiPayloadBlock {
     private final Seq<PayloadStack> emptyPayloadStacks = new Seq<>();
     public DrawBlock drawer = new DrawDefault();
+
     public Seq<MultiPayloadPlan> plans = new Seq<>(5);
+
     public boolean ignorePayloadFullness = false;
     public boolean changeClear;
     //行
@@ -129,8 +131,8 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     public void load() {
         super.load();
         drawer.load(this);
-        plans.forEach(multiPayloadPlan -> multiPayloadPlan.drawBlock.load(this));
-        plans.forEach((plan) -> plan.icon = Core.atlas.find(name + "-" + plan.name));
+        plans.each(multiPayloadPlan -> multiPayloadPlan.drawBlock.load(this));
+        plans.each((plan) -> plan.icon = Core.atlas.find(name + "-" + plan.name));
     }
 
     @Override
@@ -155,19 +157,43 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         public RecipeMover[] recipeMover;
         public DrawBlock drawBlock;
 
-        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, Recipe inputRecipe, Recipe outputRecipe,
-                                RecipeMover[] recipeMover, DrawBlock drawBlock) {
+        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, DrawBlock drawBlock,
+                                Recipe inputRecipe, Recipe outputRecipe,
+                                RecipeMover[] recipeMover) {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
+            this.drawBlock = drawBlock;
+
             this.inputRecipe = inputRecipe;
             this.outputRecipe = outputRecipe;
+
             this.recipeMover = recipeMover;
-            this.drawBlock = drawBlock;
         }
+
+        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, DrawBlock drawBlock,
+                                  Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
+                                  float inputPower, boolean inputLiquidCompletely,
+                                  Object[] outputItems, Object[] outputLiquids, Object[] outputPayloads,
+                                  float outputPower, boolean outputLiquidCompletely,
+                                  RecipeMover[] recipeMover) {
+            this.craftTime = craftTime;
+            this.warmupSpeed = warmupSpeed;
+            this.name = name;
+            this.drawBlock = drawBlock;
+
+            this.inputRecipe = new Recipe(ItemStack.list(inputItems), LiquidStack.list(inputLiquids),
+                    PayloadStack.list(inputPayloads), inputPower, inputLiquidCompletely);
+            this.outputRecipe = new Recipe(ItemStack.list(outputItems), LiquidStack.list(outputLiquids),
+                    PayloadStack.list(outputPayloads), outputPower, outputLiquidCompletely);
+
+            this.recipeMover = recipeMover;
+        }
+
     }
 
     /////////////////////////////////
+    //todo ConsumeMultiPayloadBuild
     public class MultiPayloadCrafterBuild extends MultiPayloadBlockBuild {
         public int previousPlan = -1;
         public int currentPlan = -1;
@@ -428,8 +454,8 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             }
             addLiquids.add(getLiquids(currentPlan));
 
-            removeLiquids.forEach(liquidStack -> removeBar("liquid-" + liquidStack.liquid.name));
-            addLiquids.forEach(liquidStack -> addLiquidBar(liquidStack.liquid));
+            removeLiquids.each(liquidStack -> removeBar("liquid-" + liquidStack.liquid.name));
+            addLiquids.each(liquidStack -> addLiquidBar(liquidStack.liquid));
         }
 
         public Seq<LiquidStack> getLiquids(int targetPlan) {
@@ -449,7 +475,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 previousPlan = currentPlan;
                 progress = 0;
                 if (changeClear) {
-                    positionPayloads.forEach(positionPayload -> {
+                    positionPayloads.each(positionPayload -> {
                         Payload payload = positionPayload.payload;
                         Fx.breakBlock.at(payload.x(), payload.y(), payload.size() / 8f);
                     });
@@ -466,7 +492,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                     progress += warmup * delta();
                     totalProgress += warmup * delta();
                     if (!getCurrentPlan().outputRecipe.liquidCompletely) {
-                        getOutputLiquids().forEach(liquidStack ->
+                        getOutputLiquids().each(liquidStack ->
                                 handleLiquid(this, liquidStack.liquid, delta() * liquidStack.amount));
                     }
                 }
@@ -501,7 +527,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             //配方中不存在输入载荷时，所有载荷都应该输出
 
             if (currentPlan == -1 || getInputPayloads().size == 0) {
-                positionPayloads.forEach(positionPayload ->
+                positionPayloads.each(positionPayload ->
                         outputPositionPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
             } else {
                 /////////////////////
@@ -527,7 +553,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 Seq<PositionPayload> output = positionPayloads.copy();
                 output.removeAll(inputPositionPayloads);
 
-                output.forEach(positionPayload -> outputPositionPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
+                output.each(positionPayload -> outputPositionPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
 
             }
         }

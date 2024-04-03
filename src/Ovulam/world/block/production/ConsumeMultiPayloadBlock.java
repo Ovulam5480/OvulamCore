@@ -1,5 +1,8 @@
-package Ovulam.world.block.payload;
+package Ovulam.world.block.production;
 
+import Ovulam.world.block.payload.MultiPayloadBlock;
+import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
+import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
 import arc.struct.Seq;
 import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Building;
@@ -14,7 +17,7 @@ import Ovulam.world.move.MovePayload;
 import Ovulam.world.other.PositionPayload;
 import Ovulam.world.other.RecipeMover;
 
-public class ConsumeMultiPayloadBlock extends MultiPayloadBlock{
+public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
     public ConsumeMultiPayloadBlock(String name) {
         super(name);
         size = 15;
@@ -27,7 +30,9 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock{
 
         consume(new ConsumeItemDynamic((ConsumeMultiPayloadBuild e) -> e.getInputItems().toArray()));
         consume(new ConsumeLiquidsDynamic((ConsumeMultiPayloadBuild e) -> e.getInputLiquids().toArray()));
+        consume(new ConsumeLiquidsDynamicCompletely((ConsumeMultiPayloadBuild e) -> e.getInputLiquidsCompletely().toArray()));
         consume(new ConsumePositionPayloadsDynamic(ConsumeMultiPayloadBuild::getInputPayloads));
+        consume(new ConsumePowerDynamicCanBeNegative(ConsumeMultiPayloadBuild::getInputPower));
     }
 
     @Override
@@ -61,7 +66,11 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock{
 
         public abstract Seq<LiquidStack> getInputLiquids();
 
+        public abstract Seq<LiquidStack> getInputLiquidsCompletely();
+
         public abstract Seq<PayloadStack> getInputPayloads();
+
+        public abstract float getInputPower();
 
         public abstract RecipeMover[] getMoveInMover();
 
@@ -77,7 +86,7 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock{
         }
 
         public void moveInPayloads(){
-            positionPayloads.forEach(positionPayload -> {
+            positionPayloads.each(positionPayload -> {
                 MovePayload movePayload = findMovePayload(getMoveInMover(), positionPayload.content());
 
                 int index = 0;

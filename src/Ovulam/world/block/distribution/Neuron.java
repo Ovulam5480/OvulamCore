@@ -97,7 +97,7 @@ public class Neuron extends Block {
             Vars.indexer.eachBlock(team, rangeRect(x, y, range * tilesize),
                     building -> building.block.hasItems = true, eachBlocks::addUnique);
 
-            eachBlocks.forEach(building -> {
+            eachBlocks.each(building -> {
                 if(building.block == block) otherNeurons.addUnique(this);
                 else if(building.canConsume() || building.block.acceptsItems) potentialInput.addUnique(building);
             });
@@ -156,7 +156,7 @@ public class Neuron extends Block {
                 }
             }
 
-            remove.forEach(building -> dendrite.remove(transmitter -> transmitter.building == building));
+            remove.each(building -> dendrite.remove(transmitter -> transmitter.building == building));
 
             //轴突部分，用于输出物资
             //需求物品？？？
@@ -223,7 +223,7 @@ public class Neuron extends Block {
 
             Draw.z(Layer.flyingUnit);
 
-            dendrite.forEach((transmitter -> {
+            dendrite.each((transmitter -> {
                 Building building = transmitter.building;
 
                 Drawf.line(Color.acid, x, y, building.x, building.y);

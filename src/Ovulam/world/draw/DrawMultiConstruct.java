@@ -25,9 +25,10 @@ public class DrawMultiConstruct extends DrawBlock {
                 MovePayload movePayload = crafterBuild.findMovePayload(output.item);
                 Vec2 vec2 = movePayload == null ? Vec2.ZERO : crafterBuild.setTargetPosition(i, movePayload);
 
+                //todo 单位方向和方块的方向
                 Draw.draw(Layer.blockOver + 1f,() ->
                         Drawf.construct(vec2.x + build.x, vec2.y + build.y,output.item.fullIcon,
-                        build.block.rotate ? build.rotdeg() - 90 : 0, build.progress(),1f, Time.time));
+                        0, build.progress(),1f, Time.time));
 
             }
         }

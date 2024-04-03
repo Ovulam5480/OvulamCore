@@ -153,7 +153,7 @@ public class Mortar extends MultiPayloadBlock {
 
         @Override
         public void updateTile(){
-            positionPayloads.forEach(payload -> {
+            positionPayloads.each(payload -> {
                 Building build = ((BuildPayload) (payload.payload)).build;
                 if(hasArrived(payload)){
                     health += build.maxHealth;

@@ -66,6 +66,10 @@ public class BaseCoreBlock extends CoreBlock{
         public Player spawnPlayer;
         public Building[] coreAugment = new Building[4];
 
+        public boolean destroyGameOver(){
+            return destroyGameOver;
+        }
+
         @Override
         public void drawConfigure(){
         }
@@ -128,7 +132,7 @@ public class BaseCoreBlock extends CoreBlock{
             super.onDestroyed();
             if(destroyGameOver){
                 Seq<CoreBuild> cores = Vars.state.teams.cores(team).copy();
-                cores.forEach(coreBuild -> coreBuild.damage(coreBuild.health * 20f));
+                cores.each(coreBuild -> coreBuild.damage(coreBuild.health * 20f));
             }
         }
 

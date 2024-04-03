@@ -39,7 +39,7 @@ public class StatusEffectProjector extends PayloadBlock {
 
     @Override
     public void init() {
-        plans.forEach(statusEffectPlan -> consume(statusEffectPlan.consume));
+        plans.each(statusEffectPlan -> consume(statusEffectPlan.consume));
         consume(consumePower);
         super.init();
     }

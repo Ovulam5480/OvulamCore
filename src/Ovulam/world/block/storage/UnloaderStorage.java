@@ -31,9 +31,9 @@ public class UnloaderStorage extends BaseStorageBlock {
             if (!hasCoreMerge()) {
                 Seq<Building> remove = new Seq<>();
                 buildingsTimer.forEach(((building, aFloat) -> {if (building.buildOn() != building) remove.add(building);}));
-                remove.forEach(building -> buildingsTimer.remove(building));
+                remove.each(building -> buildingsTimer.remove(building));
 
-                buildings.forEach(building -> {
+                buildings.each(building -> {
                     if (!buildingsTimer.containsKey(building)) buildingsTimer.put(building, 0f);
                     float timer = buildingsTimer.get(building);
 
@@ -50,7 +50,7 @@ public class UnloaderStorage extends BaseStorageBlock {
                     buildingsTimer.put(building, timer);
                 });
             } else {
-                buildings.forEach(building -> {
+                buildings.each(building -> {
                     for (Item item : Vars.content.items()){
                         if(items.get(item) == 0) continue;
                         int amount = building.acceptStack(item, items.get(item), this);

@@ -30,7 +30,7 @@ public class LaserShield extends Block {
 
         @Override
         public void updateTile() {
-            buildings.forEach(building -> {
+            buildings.each(building -> {
                 int index = buildings.indexOf(building);
                 float per = (float) index / buildings.size;
                 building.set((float) (x + Math.cos(per * 2 * Mathf.pi) * radius()),

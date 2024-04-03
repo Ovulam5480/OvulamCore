@@ -86,7 +86,7 @@ public class PayloadCrafter extends PayloadBlock {
         iconRegion = Core.atlas.find(name + "-icon");
 
         drawer.load(this);
-        plans.forEach((plan) -> {
+        plans.each((plan) -> {
             plan.icon = Core.atlas.find(name + "-" + plan.name);
         });
     }
@@ -237,7 +237,7 @@ public class PayloadCrafter extends PayloadBlock {
             Runnable rebuild = () -> {
                 group.clear();
                 cont.clearChildren();
-                plans.forEach(plan -> {
+                plans.each(plan -> {
                     ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () -> {
                         control.input.config.hideConfig();
                     }).tooltip(plan.name).group(group).get();

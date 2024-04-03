@@ -256,7 +256,7 @@ public class PayloadDeconstructorStorage extends PayloadDeconstructor {
 
             linkCore();
             if(linkedCore == null){
-                proximity.forEach(building -> {
+                proximity.each(building -> {
                     int ro = (((int) Mathf.angle(building.x - x, building.y - y) + 405) / 90) % 4;
                     if(ro == rotation){
                         if(items.total() > 0 && linkedCore == null){

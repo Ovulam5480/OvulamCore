@@ -37,7 +37,7 @@ public class SpaceTower extends Block {
         public void draw() {
             Rect rectRange = rect(this.x, this.y, range * 2);
             Drawf.dashRect(Pal.placing, rectRange);
-            buildings.forEach(tile1 -> {
+            buildings.each(tile1 -> {
                 Drawf.circles(tile1.x * 8, tile1.y * 8, 3);
             });
         }
@@ -59,7 +59,7 @@ public class SpaceTower extends Block {
             if(Vars.state.teams.get(team).getBuildings(laserShield).isEmpty()) return;
             Building building = Vars.state.teams.get(team).getBuildings(laserShield).first();
 
-            tileSeq.forEach(tile1 -> {
+            tileSeq.each(tile1 -> {
                 if(tile1.block() == Blocks.air && tile1.build == null)tile1.setBlock(absorbLasersBlock, team, 0);
                 if(tile1.build instanceof AbsorbLasersBlock.AbsorbLasersBuild b){
                     b.target = this;

@@ -95,7 +95,7 @@ public class OvulamBlocks {
             size = 15;
             drawer = new DrawMixer();
             plans = Seq.with(
-                    new MultiPayloadPlan(1800f, 1f, "123",
+                    new MultiPayloadPlan(1800f, 1f, "123",new DrawMultiConstruct(),
                             new Recipe(
                                     Seq.with(),
                                     Seq.with(),
@@ -115,28 +115,24 @@ public class OvulamBlocks {
                                             new MoveCustomP9(new int[]{0, 2, 4, 6, 8}, 16)),
                                     new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
                                     new RecipeMover(Blocks.surgeWallLarge, new Moved4())
-                            },
-                            new DrawMultiConstruct()
+                            }
                     ),
 
-                    new MultiPayloadPlan(1800f, 1f, "12345",
-                            new Recipe(
-                                    Seq.with(),
-                                    Seq.with(),
-                                    Seq.with(new PayloadStack(Blocks.copperWallLarge, 4),
-                                            new PayloadStack(Blocks.thoriumWallLarge, 5)),
-                                    0, true),
-                            new Recipe(
-                                    Seq.with(),
-                                    Seq.with(),
-                                    Seq.with(new PayloadStack(Blocks.surgeWallLarge, 1),
-                                            new PayloadStack(Blocks.titaniumWallLarge, 4)),
-                                    0, true),
+                    new MultiPayloadPlan(1800f, 1f, "12345",new DrawMultiConstruct(),
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{},
+                            2,
+                            true,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{},
+                            2,
+                            true,
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
                                     new RecipeMover(Blocks.surgeWallLarge, new Moved4())
-                            },
-                            new DrawMultiConstruct()
+                            }
                     )
             );
         }};
@@ -188,7 +184,7 @@ public class OvulamBlocks {
             for (UnitType unitType : Vars.content.units()) {
                 if(Vars.content.units().indexOf(unitType) > 20)break;
                 plans.add(
-                        new MultiPayloadPlan(900f, 1f, "批量生产-" + unitType,
+                        new MultiPayloadPlan(900f, 1f, "批量生产-" + unitType, new DrawMultiConstruct(),
                                 new Recipe(
                                         new Seq<>(unitType.getTotalRequirements()),
                                         Seq.with(),
@@ -203,8 +199,7 @@ public class OvulamBlocks {
 
                                 new RecipeMover[]{
                                         new RecipeMover(unitType, new MoveCustomP16(16))
-                                },
-                                new DrawMultiConstruct()
+                                }
                         ));
             }
         }};

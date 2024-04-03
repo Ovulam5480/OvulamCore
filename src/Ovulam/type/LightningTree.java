@@ -61,7 +61,7 @@ public class LightningTree {
             Seq<Vec2> points = createLightningInternal(bullet, bullet.id + i, team, roofColor,
                     damage, x, y, rotation1, (int)range, 0.85f);
 
-            points.forEach(vec2 -> {
+            points.each(vec2 -> {
                 float indexFin = (float) points.indexOf(vec2) / points.size;
                 if(indexFin > 0.2f && indexFin < 0.9f && Mathf.chance(change * (1 - indexFin))){
 

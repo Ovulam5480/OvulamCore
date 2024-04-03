@@ -1,6 +1,6 @@
 package Ovulam.world.block.block;
 
-import Ovulam.world.block.payload.ConsumeMultiPayloadBlock;
+import Ovulam.world.block.production.ConsumeMultiPayloadBlock;
 import Ovulam.world.graphics.OvulamShaders;
 import Ovulam.world.other.Recipe;
 import Ovulam.world.other.RecipeMover;
@@ -127,6 +127,18 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             this.inputRecipe = inputRecipe;
             this.recipeMover = recipeMover;
         }
+
+        public ManufacturerStage(float craftTime,
+                                 Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
+                                 float inputPower, boolean inputLiquidCompletely,
+                                 RecipeMover[] recipeMover) {
+            this.craftTime = craftTime;
+
+            this.inputRecipe = new Recipe(ItemStack.list(inputItems), LiquidStack.list(inputLiquids),
+                    PayloadStack.list(inputPayloads), inputPower, inputLiquidCompletely);
+
+            this.recipeMover = recipeMover;
+        }
     }
 
     public class ManufacturerBuild extends ConsumeMultiPayloadBuild {
@@ -146,7 +158,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
             if (progress >= stages.get(currentStage).craftTime) {
 
-                positionPayloads.forEach(positionPayload ->
+                positionPayloads.each(positionPayload ->
                         Fx.placeBlock.at(positionPayload.currentPosition.x + x,
                                 positionPayload.currentPosition.y + y,
                                 positionPayload.payload.size() / 8f));
@@ -208,7 +220,12 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public Seq<LiquidStack> getInputLiquids() {
-            return getRecipe().liquidStacks;
+            return getRecipe().liquidCompletely ? getInputLiquids() : new Seq<>();
+        }
+
+        @Override
+        public  Seq<LiquidStack> getInputLiquidsCompletely(){
+            return !getRecipe().liquidCompletely ? getInputLiquids() : new Seq<>();
         }
 
         @Override

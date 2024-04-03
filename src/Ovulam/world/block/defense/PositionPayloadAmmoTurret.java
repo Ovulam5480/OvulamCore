@@ -52,7 +52,7 @@ public class PositionPayloadAmmoTurret extends PayloadAmmoTurret {
         public void updateTile(){
             Seq<PositionPayload> removes = new Seq<>();
 
-            positionPayloads.forEach(positionPayload -> {
+            positionPayloads.each(positionPayload -> {
                 movePayloads(positionPayload);
                 if(MultiPayloadBlock.hasArrived(positionPayload)) {
                     Fx.placeBlock.at(positionPayload.payload.x(), positionPayload.payload.y(), positionPayload.payload.size());
@@ -60,7 +60,7 @@ public class PositionPayloadAmmoTurret extends PayloadAmmoTurret {
                 }
             });
 
-            removes.forEach(positionPayload -> {
+            removes.each(positionPayload -> {
                 payloads.add(positionPayload.content());
                 positionPayloads.remove(positionPayload);
             });
@@ -91,7 +91,7 @@ public class PositionPayloadAmmoTurret extends PayloadAmmoTurret {
         //绘制载荷
         public void drawPayload() {
             if (positionPayloads == null) return;
-            positionPayloads.forEach(PositionPayload -> PositionPayload.payload.draw());
+            positionPayloads.each(PositionPayload -> PositionPayload.payload.draw());
         }
 
     }

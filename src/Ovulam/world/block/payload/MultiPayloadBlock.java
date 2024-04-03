@@ -103,7 +103,7 @@ public class MultiPayloadBlock extends Block {
         @Override
         public PayloadSeq getPayloads() {
             PayloadSeq payloads = new PayloadSeq();
-            this.positionPayloads.forEach(payload -> {
+            this.positionPayloads.each(payload -> {
                 payloads.add(payload.content());
             });
             return payloads;
@@ -120,7 +120,7 @@ public class MultiPayloadBlock extends Block {
 
         public PayloadSeq toPayloadSeq(Seq<PositionPayload> payloads) {
             PayloadSeq payloadSeq = new PayloadSeq();
-            payloads.forEach(PositionPayload -> {
+            payloads.each(PositionPayload -> {
                 payloadSeq.add(PositionPayload.content());
             });
             return payloadSeq;
@@ -209,7 +209,7 @@ public class MultiPayloadBlock extends Block {
         //绘制载荷
         public void drawPayload() {
             if (positionPayloads == null) return;
-            positionPayloads.forEach(PositionPayload -> PositionPayload.payload.draw());
+            positionPayloads.each(PositionPayload -> PositionPayload.payload.draw());
 
         }
     }

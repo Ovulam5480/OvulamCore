@@ -183,7 +183,7 @@ public class AblationTower extends Block {
                     Intersector.isInPolygon(polygon(x, y, side, lerpDeltaRadius), 0, side * 2, bullet.x, bullet.y));
 
             HashMap<Bullet, int[]> bulletPositions = new HashMap<>();
-            bulletSeq.forEach(bullet -> {
+            bulletSeq.each(bullet -> {
                 int[] positions = new int[side / 2];
                 for (int i = 0; i < side / 2; i++) {
                     float position = (float) (Math.cos(Mathf.pi * 2f * (i + 0.5f) / side) * (bullet.x - x) +
@@ -204,7 +204,7 @@ public class AblationTower extends Block {
             bulletAndPoint.forEach((bullet, ints) -> {
                 if (!bulletPositions.containsKey(bullet)) bullets.add(bullet);
             });
-            bullets.forEach(bulletAndPoint::remove);
+            bullets.each(bulletAndPoint::remove);
         }
 
         //多边形的内径

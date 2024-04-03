@@ -58,7 +58,7 @@ public class OvulamDynamicExplosion {
         highlight.at(x, y, Mathf.pow(radioactivity, 0.65f));
 
 
-        //charge 效果未知
+        //charge
         LightningTree.create(x, y, team, Mathf.sqrt(charge) * 50, (int) Mathf.pow(charge, 1f / 4) + 4, Mathf.pow(charge, 1f / 3) * 3);
 
     }

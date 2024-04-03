@@ -90,7 +90,7 @@ public class EffectBlock extends Block {
             四角星.at(x,y);
             etimer -= etime;
 
-            Vars.state.teams.get(Team.sharded).units.forEach(unit -> unit.elevation(1));
+            Vars.state.teams.get(Team.sharded).units.each(unit -> unit.elevation(1));
         }
 
         @Override
