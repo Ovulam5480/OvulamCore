@@ -1,5 +1,6 @@
 package Ovulam.world.block.block;
 
+import Ovulam.UI.RecipeTable;
 import Ovulam.world.block.production.ConsumeMultiPayloadBlock;
 import Ovulam.world.graphics.OvulamShaders;
 import Ovulam.world.other.Recipe;
@@ -19,8 +20,6 @@ import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.type.PayloadStack;
 import mindustry.ui.Bar;
-import mindustry.ui.ItemImage;
-import mindustry.ui.ReqImage;
 import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.meta.Stat;
@@ -72,36 +71,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
                     stageTable.add("stage-" + index).center().marginBottom(5).row();
 
-                    stageTable.table(itemTable -> {
-                        itemTable.marginTop(10);
-                        for (int j = 0; j < stage.inputRecipe.itemStacks.size; j++){
-                            itemTable.add(new ItemImage(stage.inputRecipe.itemStacks.get(j)));
-                            if(j % 8 == 7)itemTable.row();
-                        }
-                        stageTable.row();
-                    });
-
-
-
-                    stageTable.table(liquidTable -> {
-                        liquidTable.marginTop(10);
-                        for (int j = 0; j < stage.inputRecipe.liquidStacks.size; j++){
-                            liquidTable.add(new ReqImage(stage.inputRecipe.liquidStacks.get(j).liquid.uiIcon, () -> true));
-                            if(j % 8 == 7)liquidTable.row();
-                        }
-                        stageTable.row();
-                    });
-
-
-                    stageTable.table(payloadTable -> {
-                        payloadTable.marginTop(10);
-                        for (int j = 0; j < stage.inputRecipe.payloadStacks.size; j++){
-                            payloadTable.add(new ItemImage(stage.inputRecipe.payloadStacks.get(j)));
-                            if(j % 8 == 7)payloadTable.row();
-                        }
-                        stageTable.row();
-                    });
-                    //todo power
+                    RecipeTable.addRecipeTable(stageTable, stage.inputRecipe, 4);
 
                     table.row();
 
@@ -143,18 +113,20 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
     public class ManufacturerBuild extends ConsumeMultiPayloadBuild {
         public int currentStage = 0;
-        public float progress;
 
         @Override
-        public float progress() {
-            return progress / stages.get(currentStage).craftTime;
+        public float warmup(){
+            return 1;
         }
 
         @Override
         public void updateTile() {
             moveInPayloads();
 
-            if (efficiency > 0) progress += delta();
+            if (efficiency > 0){
+                progress += delta();
+                totalProgress += delta();
+            }
 
             if (progress >= stages.get(currentStage).craftTime) {
 
@@ -220,12 +192,12 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public Seq<LiquidStack> getInputLiquids() {
-            return getRecipe().liquidCompletely ? getInputLiquids() : new Seq<>();
+            return getRecipe().liquidStacks;
         }
 
         @Override
-        public  Seq<LiquidStack> getInputLiquidsCompletely(){
-            return !getRecipe().liquidCompletely ? getInputLiquids() : new Seq<>();
+        public boolean getInputLiquidsCompletely(){
+            return getRecipe().liquidCompletely;
         }
 
         @Override
@@ -234,10 +206,13 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         }
 
         @Override
-        public RecipeMover[] getMoveInMover() {
+        public float getInputPower(){
+            return getRecipe().Power;
+        }
+
+        @Override
+        public RecipeMover[] getMover() {
             return stages.get(currentStage).recipeMover;
         }
     }
-
-
 }

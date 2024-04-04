@@ -63,7 +63,6 @@ public class DrawMixer extends DrawBlock {
         Draw.reset();
     }
 
-
     @Override
     public TextureRegion[] icons(Block block){
         return new TextureRegion[]{iconRegion};

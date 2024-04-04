@@ -1,4 +1,4 @@
-package Ovulam.world.block.block;
+package Ovulam.world.block.No9527;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;

@@ -1,14 +1,8 @@
 package Ovulam.world.block.block;
 
-import Ovulam.OvulamMod;
-import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
-import arc.scene.style.Drawable;
-import arc.scene.style.TextureRegionDrawable;
-import arc.scene.ui.Image;
 import mindustry.gen.Building;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
@@ -37,15 +31,6 @@ public class ItemBlock extends Block {
         super.init();
     }
 
-    @Override
-    public TextureRegion[] icons(){
-        TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(region);
-        Drawable drawable = textureRegionDrawable.tint(itemColor());
-        Image image = new Image(drawable);
-
-        return new TextureRegion[]{image.getRegion()};
-    }
-
     public Color itemColor(){
         Color color = item.color.cpy();
         return color.fromHsv(color.hue(),color.saturation() * 1.5f,color.value() * 1.3f);
@@ -55,7 +40,18 @@ public class ItemBlock extends Block {
     @Override
     public void load(){
         super.load();
-        region = Core.atlas.find(OvulamMod.ovulamName() + "-ItemBlock-" + size);
+        /*
+        Fi fi = Vars.tree.get("sprites/方块/walls 墙/ItemBlock-2.png");
+
+        Pixmap pixmap = new Pixmap(fi);
+        pixmap.fill(itemColor());
+
+        Texture texture = new Texture(pixmap);
+        region = new TextureRegion(texture);
+
+        //region = Core.atlas.find(OvulamMod.ovulamName() + "-ItemBlock-" + size);
+
+         */
     }
 
 

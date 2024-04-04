@@ -13,7 +13,7 @@ public class OvulamUnits {
             constructor = InvitationUnitEntity::new;
             health = 9000;
             hitSize = 15 * 8;
-            abilities.add(new ForceFieldAbility(800, 0, 10000000, 0));
+            abilities.add(new ForceFieldAbility(800, 0, 1000000, 0));
             speed = 0.05f;
             canAttack = false;
             flying = true;

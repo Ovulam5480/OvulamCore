@@ -140,6 +140,11 @@ public class ItemRepeater extends Block {
         @Override
         public void draw(){
             /*
+
+            Font font = Fonts.outline;
+            font.draw(String.valueOf(fullTime), x, y - 40, Align.center);
+
+
             Vars.content.unit(47).targetAir = true;
             Vars.content.unit(47).weapons.each(weapon => weapon.bullet.collidesAir = true);
             Vars.content.unit(52).targetAir = true;

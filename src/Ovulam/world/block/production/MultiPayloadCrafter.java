@@ -1,6 +1,7 @@
 package Ovulam.world.block.production;
 
-import Ovulam.world.block.payload.MultiPayloadBlock;
+import Ovulam.UI.RecipeTable;
+import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
 import Ovulam.world.move.MoveCustomP9;
@@ -27,7 +28,6 @@ import mindustry.ctype.UnlockableContent;
 import mindustry.entities.units.BuildPlan;
 import mindustry.game.EventType;
 import mindustry.gen.Building;
-import mindustry.gen.Icon;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
@@ -35,8 +35,6 @@ import mindustry.graphics.Pal;
 import mindustry.logic.LAccess;
 import mindustry.type.*;
 import mindustry.ui.Bar;
-import mindustry.ui.ItemImage;
-import mindustry.ui.ReqImage;
 import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.blocks.payloads.BuildPayload;
@@ -53,8 +51,8 @@ import java.util.HashMap;
 import static mindustry.Vars.content;
 import static mindustry.Vars.control;
 
-public class MultiPayloadCrafter extends MultiPayloadBlock {
-    private final Seq<PayloadStack> emptyPayloadStacks = new Seq<>();
+public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
+    private final PayloadStack[] emptyPayloadStacks = {};
     public DrawBlock drawer = new DrawDefault();
 
     public Seq<MultiPayloadPlan> plans = new Seq<>(5);
@@ -75,15 +73,6 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
     public MultiPayloadCrafter(String name) {
         super(name);
         size = 3;
-        update = true;
-        hasPower = true;
-        hasLiquids = true;
-        hasItems = true;
-        acceptsItems = true;
-        acceptsPayload = true;
-        solid = true;
-        itemCapacity = 10;
-        liquidCapacity = 100f;
         configurable = true;
         clearOnDoubleTap = true;
         outputsPayload = true;
@@ -91,19 +80,22 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         rotateDraw = false;
         //todo ???
         dumpFacing = true;
+        consumeBuilder.clear();
 
-        consume(new ConsumeItemDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
-                plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.itemStacks.toArray() : ItemStack.empty));
+        consume(new ConsumeItemDynamic((MultiPayloadCrafterBuild e) ->
+                e.currentPlan != -1 ? e.getInputItems().toArray(ItemStack.class) : ItemStack.empty));
 
-        //todo 完全消耗
-        consume(new ConsumeLiquidsDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
-                plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.liquidStacks.toArray() : LiquidStack.empty));
+        consume(new ConsumeLiquidsDynamic((MultiPayloadCrafterBuild e) ->
+                e.currentPlan != -1 && !e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
 
-        consume(new ConsumePositionPayloadsDynamic((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
-                plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.payloadStacks : emptyPayloadStacks));
+        consume(new ConsumeLiquidsDynamicCompletely((MultiPayloadCrafterBuild e) ->
+                e.currentPlan != -1 && e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
 
-        consume(new ConsumePowerDynamicCanBeNegative((MultiPayloadCrafterBuild e) -> e.currentPlan != -1 ?
-                plans.get(Math.min(e.currentPlan, plans.size - 1)).inputRecipe.Power : 0));
+        consume(new ConsumePositionPayloadsDynamic((MultiPayloadCrafterBuild e) ->
+                e.currentPlan != -1 ? e.getInputPayloads().toArray(PayloadStack.class) : emptyPayloadStacks));
+
+        consume(new ConsumePowerDynamicCanBeNegative((MultiPayloadCrafterBuild e) ->
+                e.currentPlan != -1 ? e.getInputPower() : 0));
     }
 
     @Override
@@ -113,7 +105,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 itemCapacity = Math.max(itemCapacity, stack.amount * 2);
             }
             for (LiquidStack stack : plan.inputRecipe.liquidStacks) {
-                liquidCapacity = Math.max(liquidCapacity, stack.amount);
+                liquidCapacity = Math.max(liquidCapacity, stack.amount * 2f * (plan.inputRecipe.liquidCompletely ? 1 : plan.craftTime));
             }
         }
         super.init();
@@ -189,28 +181,21 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
             this.recipeMover = recipeMover;
         }
-
     }
 
     /////////////////////////////////
-    //todo ConsumeMultiPayloadBuild
-    public class MultiPayloadCrafterBuild extends MultiPayloadBlockBuild {
+    //todo 耗电与发电
+    public class MultiPayloadCrafterBuild extends ConsumeMultiPayloadBuild {
         public int previousPlan = -1;
         public int currentPlan = -1;
         public int hoveredPlan = -1;
-        //todo warmup
-        public float progress;
-        public float totalProgress;
-        public float warmup;
         public Seq<PositionPayload> inputPositionPayloads = new Seq<>();
         public Seq<PositionPayload> craftPositionPayloads = new Seq<>();
-        public Seq<PositionPayload> remover = new Seq<>();
-
         public HashMap<PositionPayload, Integer> outputPositionPayloads = new HashMap<>();
+        public Seq<PositionPayload> remover = new Seq<>();
 
         public void buildConfiguration(Table table) {
             table.table(configTable -> {
-
                 Table recipeShow = new Table(Styles.black3);
                 recipeShow.defaults().size(48, 48).left();
 
@@ -268,69 +253,14 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             table.margin(10);
 
             MultiPayloadPlan plan = plans.get(hoveredPlan);
+
             Recipe inputRecipe = plan.inputRecipe;
-
             table.add(Stat.input.localized()).height(48).row();
-
-            for (int i = 0; i < inputRecipe.itemStacks.size; i++) {
-                ItemStack itemStack = inputRecipe.itemStacks.get(i);
-                ItemImage itemImage = new ItemImage(itemStack.item.uiIcon, itemStack.amount);
-
-                table.add(itemImage).center();
-                if (i % 4 == 3) table.row();
-            }
-            table.row();
-            for (int i = 0; i < inputRecipe.liquidStacks.size; i++) {
-                LiquidStack liquidStacks = inputRecipe.liquidStacks.get(i);
-                table.add(new ReqImage(liquidStacks.liquid.uiIcon, () -> true)).center();
-                if (i % 4 == 3) table.row();
-            }
-
-            table.row();
-            for (int i = 0; i < inputRecipe.payloadStacks.size; i++) {
-                PayloadStack payloadStack = inputRecipe.payloadStacks.get(i);
-                ItemImage payloadImage = new ItemImage(payloadStack.item.uiIcon, payloadStack.amount);
-                table.add(payloadImage).center();
-                if (i % 4 == 3) table.row();
-            }
-            table.row();
-
-            if (inputRecipe.Power > 0) {
-                table.image(Icon.power.tint(Pal.accent)).size(32);
-                table.add(String.valueOf(inputRecipe.Power)).size(32);
-                table.row();
-            }
+            RecipeTable.addRecipeTable(table, inputRecipe, 4);
 
             Recipe outputRecipe = plan.outputRecipe;
             table.add(Stat.output.localized()).height(48).row();
-
-            for (int i = 0; i < outputRecipe.itemStacks.size; i++) {
-                ItemStack itemStack = outputRecipe.itemStacks.get(i);
-                ItemImage itemImage = new ItemImage(itemStack.item.uiIcon, itemStack.amount);
-
-                table.add(itemImage).center();
-                if (i % 4 == 3) table.row();
-            }
-            table.row();
-            for (int i = 0; i < outputRecipe.liquidStacks.size; i++) {
-                LiquidStack liquidStacks = outputRecipe.liquidStacks.get(i);
-                table.add(new ReqImage(liquidStacks.liquid.uiIcon, () -> true)).center();
-                if (i % 4 == 3) table.row();
-            }
-
-            table.row();
-            for (int i = 0; i < outputRecipe.payloadStacks.size; i++) {
-                PayloadStack payloadStack = outputRecipe.payloadStacks.get(i);
-                table.add(new ReqImage(payloadStack.item.uiIcon, () -> true)).center();
-                if (i % 4 == 3) table.row();
-            }
-            table.row();
-
-            if (outputRecipe.Power > 0) {
-                table.image(Icon.power.tint(Pal.accent)).size(32);
-                table.add(String.valueOf(outputRecipe.Power)).size(32);
-                table.row();
-            }
+            RecipeTable.addRecipeTable(table, outputRecipe, 4);
 
             hoveredPlan = -1;
         }
@@ -343,24 +273,14 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public int getMaximumAccepted(Item item) {
-            ItemStack itemStack1 = getInputItems().find(itemStack -> itemStack.item == item);
-            return itemStack1 == null ? 0 : itemStack1.amount * 2;
+            ItemStack stack = getInputItems().find(itemStack -> itemStack.item == item);
+            return stack == null ? 0 : stack.amount * 2;
         }
 
 
         @Override
         public float progress() {
             return currentPlan == -1 ? 0 : progress / getCurrentPlan().craftTime;
-        }
-
-        @Override
-        public float totalProgress(){
-            return totalProgress;
-        }
-
-        @Override
-        public float warmup(){
-            return warmup;
         }
 
         @Override
@@ -393,18 +313,12 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public boolean acceptLiquid(Building source, Liquid liquid) {
-            if (currentPlan == -1) {
-                return false;
-            }
-            for (LiquidStack stack : getInputLiquids()) {
-                if (stack.liquid == liquid) return true;
-            }
-            return false;
+            return currentPlan != -1 && super.acceptLiquid(source, liquid);
         }
 
         @Override
         public boolean acceptItem(Building source, Item item) {
-            return currentPlan != -1 && items.get(item) < getMaximumAccepted(item);
+            return currentPlan != -1 && super.acceptItem(source, item);
         }
 
 
@@ -412,16 +326,29 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             return currentPlan == -1 ? null : plans.get(currentPlan);
         }
 
-        public Seq<ItemStack> getInputItems() {
+        @Override
+        public Seq<ItemStack> getInputItems(){
             return getCurrentPlan().inputRecipe.itemStacks;
         }
 
-        public Seq<LiquidStack> getInputLiquids() {
+        @Override
+        public Seq<LiquidStack> getInputLiquids(){
             return getCurrentPlan().inputRecipe.liquidStacks;
         }
 
+        @Override
+        public boolean getInputLiquidsCompletely(){
+            return getCurrentPlan().inputRecipe.liquidCompletely;
+        }
+
+        @Override
         public Seq<PayloadStack> getInputPayloads() {
             return getCurrentPlan().inputRecipe.payloadStacks;
+        }
+
+        @Override
+        public float getInputPower(){
+            return getCurrentPlan().inputRecipe.Power;
         }
 
         public Seq<ItemStack> getOutputItems() {
@@ -564,6 +491,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         //输入的载荷优先填充moveIn，然后填充moveCapital
         //不以moveInMover的容量去判断moveIn是否填满，工作区容纳一次工作所需要的所以载荷
+        @Override
         public void moveInPayloads() {
             //输入判断，所有非输入的载荷都应该输出
             for (PositionPayload positionPayload : craftPositionPayloads) {
@@ -744,12 +672,9 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             return recipeMover;
         }
 
-        public MovePayload getMoveInMover() {
-            return moveInMover;
-        }
-
-        public MovePayload getMoveOutMover() {
-            return moveOutMover;
+        @Override
+        public RecipeMover[] getMover() {
+            return getCurrentPlan().recipeMover;
         }
 
     }

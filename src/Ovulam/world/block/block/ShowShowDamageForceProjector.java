@@ -58,8 +58,6 @@ public class ShowShowDamageForceProjector extends Block{
         envEnabled |= Env.space;
         ambientSound = Sounds.shield;
         ambientSoundVolume = 0.08f;
-
-
     }
 
     @Override

@@ -1,12 +1,13 @@
 package Ovulam.mod;
 
 import Ovulam.type.bullet.MortarBulletType;
+import Ovulam.world.block.block.ItemBlock;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.defense.ItemStackTurret;
 import Ovulam.world.block.defense.Mortar;
-import Ovulam.world.block.production.Drill9527;
+import Ovulam.world.block.No9527.Drill9527;
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.block.production.PayloadDrill;
 import Ovulam.world.block.storage.PayloadDeconstructorStorage;
@@ -27,10 +28,7 @@ import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
-import mindustry.type.Category;
-import mindustry.type.ItemStack;
-import mindustry.type.PayloadStack;
-import mindustry.type.UnitType;
+import mindustry.type.*;
 import mindustry.world.Block;
 
 public class OvulamBlocks {
@@ -49,6 +47,12 @@ public class OvulamBlocks {
             q1;
 
     public static void load() {
+        itemBlocks = new Block[Vars.content.items().size];
+        for (int i = 0; i < Vars.content.items().size; i++){
+            itemBlocks[i] = new ItemBlock(Vars.content.item(i), 2);
+
+        }
+
         AblationTower = new AblationTower("AblationTower") {{
             side = 8;
             size = 4;
@@ -95,19 +99,19 @@ public class OvulamBlocks {
             size = 15;
             drawer = new DrawMixer();
             plans = Seq.with(
-                    new MultiPayloadPlan(1800f, 1f, "123",new DrawMultiConstruct(),
+                    new MultiPayloadPlan(600f, 1f, "123",new DrawMultiConstruct(),
                             new Recipe(
-                                    Seq.with(),
-                                    Seq.with(),
+                                    Seq.with(new ItemStack(Items.sand, 300)),
+                                    Seq.with(new LiquidStack(Liquids.water, 1)),
                                     Seq.with(new PayloadStack(Blocks.copperWallLarge, 2),
                                             new PayloadStack(Blocks.thoriumWallLarge, 2)),
-                                    0, true),
+                                    0, false),
                             new Recipe(
                                     Seq.with(),
                                     Seq.with(),
                                     Seq.with(new PayloadStack(Blocks.surgeWallLarge, 1),
                                             new PayloadStack(Blocks.titaniumWallLarge, 4)),
-                                    0, true),
+                                    0, false),
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.copperWallLarge,
                                             new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
@@ -118,18 +122,22 @@ public class OvulamBlocks {
                             }
                     ),
 
-                    new MultiPayloadPlan(1800f, 1f, "12345",new DrawMultiConstruct(),
-                            new Object[]{},
-                            new Object[]{},
-                            new Object[]{},
-                            2,
+                    new MultiPayloadPlan(600f, 1f, "12345", new DrawMultiConstruct(),
+                            new Object[]{Items.sand, 400},
+                            new Object[]{Liquids.water, 2000},
+                            new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
+                            0,
                             true,
                             new Object[]{},
                             new Object[]{},
-                            new Object[]{},
-                            2,
-                            true,
+                            new Object[]{Blocks.surgeWallLarge, 5, Blocks.titaniumWallLarge, 4},
+                            0,
+                            false,
                             new RecipeMover[]{
+                                    new RecipeMover(Blocks.copperWallLarge,
+                                            new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
+                                    new RecipeMover(Blocks.thoriumWallLarge,
+                                            new MoveCustomP9(new int[]{0, 2, 4, 6, 8}, 16)),
                                     new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
                                     new RecipeMover(Blocks.surgeWallLarge, new Moved4())
                             }
@@ -221,13 +229,15 @@ public class OvulamBlocks {
                                             new MoveCustomP16(new int[]{1, 2, 4, 7, 8, 11, 13, 14}, 24))
                             }
                     ),
-                    new ManufacturerStage(300f,
-                            new Recipe(Seq.with(), Seq.with(), Seq.with(
-                                    new PayloadStack(Blocks.surgeWallLarge, 12)
-                            ), 0, true),
+                    new ManufacturerStage(1800f,
+                            new Recipe(Seq.with(),Seq.with(), Seq.with(), 0, true),
                             new RecipeMover[]{
-                                    new RecipeMover(Blocks.surgeWallLarge,
-                                            new MoveCustomP16(new int[]{0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15}, 24))
+                                    new RecipeMover(Blocks.copperWallLarge,
+                                            new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
+                                    new RecipeMover(Blocks.thoriumWallLarge,
+                                            new MoveCustomP9(new int[]{0, 2, 4, 6, 8}, 16)),
+                                    new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
+                                    new RecipeMover(Blocks.surgeWallLarge, new Moved4())
                             }
                     ),
                     new ManufacturerStage(300f,
@@ -259,13 +269,19 @@ public class OvulamBlocks {
                                             new MoveCustomP16(new int[]{1, 2, 4, 7, 8, 11, 13, 14}, 24))
                             }
                     ),
-                    new ManufacturerStage(300f,
-                            new Recipe(Seq.with(), Seq.with(), Seq.with(
-                                    new PayloadStack(Blocks.surgeWallLarge, 12)
-                            ), 0, true),
+                    new ManufacturerStage(1800f,
+                            new Object[]{Items.sand, 300, Items.copper, 500},
+                            new Object[]{Liquids.water, 1800, Liquids.slag, 1800},
+                            new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
+                            2,
+                            true,
                             new RecipeMover[]{
-                                    new RecipeMover(Blocks.surgeWallLarge,
-                                            new MoveCustomP16(new int[]{0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15}, 24))
+                                    new RecipeMover(Blocks.copperWallLarge,
+                                            new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
+                                    new RecipeMover(Blocks.thoriumWallLarge,
+                                            new MoveCustomP9(new int[]{0, 2, 4, 6, 8}, 16)),
+                                    new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
+                                    new RecipeMover(Blocks.surgeWallLarge, new Moved4())
                             }
                     ),
                     new ManufacturerStage(300f,

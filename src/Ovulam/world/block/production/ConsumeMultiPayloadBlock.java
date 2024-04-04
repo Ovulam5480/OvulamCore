@@ -28,10 +28,10 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
         itemCapacity = 10;
         liquidCapacity = 100f;
 
-        consume(new ConsumeItemDynamic((ConsumeMultiPayloadBuild e) -> e.getInputItems().toArray()));
-        consume(new ConsumeLiquidsDynamic((ConsumeMultiPayloadBuild e) -> e.getInputLiquids().toArray()));
-        consume(new ConsumeLiquidsDynamicCompletely((ConsumeMultiPayloadBuild e) -> e.getInputLiquidsCompletely().toArray()));
-        consume(new ConsumePositionPayloadsDynamic(ConsumeMultiPayloadBuild::getInputPayloads));
+        consume(new ConsumeItemDynamic((ConsumeMultiPayloadBuild e) -> e.getInputItems().toArray(ItemStack.class)));
+        consume(new ConsumeLiquidsDynamic((ConsumeMultiPayloadBuild e) -> !e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
+        consume(new ConsumeLiquidsDynamicCompletely((ConsumeMultiPayloadBuild e) -> e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
+        consume(new ConsumePositionPayloadsDynamic((ConsumeMultiPayloadBuild e) -> e.getInputPayloads().toArray(PayloadStack.class)));
         consume(new ConsumePowerDynamicCanBeNegative(ConsumeMultiPayloadBuild::getInputPower));
     }
 
@@ -42,6 +42,24 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
     }
 
     public abstract class ConsumeMultiPayloadBuild extends MultiPayloadBlockBuild{
+        public float progress;
+        public float totalProgress;
+        public float warmup;
+
+        @Override
+        public float progress() {
+            return progress;
+        }
+
+        @Override
+        public float totalProgress() {
+            return totalProgress;
+        }
+
+        @Override
+        public float warmup() {
+            return warmup;
+        }
 
         @Override
         public boolean acceptItem(Building source, Item item){
@@ -66,13 +84,13 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
 
         public abstract Seq<LiquidStack> getInputLiquids();
 
-        public abstract Seq<LiquidStack> getInputLiquidsCompletely();
+        public abstract boolean getInputLiquidsCompletely();
 
         public abstract Seq<PayloadStack> getInputPayloads();
 
         public abstract float getInputPower();
 
-        public abstract RecipeMover[] getMoveInMover();
+        public abstract RecipeMover[] getMover();
 
         public MovePayload findMovePayload(RecipeMover[] getRecipeMovers,UnlockableContent payload) {
             MovePayload recipeMover = null;
@@ -87,7 +105,7 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
 
         public void moveInPayloads(){
             positionPayloads.each(positionPayload -> {
-                MovePayload movePayload = findMovePayload(getMoveInMover(), positionPayload.content());
+                MovePayload movePayload = findMovePayload(getMover(), positionPayload.content());
 
                 int index = 0;
                 for (PositionPayload positionPayload1 : positionPayloads){
