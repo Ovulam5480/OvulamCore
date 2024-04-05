@@ -23,8 +23,8 @@ public class MoveOut extends MovePayload{
         float y = Geometry.d4(build.rotation).y * (trns - row * 2) * 8;
 
         return new Vec2(
-                x + (index % amount + 1 - half) * 16 * Geometry.d4(build.rotation).y,
-                y + (index % amount + 1 - half) * 16 * Geometry.d4(build.rotation).x);
+                x + (index % amount + 0.75f - half) * 16 * Geometry.d4(build.rotation).y,
+                y + (index % amount + 0.75f - half) * 16 * Geometry.d4(build.rotation).x);
     }
 
 }

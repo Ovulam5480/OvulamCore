@@ -64,9 +64,8 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
         @Override
         public boolean acceptItem(Building source, Item item){
             ItemStack stack = getInputItems().find(itemStack -> itemStack.item == item);
-            return stack != null && stack.amount < getMaximumAccepted(item);
+            return stack != null && items.get(stack.item) < getMaximumAccepted(item);
         }
-
 
         //todo 潜在的空指针异常问题
         @Override

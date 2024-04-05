@@ -1,6 +1,7 @@
 package Ovulam.world.block.defense;
 
 import Ovulam.type.bullet.OvulamDynamicExplosionBulletType;
+import mindustry.content.Fx;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Building;
 import mindustry.graphics.Pal;
@@ -16,9 +17,10 @@ public class ItemStackTurret extends Turret {
     public ItemStackTurret(String name) {
         super(name);
         hasItems = true;
-        separateItemCapacity = true;
         maxAmmo = 150;
         range = 400;
+
+        shootEffect = Fx.shootBig;
     }
 
 
