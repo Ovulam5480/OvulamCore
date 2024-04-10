@@ -19,6 +19,7 @@ ext{
     //the build number that this mod is made for
     mindustryVersion = 'v146'
     jabelVersion = "93fde537c7"
+
     //windows sucks
     isWindows = System.getProperty("os.name").toLowerCase().contains("windows")
     sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
@@ -36,6 +37,7 @@ dependencies{
     compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
 
     annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
+    implementation files("D:\\M O D\\OvulamCore\\build\\libs\\TooManyItems.jar")
 }
 
 //force arc version

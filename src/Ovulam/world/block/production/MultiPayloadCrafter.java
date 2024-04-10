@@ -52,11 +52,9 @@ import static mindustry.Vars.content;
 import static mindustry.Vars.control;
 
 public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
+    public static Seq<MultiPayloadPlan> plans = new Seq<>(5);
     private final PayloadStack[] emptyPayloadStacks = {};
     public DrawBlock drawer = new DrawDefault();
-
-    public Seq<MultiPayloadPlan> plans = new Seq<>(5);
-
     public boolean ignorePayloadFullness = false;
     public boolean changeClear;
     //行
@@ -164,11 +162,11 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
         public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, DrawBlock drawBlock,
-                                  Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
-                                  float inputPower, boolean inputLiquidCompletely,
-                                  Object[] outputItems, Object[] outputLiquids, Object[] outputPayloads,
-                                  float outputPower, boolean outputLiquidCompletely,
-                                  RecipeMover[] recipeMover) {
+                                Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
+                                float inputPower, boolean inputLiquidCompletely,
+                                Object[] outputItems, Object[] outputLiquids, Object[] outputPayloads,
+                                float outputPower, boolean outputLiquidCompletely,
+                                RecipeMover[] recipeMover) {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
@@ -256,11 +254,11 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
             Recipe inputRecipe = plan.inputRecipe;
             table.add(Stat.input.localized()).height(48).row();
-            RecipeTable.addRecipeTable(table, inputRecipe, 4);
+            RecipeTable.addRecipeTable(table, inputRecipe);
 
             Recipe outputRecipe = plan.outputRecipe;
             table.add(Stat.output.localized()).height(48).row();
-            RecipeTable.addRecipeTable(table, outputRecipe, 4);
+            RecipeTable.addRecipeTable(table, outputRecipe);
 
             hoveredPlan = -1;
         }
@@ -327,17 +325,17 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
         @Override
-        public Seq<ItemStack> getInputItems(){
+        public Seq<ItemStack> getInputItems() {
             return getCurrentPlan().inputRecipe.itemStacks;
         }
 
         @Override
-        public Seq<LiquidStack> getInputLiquids(){
+        public Seq<LiquidStack> getInputLiquids() {
             return getCurrentPlan().inputRecipe.liquidStacks;
         }
 
         @Override
-        public boolean getInputLiquidsCompletely(){
+        public boolean getInputLiquidsCompletely() {
             return getCurrentPlan().inputRecipe.liquidCompletely;
         }
 
@@ -347,8 +345,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
         @Override
-        public float getInputPower(){
+        public float getInputPower() {
             return getCurrentPlan().inputRecipe.Power;
+        }
+
+        @Override
+        public float getCraftTime() {
+            return getCurrentPlan().craftTime;
         }
 
         public Seq<ItemStack> getOutputItems() {
@@ -413,18 +416,16 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             continueAddBar();
 
             if (currentPlan != -1) {
-                MultiPayloadPlan plan = getCurrentPlan();
                 warmup = Mathf.approachDelta(warmup, efficiency, getCurrentPlan().warmupSpeed * delta());
-                if (efficiency > 0) {
-                    progress += warmup * delta();
-                    totalProgress += warmup * delta();
-                    if (!getCurrentPlan().outputRecipe.liquidCompletely) {
-                        getOutputLiquids().each(liquidStack ->
-                                handleLiquid(this, liquidStack.liquid, delta() * liquidStack.amount));
-                    }
+                progress += warmup * edelta();
+                totalProgress += warmup * edelta();
+
+                if (!getCurrentPlan().outputRecipe.liquidCompletely) {
+                    getOutputLiquids().each(liquidStack ->
+                            handleLiquid(this, liquidStack.liquid, edelta() * liquidStack.amount));
                 }
 
-                if (progress >= plan.craftTime) {
+                if (progress >= getCurrentPlan().craftTime) {
                     craft();
                     Fx.placeBlock.at(x, y, size);
                 }

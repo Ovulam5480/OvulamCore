@@ -1,6 +1,6 @@
 package Ovulam.world.consumers;
 
-import Ovulam.UI.LiquidImage;
+import Ovulam.UI.RecipeItemImage;
 import arc.func.Func;
 import arc.scene.ui.layout.Table;
 import mindustry.Vars;
@@ -46,7 +46,7 @@ public class ConsumeLiquidsDynamicCompletely extends Consume {
 
         for(LiquidStack stack : liquids.get(build)){
 
-            table.add(new ReqImage(new LiquidImage(stack, true),
+            table.add(new ReqImage(new RecipeItemImage(stack, true),
                     () -> build.liquids != null && build.liquids().get(stack.liquid) > stack.amount)).size(Vars.iconMed).width(48).padRight(8);
             if(++i % 4 == 0) table.row();
         }

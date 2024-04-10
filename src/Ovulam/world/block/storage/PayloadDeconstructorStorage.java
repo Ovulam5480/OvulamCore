@@ -90,7 +90,6 @@ public class PayloadDeconstructorStorage extends PayloadDeconstructor {
                 (!valid ? 0.4f : 0.24f) + Mathf.absin(Time.globalTime, 6f, 0.28f));
         Draw.rect(Mathf.mod((plan.rotation), 4) < 2 ? teamRegion1 : teamRegion2, plan.drawx(), plan.drawy(), plan.rotation * 90);
         Draw.reset();
-
     }
 
     @Override
@@ -132,9 +131,8 @@ public class PayloadDeconstructorStorage extends PayloadDeconstructor {
         }
 
         public boolean canAcceptItem(Item item){
-            if(linkedCore == null){
-                return items.get(item) < getMaximumAccepted(item);
-            } else return linkedCore.items.get(item) < linkedCore.getMaximumAccepted(item);
+            if(linkedCore == null)return items.get(item) < getMaximumAccepted(item);
+            else return linkedCore.items.get(item) < linkedCore.getMaximumAccepted(item);
         }
 
         @Override

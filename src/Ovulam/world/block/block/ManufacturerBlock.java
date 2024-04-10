@@ -71,7 +71,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
                     stageTable.add("stage-" + index).center().marginBottom(5).row();
 
-                    RecipeTable.addRecipeTable(stageTable, stage.inputRecipe, 4);
+                    RecipeTable.addRecipeTable(stageTable, stage.inputRecipe);
 
                     table.row();
 
@@ -213,6 +213,11 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         @Override
         public RecipeMover[] getMover() {
             return stages.get(currentStage).recipeMover;
+        }
+
+        @Override
+        public float getCraftTime() {
+            return stages.get(currentStage).craftTime;
         }
     }
 }

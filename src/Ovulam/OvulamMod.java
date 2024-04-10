@@ -5,26 +5,23 @@ import Ovulam.mod.OvulamBlocks;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
 import Ovulam.type.unit.InvitationUnitEntity;
-import Ovulam.world.block.No9527.CT3PlanetDialog;
 import Ovulam.world.graphics.OvulamShaders;
 import arc.Events;
-import arc.util.Log;
-import mindustry.Vars;
 import mindustry.content.UnitTypes;
 import mindustry.mod.Mod;
 
 public class OvulamMod extends Mod{
+    //RecipesManager recipesManager;
     public static String ovulamName(){
         return "ovulam";
     }
 
     public OvulamMod(){
-        Log.info("5480 is eating.");
     }
 
     @Override
     public void init() {
-        Vars.ui.planet = new CT3PlanetDialog();
+        super.init();
     }
 
     @Override

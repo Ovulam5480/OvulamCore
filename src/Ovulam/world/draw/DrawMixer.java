@@ -12,8 +12,8 @@ import mindustry.world.Block;
 import mindustry.world.draw.DrawBlock;
 
 public class DrawMixer extends DrawBlock {
-    public TextureRegion region, topRegion, rotatorRegion, iconRegion,pointRegion,lineRegion;
-    public float rotation;
+    public TextureRegion region, topRegion, rotatorRegion, iconRegion, pointRegion, lineRegion;
+
     public float radiusBig = 16;
     public float radiusSmail = 16;
 
@@ -30,8 +30,7 @@ public class DrawMixer extends DrawBlock {
     public void draw(Building build){
         Draw.rect(region, build.x, build.y);
 
-        rotation = Mathf.approach(rotation, build.totalProgress(), build.warmup());
-        float approach = rotation / (60);
+        float approach = build.totalProgress() / (60);
 
         float bx = Mathf.cos(approach) * radiusBig;
         float by = Mathf.sin(approach) * radiusBig;
@@ -41,9 +40,9 @@ public class DrawMixer extends DrawBlock {
 
         Draw.z(Layer.blockOver + 2);
 
-        Drawf.spinSprite(rotatorRegion,build.x + bx * 2, build.y + by * 2, rotation * 12);
-        Drawf.spinSprite(rotatorRegion,build.x - bx + sx, build.y - by + sy, rotation * 12);
-        Drawf.spinSprite(rotatorRegion,build.x - bx - sx, build.y - by - sy, rotation * 12);
+        Drawf.spinSprite(rotatorRegion,build.x + bx * 2, build.y + by * 2, build.totalProgress() * 12);
+        Drawf.spinSprite(rotatorRegion,build.x - bx + sx, build.y - by + sy, build.totalProgress() * 12);
+        Drawf.spinSprite(rotatorRegion,build.x - bx - sx, build.y - by - sy, build.totalProgress() * 12);
 
         Lines.stroke(4f);
         Lines.line(lineRegion, build.x - bx + sx, build.y - by + sy,

@@ -1,20 +1,18 @@
 package Ovulam.mod;
 
 import Ovulam.type.bullet.MortarBulletType;
+import Ovulam.world.block.No9527.Drill9527;
+import Ovulam.world.block.No9527.扣核心资源ItemTurret;
 import Ovulam.world.block.block.ItemBlock;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.defense.ItemStackTurret;
 import Ovulam.world.block.defense.Mortar;
-import Ovulam.world.block.No9527.Drill9527;
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.block.production.PayloadDrill;
 import Ovulam.world.block.storage.PayloadDeconstructorStorage;
-import Ovulam.world.draw.DrawBatchFactory;
-import Ovulam.world.draw.DrawMixer;
-import Ovulam.world.draw.DrawMultiConstruct;
-import Ovulam.world.draw.DrawOrganize;
+import Ovulam.world.draw.*;
 import Ovulam.world.move.MoveCustomP16;
 import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.Moved4;
@@ -26,6 +24,7 @@ import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
+import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.*;
@@ -43,7 +42,7 @@ public class OvulamBlocks {
     //
     PayloadDrill, PayloadDeconstructorStorage, Mortar, AblationTower, SSSSS, batchFactoryBase,mixerBase,
     //测试
-    SSSS, SSS, PDS, SS, Drill9527, PayloadOre, S,
+    SSSS, SSS, PDS, SS, Drill9527, PayloadOre, S,knitter,
             q1;
 
     public static void load() {
@@ -52,6 +51,12 @@ public class OvulamBlocks {
             itemBlocks[i] = new ItemBlock(Vars.content.item(i), 2);
 
         }
+
+        SSSS = new 扣核心资源ItemTurret("ssss"){{
+            requirements(Category.defense, new ItemStack[]{});
+            itemStacks = ItemStack.with(Items.sand, 10, Items.coal, 10);
+            shootType = new ArtilleryBulletType();
+        }};
 
         AblationTower = new AblationTower("AblationTower") {{
             side = 8;
@@ -247,6 +252,34 @@ public class OvulamBlocks {
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.plastaniumWallLarge,
                                             new MoveCustomP16(new int[]{0, 3, 5, 6, 9, 10, 12, 15}, 24))
+                            }
+                    )
+            );
+        }};
+
+        knitter = new MultiPayloadCrafter("knitter") {{
+            requirements(Category.defense, new ItemStack[]{});
+            size = 15;
+            drawer = new DrawKnitter();
+            plans = Seq.with(
+                    new MultiPayloadPlan(600f, 1f, "12345", new DrawMultiConstruct(),
+                            new Object[]{Items.sand, 400},
+                            new Object[]{},
+                            new Object[]{},
+                            0,
+                            true,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{},
+                            0,
+                            false,
+                            new RecipeMover[]{
+                                    new RecipeMover(Blocks.copperWallLarge,
+                                            new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
+                                    new RecipeMover(Blocks.thoriumWallLarge,
+                                            new MoveCustomP9(new int[]{0, 2, 4, 6, 8}, 16)),
+                                    new RecipeMover(Blocks.titaniumWallLarge, new Moved8edge()),
+                                    new RecipeMover(Blocks.surgeWallLarge, new Moved4())
                             }
                     )
             );

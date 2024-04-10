@@ -7,6 +7,7 @@ import mindustry.gen.Bullet;
 import mindustry.graphics.Drawf;
 import mindustry.world.Block;
 
+// 绝缘方块,用于激光盾的外壳
 public class AbsorbLasersBlock extends Block {
     public AbsorbLasersBlock(String name) {
         super(name);
@@ -26,6 +27,11 @@ public class AbsorbLasersBlock extends Block {
 
         public void hitbox(Rect out) {
             out.setCentered(this.x, this.y, (float)(this.block.size * 8), (float)(this.block.size * 8));
+        }
+
+        public void setXY(float x, float y){
+            this.x = x;
+            this.y = y;
         }
 
         @Override

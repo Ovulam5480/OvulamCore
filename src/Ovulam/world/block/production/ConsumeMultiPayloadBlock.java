@@ -91,6 +91,8 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
 
         public abstract RecipeMover[] getMover();
 
+        public abstract float getCraftTime();
+
         public MovePayload findMovePayload(RecipeMover[] getRecipeMovers,UnlockableContent payload) {
             MovePayload recipeMover = null;
             for (RecipeMover moveInMover1 : getRecipeMovers) {

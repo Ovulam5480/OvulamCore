@@ -7,6 +7,7 @@ import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
 import mindustry.world.Block;
 
+//激光盾,绝缘方块组成外壳,空间塔提供外壳存放空间
 public class LaserShield extends Block {
 
     public LaserShield(String name) {
