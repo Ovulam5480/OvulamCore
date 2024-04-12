@@ -2,55 +2,82 @@ package Ovulam.world.draw;
 
 import arc.Core;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Font;
+import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
+import mindustry.content.Items;
 import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
-import mindustry.ui.Fonts;
 import mindustry.world.Block;
 import mindustry.world.draw.DrawBlock;
 
 public class DrawKnitter extends DrawBlock {
-    public TextureRegion region, spindleRegion, iconRegion, lineRegion;
+    public TextureRegion region, spindleRegion, iconRegion, nodeRegion;
+    //轴围绕方块中心的半径,轴本身的半径(节点围绕半径)根据轴数计算出
+    public float spindleRadius = 32;
+    public int spindleAmount = 16;
+    public float speedMultiplier = 2f;
+    public float topRadius = 6;
 
     @Override
     public void load(Block block){
         region = Core.atlas.find(block.name);
         spindleRegion = Core.atlas.find(block.name + "-spindle");
         iconRegion = Core.atlas.find(block.name + "-icon");
-        lineRegion = Core.atlas.find(block.name + "-line");
+        nodeRegion = Core.atlas.find(block.name + "-node");
     }
     @Override
     public void draw(Building build){
         Draw.rect(region, build.x, build.y);
-        Font font = Fonts.outline;
-        //font.draw(String.valueOf(360f * i / 8), build.x + sx, build.y + sy, Align.center);
 
-        for (int i = 0; i < 8; i++){
-            int pow = Mathf.pow(-1, i);
-            float rotate = pow * build.totalProgress() + 22.5f;
-
-            float sx = (float) (Math.cos(360f * i / 8 * Mathf.degreesToRadians) * 32);
-            float sy = (float) (Math.sin(360f * i / 8 * Mathf.degreesToRadians) * 32);
-
-            Drawf.spinSprite(spindleRegion, build.x + sx, build.y + sy, rotate);
-
+        for (int i = 0; i < spindleAmount; i++){
             Draw.z(Layer.blockOver + 1);
+            int pow = Mathf.pow(-1, i);
 
-            float lineRotate = rotate + 45;
+            //正多边形内角的角度
+            float sizeAngle = (1 - 2f / spindleAmount) * 360;
 
-            //if(Mathf.mod(lineRotate - 360f * i / 8, 360))
+            //建筑的totalProgress(用于旋转, pow控制旋转方向) + 初始值(用于初始放置,调整错位)
+            float rotate = pow * build.totalProgress() * speedMultiplier + 180f / spindleAmount - sizeAngle * Mathf.floor(i / 2f);
 
-            float lx = (float) (Math.cos(lineRotate * Mathf.degreesToRadians) * 12);
-            float ly = (float) (Math.sin(lineRotate * Mathf.degreesToRadians) * 12);
+            float sx = (float) (Math.cos(360f * i / spindleAmount * Mathf.degreesToRadians) * spindleRadius);
+            float sy = (float) (Math.sin(360f * i / spindleAmount * Mathf.degreesToRadians) * spindleRadius);
 
-            //0.25 6 6 10
+            Drawf.spinSprite(spindleRegion, build.x + sx, build.y + sy, rotate - 45);
 
-            Draw.rect(lineRegion, build.x + sx + pow * lx, build.y + sy + pow * ly);
-            //Draw.rect(lineRegion, build.x + sx - lx, build.y + sy - ly);
+            Draw.z(Layer.blockOver + 2);
+
+            float nodeRadius = (float) (Math.cos((90 - 180f / spindleAmount) * Mathf.degreesToRadians) * spindleRadius);
+            float[] nodeRotates = new float[4];
+
+            for (int j = 0; j < 4; j ++){
+                nodeRotates[j] = rotate + j * 90;
+                boolean b = j % 2 == 0;
+
+                float lx = (float) (Math.cos((nodeRotates[j]) * Mathf.degreesToRadians) * nodeRadius);
+                float ly = (float) (Math.sin((nodeRotates[j]) * Mathf.degreesToRadians) * nodeRadius);
+
+                float centerAngle = Mathf.angle(sx + lx, sy + ly) - Mathf.sign(b) * 90;
+                float lx2 = (float) (Math.cos(centerAngle * Mathf.degreesToRadians) * topRadius);
+                float ly2 = (float) (Math.sin(centerAngle * Mathf.degreesToRadians) * topRadius);
+
+                float angle = nodeRotates[j] - 360f * i / spindleAmount;
+
+                if(angleWithin(angle, 67.5f) != (pow == 1) && b ||
+                        angleWithin(angle, 67.5f) == (pow == 1) && !b){
+                    Draw.rect(nodeRegion, build.x + sx + lx, build.y + sy + ly);
+                    Draw.color(Items.phaseFabric.color);
+                    Lines.line(build.x + sx + lx, build.y + sy + ly,
+                            build.x + lx2, build.y + ly2);
+                }
+                Draw.reset();
+            }
         }
+    }
+
+    public boolean angleWithin(float angle, float targetAngle){
+        return Math.abs(Mathf.mod(angle, 360) - 180) < targetAngle;
     }
 
     @Override
