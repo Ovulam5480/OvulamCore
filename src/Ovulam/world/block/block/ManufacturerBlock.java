@@ -207,7 +207,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public float getInputPower(){
-            return getRecipe().Power;
+            return getRecipe().power;
         }
 
         @Override

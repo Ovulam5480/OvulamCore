@@ -1,23 +1,17 @@
-#the mod name as displayed in-game
 displayName: "水兔兔的垃圾堆与半成品"
 
-#the internal name of your mod
 name: "Ovulam"
 
-#your name
 author: "Ovulam5480"
 
-#the fully qualified main class of the mod
 main: "Ovulam.OvulamMod"
 
-#the mod description as seen in the mod dialog
+"recipeEntry": "Ovulam.OvulamTMIRecipes"
+
 description: "作者:Ovulam, 贴图:水兔兔, 代码:Leporidae, 地图:qodhshai, 宣传:兔子食不食有猫饼, 灵感:hi9he5t, 测试:5480"
 
-#the mod version
 version: 0.1
 
-#the minimum game build required to run this mod
 minGameVersion: 146
 
-#this is a java mod
 java: true

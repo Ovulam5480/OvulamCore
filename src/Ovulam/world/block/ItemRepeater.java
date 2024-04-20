@@ -140,22 +140,24 @@ public class ItemRepeater extends Block {
         @Override
         public void draw(){
             /*
+            Vars.state.rules.logicUnitBuild = false
+            Vars.state.rules.reactorExplosions = false;
+
+            Vars.state.rules.pvpAutoPause = false;
+
             Vars.state.rules.ghostBlocks = false;
             Vars.world.tiles.eachTile(function(tile) {if (tile.block() instanceof ConstructBlock) tile.build.kill();});
             Vars.state.rules.ghostBlocks = true;
 
-            /*
-
             Font font = Fonts.outline;
             font.draw(String.valueOf(fullTime), x, y - 40, Align.center);
-
 
             Vars.content.unit(47).targetAir = true;
             Vars.content.unit(47).weapons.each(weapon => weapon.bullet.collidesAir = true);
             Vars.content.unit(52).targetAir = true;
 
             //Vars.world.tiles.eachTile(tile1 => {if(tile1.build instanceof ConstructBlock.ConstructBuild)tile1.build.remove();});
-
+            Vars.player.unit().type.drag = 0.3f
             Vars.player.unit().type.speed = 5;
             Vars.player.unit().type.omniMovement = true;
             Vars.player.unit().type.rotateMoveFirst = false;

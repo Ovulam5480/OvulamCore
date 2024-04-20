@@ -53,9 +53,9 @@ import static mindustry.Vars.control;
 
 public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public static Seq<MultiPayloadPlan> plans = new Seq<>(5);
-    private final PayloadStack[] emptyPayloadStacks = {};
     public DrawBlock drawer = new DrawDefault();
     public boolean ignorePayloadFullness = false;
+    //改变配方清除自身携带的载荷
     public boolean changeClear;
     //行
     public int tableRows = 8;
@@ -66,6 +66,8 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public MovePayload moveCapital = new MoveSize();
     public MovePayload moveOutMover = new MoveOut();
     public float outMoverCapitalMulti = 2f;
+
+    private final PayloadStack[] emptyPayloadStacks = {};
 
     //todo 方块保存配置 与 地图保存配置
     public MultiPayloadCrafter(String name) {
@@ -121,7 +123,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public void load() {
         super.load();
         drawer.load(this);
-        plans.each(multiPayloadPlan -> multiPayloadPlan.drawBlock.load(this));
         plans.each((plan) -> plan.icon = Core.atlas.find(name + "-" + plan.name));
     }
 
@@ -145,15 +146,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         public Recipe inputRecipe;
         public Recipe outputRecipe;
         public RecipeMover[] recipeMover;
-        public DrawBlock drawBlock;
 
-        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, DrawBlock drawBlock,
+        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name,
                                 Recipe inputRecipe, Recipe outputRecipe,
                                 RecipeMover[] recipeMover) {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
-            this.drawBlock = drawBlock;
 
             this.inputRecipe = inputRecipe;
             this.outputRecipe = outputRecipe;
@@ -161,7 +160,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             this.recipeMover = recipeMover;
         }
 
-        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name, DrawBlock drawBlock,
+        public MultiPayloadPlan(float craftTime, float warmupSpeed, String name,
                                 Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
                                 float inputPower, boolean inputLiquidCompletely,
                                 Object[] outputItems, Object[] outputLiquids, Object[] outputPayloads,
@@ -170,7 +169,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
-            this.drawBlock = drawBlock;
 
             this.inputRecipe = new Recipe(ItemStack.list(inputItems), LiquidStack.list(inputLiquids),
                     PayloadStack.list(inputPayloads), inputPower, inputLiquidCompletely);
@@ -284,8 +282,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         @Override
         public void draw() {
             drawer.draw(this);
-            if (currentPlan != -1) getCurrentPlan().drawBlock.draw(this);
-
             Draw.z(Layer.blockOver);
             drawPayload();
         }
@@ -346,7 +342,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
         @Override
         public float getInputPower() {
-            return getCurrentPlan().inputRecipe.Power;
+            return getCurrentPlan().inputRecipe.power;
         }
 
         @Override
@@ -616,7 +612,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         //todo 电力生产，消耗
         @Override
         public float getPowerProduction() {
-            return getCurrentPlan().outputRecipe.Power * efficiency;
+            return getCurrentPlan().outputRecipe.power * efficiency;
         }
 
         public void craft() {

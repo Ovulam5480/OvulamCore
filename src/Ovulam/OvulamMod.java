@@ -11,7 +11,6 @@ import mindustry.content.UnitTypes;
 import mindustry.mod.Mod;
 
 public class OvulamMod extends Mod{
-    //RecipesManager recipesManager;
     public static String ovulamName(){
         return "ovulam";
     }
@@ -21,7 +20,6 @@ public class OvulamMod extends Mod{
 
     @Override
     public void init() {
-        super.init();
     }
 
     @Override

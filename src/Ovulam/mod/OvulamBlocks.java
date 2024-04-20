@@ -2,7 +2,7 @@ package Ovulam.mod;
 
 import Ovulam.type.bullet.MortarBulletType;
 import Ovulam.world.block.No9527.Drill9527;
-import Ovulam.world.block.No9527.扣核心资源ItemTurret;
+import Ovulam.world.block.No9527.TDsuicideWall;
 import Ovulam.world.block.block.ItemBlock;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
@@ -24,7 +24,6 @@ import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
-import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.*;
@@ -52,10 +51,8 @@ public class OvulamBlocks {
 
         }
 
-        SSSS = new 扣核心资源ItemTurret("ssss"){{
+        SSSS = new TDsuicideWall("ssss"){{
             requirements(Category.defense, new ItemStack[]{});
-            itemStacks = ItemStack.with(Items.sand, 10, Items.coal, 10);
-            shootType = new ArtilleryBulletType();
         }};
 
         AblationTower = new AblationTower("AblationTower") {{
@@ -104,7 +101,7 @@ public class OvulamBlocks {
             size = 15;
             drawer = new DrawMixer();
             plans = Seq.with(
-                    new MultiPayloadPlan(600f, 1f, "123",new DrawMultiConstruct(),
+                    new MultiPayloadPlan(600f, 1f, "123",
                             new Recipe(
                                     Seq.with(new ItemStack(Items.sand, 300)),
                                     Seq.with(new LiquidStack(Liquids.water, 1)),
@@ -127,7 +124,7 @@ public class OvulamBlocks {
                             }
                     ),
 
-                    new MultiPayloadPlan(600f, 1f, "12345", new DrawMultiConstruct(),
+                    new MultiPayloadPlan(600f, 1f, "12345",
                             new Object[]{Items.sand, 400},
                             new Object[]{Liquids.water, 2000},
                             new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
@@ -185,7 +182,6 @@ public class OvulamBlocks {
             requirements(Category.defense, new ItemStack[]{});
             size = 6;
         }};
-
         batchFactory = new MultiPayloadCrafter("batch-factory") {{
             drawer = new DrawBatchFactory();
             requirements(Category.defense, new ItemStack[]{});
@@ -197,7 +193,7 @@ public class OvulamBlocks {
             for (UnitType unitType : Vars.content.units()) {
                 if(Vars.content.units().indexOf(unitType) > 20)break;
                 plans.add(
-                        new MultiPayloadPlan(900f, 1f, "批量生产-" + unitType, new DrawMultiConstruct(),
+                        new MultiPayloadPlan(900f, 1f, "批量生产-" + unitType,
                                 new Recipe(
                                         new Seq<>(unitType.getTotalRequirements()),
                                         Seq.with(),
@@ -216,6 +212,7 @@ public class OvulamBlocks {
                         ));
             }
         }};
+
 
         mixerBase = new ManufacturerBlock("mixer-base") {{
             buildCost = 300f;
@@ -262,16 +259,30 @@ public class OvulamBlocks {
             size = 15;
             drawer = new DrawKnitter();
             plans = Seq.with(
-                    new MultiPayloadPlan(600f, 1f, "12345", new DrawMultiConstruct(),
-                            new Object[]{Items.sand, 400},
+                    new MultiPayloadPlan(600f, 1f, "12345",
+                            new Object[]{Items.sand, 300},
                             new Object[]{},
                             new Object[]{},
                             0,
                             true,
+                            new Object[]{Items.copper, 100},
                             new Object[]{},
                             new Object[]{},
+                            8,
+                            false,
+                            new RecipeMover[]{}
+                    )
+                    ,
+                    new MultiPayloadPlan(600f, 1f, "12345",
+                            new Object[]{Items.sand, 400},
+                            new Object[]{Liquids.water, 2000},
+                            new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
+                            8,
+                            true,
                             new Object[]{},
-                            0,
+                            new Object[]{},
+                            new Object[]{Blocks.surgeWallLarge, 5, Blocks.titaniumWallLarge, 4},
+                            12,
                             false,
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.copperWallLarge,
@@ -307,7 +318,7 @@ public class OvulamBlocks {
                             new Object[]{Liquids.water, 1800, Liquids.slag, 1800},
                             new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
                             2,
-                            true,
+                            false,
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.copperWallLarge,
                                             new MoveCustomP9(new int[]{1, 3, 5, 7}, 16)),
@@ -320,7 +331,7 @@ public class OvulamBlocks {
                     new ManufacturerStage(300f,
                             new Recipe(Seq.with(), Seq.with(), Seq.with(
                                     new PayloadStack(Blocks.plastaniumWallLarge, 16)
-                            ), 0, true),
+                            ), 12, true),
                             new RecipeMover[]{
                                     new RecipeMover(Blocks.plastaniumWallLarge,
                                             new MoveCustomP16(new int[]{0, 3, 5, 6, 9, 10, 12, 15}, 24))

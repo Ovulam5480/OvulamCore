@@ -11,6 +11,6 @@ public class RecipeTable {
         table.row();
         recipe.payloadStacks.each(payloadStack -> table.add(new RecipeItemImage(payloadStack)));
         table.row();
-        if (recipe.Power > 0) table.add(new RecipeItemImage(recipe.Power));
+        if (recipe.power > 0) table.add(new RecipeItemImage(recipe.power));
     }
 }

@@ -37,7 +37,8 @@ dependencies{
     compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
 
     annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
-    //implementation files("D:\\M O D\\OvulamCore\\build\\libs\\TooManyItems.jar")
+    //implementation 'com.github.EB-wilson:TooManyItems:1.5'
+    compileOnly files("D:\\M O D\\Modlib\\TooManyItems-v1.5.jar")
 }
 
 //force arc version
