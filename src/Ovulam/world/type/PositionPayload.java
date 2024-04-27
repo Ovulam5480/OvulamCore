@@ -1,4 +1,4 @@
-package Ovulam.world.other;
+package Ovulam.world.type;
 
 import arc.math.geom.Vec2;
 import mindustry.ctype.UnlockableContent;

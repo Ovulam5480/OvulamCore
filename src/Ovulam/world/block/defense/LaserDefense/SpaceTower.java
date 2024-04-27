@@ -12,7 +12,7 @@ import mindustry.world.Tile;
 
 public class SpaceTower extends Block {
     public AbsorbLasersBlock absorbLasersBlock;
-    public LaserShield laserShield;
+    public AbsorbShield laserShield;
     public float range = 40;
 
     public SpaceTower(String name) {
@@ -63,7 +63,7 @@ public class SpaceTower extends Block {
                 if(tile1.block() == Blocks.air && tile1.build == null)tile1.setBlock(absorbLasersBlock, team, 0);
                 if(tile1.build instanceof AbsorbLasersBlock.AbsorbLasersBuild b){
                     b.target = this;
-                    ((LaserShield.LaserShieldBuild)building).buildings.add(b);
+                    ((AbsorbShield.AbsorbShieldBuild)building).buildings.add(b);
                 }
             });
         }

@@ -1,4 +1,4 @@
-package Ovulam.world.other;
+package Ovulam.world.type;
 
 import arc.struct.Seq;
 import mindustry.type.ItemStack;

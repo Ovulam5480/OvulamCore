@@ -2,7 +2,7 @@ package Ovulam.world.block.payload;
 
 import Ovulam.world.move.MoveDefault;
 import Ovulam.world.move.MovePayload;
-import Ovulam.world.other.PositionPayload;
+import Ovulam.world.type.PositionPayload;
 import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;

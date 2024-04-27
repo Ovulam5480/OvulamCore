@@ -1,4 +1,4 @@
-package Ovulam.world.draw;
+package Ovulam.world.drawBlock;
 
 import arc.graphics.g2d.Draw;
 import arc.math.geom.Vec2;

@@ -1,7 +1,7 @@
 package Ovulam.world.block.defense;
 
 import Ovulam.world.block.payload.MultiPayloadBlock;
-import Ovulam.world.other.PositionPayload;
+import Ovulam.world.type.PositionPayload;
 import arc.math.Angles;
 import arc.math.geom.Geometry;
 import arc.math.geom.Vec2;

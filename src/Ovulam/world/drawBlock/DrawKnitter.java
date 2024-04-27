@@ -1,4 +1,4 @@
-package Ovulam.world.draw;
+package Ovulam.world.drawBlock;
 
 import arc.Core;
 import arc.graphics.g2d.Draw;
@@ -14,11 +14,32 @@ import mindustry.world.draw.DrawBlock;
 
 public class DrawKnitter extends DrawBlock {
     public TextureRegion region, spindleRegion, iconRegion, nodeRegion;
-    //轴围绕方块中心的半径,轴本身的半径(节点围绕半径)根据轴数计算出
-    public float spindleRadius = 32;
-    public int spindleAmount = 16;
-    public float speedMultiplier = 2f;
-    public float topRadius = 6;
+    //轴距离设定中心的半径, 轴本身的半径(节点围绕半径)根据轴数计算出
+    public float spindleRadius;
+    //轴的数量
+    public int spindleAmount;
+    //旋转速度倍率
+    public float speedMultiplier;
+    //中心
+    public float centerRadiusFrom;
+    public float centerRadiusTo;
+
+    public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier, float centerRadius){
+        this.spindleRadius = spindleRadius;
+        this.spindleAmount = spindleAmount;
+        this.speedMultiplier = speedMultiplier;
+        this.centerRadiusFrom = centerRadius;
+        this.centerRadiusTo = centerRadius;
+    }
+    
+    public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier,
+                       float centerRadiusFrom, float centerRadiusTo){
+        this.spindleRadius = spindleRadius;
+        this.spindleAmount = spindleAmount;
+        this.speedMultiplier = speedMultiplier;
+        this.centerRadiusFrom = centerRadiusFrom;
+        this.centerRadiusTo = centerRadiusTo;
+    }
 
     @Override
     public void load(Block block){
@@ -30,6 +51,7 @@ public class DrawKnitter extends DrawBlock {
     @Override
     public void draw(Building build){
         Draw.rect(region, build.x, build.y);
+        float centerRadius = Mathf.approach(centerRadiusFrom, centerRadiusTo, build.progress());
 
         for (int i = 0; i < spindleAmount; i++){
             Draw.z(Layer.blockOver + 1);
@@ -59,8 +81,8 @@ public class DrawKnitter extends DrawBlock {
                 float ly = (float) (Math.sin((nodeRotates[j]) * Mathf.degreesToRadians) * nodeRadius);
 
                 float centerAngle = Mathf.angle(sx + lx, sy + ly) - Mathf.sign(b) * 90;
-                float lx2 = (float) (Math.cos(centerAngle * Mathf.degreesToRadians) * topRadius);
-                float ly2 = (float) (Math.sin(centerAngle * Mathf.degreesToRadians) * topRadius);
+                float lx2 = (float) (Math.cos(centerAngle * Mathf.degreesToRadians) * centerRadius);
+                float ly2 = (float) (Math.sin(centerAngle * Mathf.degreesToRadians) * centerRadius);
 
                 float angle = nodeRotates[j] - 360f * i / spindleAmount;
 

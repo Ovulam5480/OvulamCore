@@ -14,8 +14,8 @@ import mindustry.world.consumers.ConsumeItemDynamic;
 import mindustry.world.consumers.ConsumeLiquidsDynamic;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.move.MovePayload;
-import Ovulam.world.other.PositionPayload;
-import Ovulam.world.other.RecipeMover;
+import Ovulam.world.type.PositionPayload;
+import Ovulam.world.type.RecipeMover;
 
 public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
     public ConsumeMultiPayloadBlock(String name) {

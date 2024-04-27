@@ -4,7 +4,7 @@ import Ovulam.UI.StoryTable;
 import Ovulam.mod.OvulamBlocks;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
-import Ovulam.type.unit.InvitationUnitEntity;
+import Ovulam.type.unit.InvitationUnitType;
 import Ovulam.world.graphics.OvulamShaders;
 import arc.Events;
 import mindustry.content.UnitTypes;
@@ -30,7 +30,7 @@ public class OvulamMod extends Mod{
 
         OvulamShaders.init();
 
-        Events.on(InvitationUnitEntity.class, invitationUnitEntity -> new StoryTable(UnitTypes.mono.fullIcon,"AAAAAA"));
+        Events.on(InvitationUnitType.InvitationUnitEntity.class, invitationUnitEntity -> new StoryTable(UnitTypes.mono.fullIcon,"AAAAAA"));
 
         //OvulamUI.init();
     }

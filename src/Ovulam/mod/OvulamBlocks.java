@@ -1,8 +1,8 @@
 package Ovulam.mod;
 
 import Ovulam.type.bullet.MortarBulletType;
+import Ovulam.world.block.No9527.BuffSpee;
 import Ovulam.world.block.No9527.Drill9527;
-import Ovulam.world.block.No9527.TDsuicideWall;
 import Ovulam.world.block.block.ItemBlock;
 import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.block.PayloadOre;
@@ -12,13 +12,16 @@ import Ovulam.world.block.defense.Mortar;
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.block.production.PayloadDrill;
 import Ovulam.world.block.storage.PayloadDeconstructorStorage;
-import Ovulam.world.draw.*;
+import Ovulam.world.drawBlock.DrawBatchFactory;
+import Ovulam.world.drawBlock.DrawKnitter;
+import Ovulam.world.drawBlock.DrawMixer;
+import Ovulam.world.drawBlock.DrawOrganize;
 import Ovulam.world.move.MoveCustomP16;
 import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.Moved4;
 import Ovulam.world.move.Moved8edge;
-import Ovulam.world.other.Recipe;
-import Ovulam.world.other.RecipeMover;
+import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipeMover;
 import arc.struct.Seq;
 import mindustry.Vars;
 import mindustry.content.Blocks;
@@ -51,7 +54,7 @@ public class OvulamBlocks {
 
         }
 
-        SSSS = new TDsuicideWall("ssss"){{
+        SSSS = new BuffSpee("ssss"){{
             requirements(Category.defense, new ItemStack[]{});
         }};
 
@@ -257,7 +260,7 @@ public class OvulamBlocks {
         knitter = new MultiPayloadCrafter("knitter") {{
             requirements(Category.defense, new ItemStack[]{});
             size = 15;
-            drawer = new DrawKnitter();
+            drawer = new DrawKnitter(32f, 16, 2f, 6f);
             plans = Seq.with(
                     new MultiPayloadPlan(600f, 1f, "12345",
                             new Object[]{Items.sand, 300},
@@ -314,8 +317,8 @@ public class OvulamBlocks {
                             }
                     ),
                     new ManufacturerStage(1800f,
-                            new Object[]{Items.sand, 300, Items.copper, 500},
-                            new Object[]{Liquids.water, 1800, Liquids.slag, 1800},
+                            new Object[]{Items.sand, 3333, Items.copper, 500},
+                            new Object[]{Liquids.water, 500},
                             new Object[]{Blocks.copperWallLarge, 4, Blocks.thoriumWallLarge, 5},
                             2,
                             false,

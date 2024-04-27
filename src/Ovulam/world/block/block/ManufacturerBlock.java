@@ -3,8 +3,8 @@ package Ovulam.world.block.block;
 import Ovulam.UI.RecipeTable;
 import Ovulam.world.block.production.ConsumeMultiPayloadBlock;
 import Ovulam.world.graphics.OvulamShaders;
-import Ovulam.world.other.Recipe;
-import Ovulam.world.other.RecipeMover;
+import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipeMover;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
@@ -14,13 +14,13 @@ import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Fx;
+import mindustry.gen.Tex;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.type.PayloadStack;
 import mindustry.ui.Bar;
-import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.meta.Stat;
 
@@ -28,7 +28,7 @@ import static mindustry.world.blocks.ConstructBlock.constructed;
 
 public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     public Block targetBlock = Blocks.router;
-    public Seq<ManufacturerStage> stages = new Seq<>(5);
+    public static Seq<ManufacturerStage> stages = new Seq<>(5);
     public TextureRegion[] stageRegion = new TextureRegion[5];
 
     public ManufacturerBlock(String name) {
@@ -63,19 +63,17 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             table.row();
             for(int i = 0; i < stages.size; i++){
                 ManufacturerStage stage = stages.get(i);
-                int index = i;
+                int finalI = i;
 
                 table.table(stageTable -> {
-                    stageTable.setBackground(Styles.grayPanel);
-                    stageTable.marginBottom(15);
+                    stageTable.setBackground(Tex.buttonSelectTrans);
+                    stageTable.add("stage-" + finalI).center().marginBottom(10f).row();
 
-                    stageTable.add("stage-" + index).center().marginBottom(5).row();
+                    stageTable.table(stageTableTable -> RecipeTable.addRecipeTable(stageTableTable, stage.inputRecipe)).center();
 
-                    RecipeTable.addRecipeTable(stageTable, stage.inputRecipe);
+                }).growX().pad(10);
 
-                    table.row();
-
-                }).growX();
+                table.row();
             }
         });
     }

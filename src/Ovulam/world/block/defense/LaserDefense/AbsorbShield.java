@@ -8,16 +8,16 @@ import mindustry.graphics.Drawf;
 import mindustry.world.Block;
 
 //激光盾,绝缘方块组成外壳,空间塔提供外壳存放空间
-public class LaserShield extends Block {
+public class AbsorbShield extends Block {
 
-    public LaserShield(String name) {
+    public AbsorbShield(String name) {
         super(name);
         update = true;
         sync = true;
     }
 
 
-    public class LaserShieldBuild extends Building {
+    public class AbsorbShieldBuild extends Building {
         public Seq<Building> buildings = new Seq<>();
 
         public float radius() {

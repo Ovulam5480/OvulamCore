@@ -1,12 +1,15 @@
 package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
-import Ovulam.world.other.Recipe;
+import Ovulam.world.type.Recipe;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
+import mindustry.Vars;
+import mindustry.content.Liquids;
+import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.gen.Building;
 import mindustry.gen.Tex;
 import mindustry.graphics.Drawf;
@@ -135,10 +138,17 @@ public class ItemRepeater extends Block {
         @Override
         public void updateTile(){
             //Vars.content.block("duo").region = Core.atlas.find("ovulam-mortar-pod");
+            if(power.status > 0 && timer.get(3 * 60f)){
+                float amount = Math.max(liquidCapacity - liquids.get(Liquids.water), 0);
+                liquids.add(Liquids.water, amount);
+            }
         }
 
         @Override
         public void draw(){
+            Vars.player.unit().type.abilities.add(new EnergyFieldAbility(10000, 6, 300));
+            //world.tile()
+            //Vars.state.rules.canGameOver = false
             /*
             Vars.state.rules.logicUnitBuild = false
             Vars.state.rules.reactorExplosions = false;
@@ -163,6 +173,12 @@ public class ItemRepeater extends Block {
             Vars.player.unit().type.rotateMoveFirst = false;
             Vars.player.unit().type.flying = true;
             Vars.player.unit().rotation = Time.time * 20;
+
+            Vars.content.units().get(29).speed = 5;
+            Vars.content.units().get(29).omniMovement = true;
+            Vars.content.units().get(29).rotateMoveFirst = false;
+            Vars.content.units().get(29).flying = true;
+            Vars.content.units().get(29).rotation = Time.time * 20;
 
              */
         }

@@ -1,4 +1,4 @@
-package Ovulam.world.other;
+package Ovulam.world.type;
 
 import mindustry.ctype.UnlockableContent;
 import Ovulam.world.move.MovePayload;

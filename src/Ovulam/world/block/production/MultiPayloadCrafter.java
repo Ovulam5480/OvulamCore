@@ -8,9 +8,9 @@ import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.MoveOut;
 import Ovulam.world.move.MovePayload;
 import Ovulam.world.move.MoveSize;
-import Ovulam.world.other.PositionPayload;
-import Ovulam.world.other.Recipe;
-import Ovulam.world.other.RecipeMover;
+import Ovulam.world.type.PositionPayload;
+import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipeMover;
 import arc.Core;
 import arc.Events;
 import arc.graphics.g2d.Draw;
@@ -28,6 +28,7 @@ import mindustry.ctype.UnlockableContent;
 import mindustry.entities.units.BuildPlan;
 import mindustry.game.EventType;
 import mindustry.gen.Building;
+import mindustry.gen.Icon;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
@@ -124,6 +125,40 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         super.load();
         drawer.load(this);
         plans.each((plan) -> plan.icon = Core.atlas.find(name + "-" + plan.name));
+    }
+
+    @Override
+    public void setStats(){
+        super.setStats();
+        stats.add(Stat.output, table -> {
+            table.row();
+            for(int i = 0; i < plans.size; i++){
+                MultiPayloadPlan plan = plans.get(i);
+
+                table.table(plansTable -> {
+                    plansTable.setBackground(Tex.buttonOver);
+
+                    plansTable.add(plan.name).center().row();
+
+                    plansTable.table(input -> {
+                        input.setBackground(Tex.buttonOver);
+                        input.add(Stat.input.localized()).fontScale(1.2f).row();
+                        input.table(stageTableTable -> RecipeTable.addRecipeTable(stageTableTable, plan.inputRecipe));
+                    }).pad(10).center().row();
+
+                    plansTable.image(Icon.tree).center().row();
+
+                    plansTable.table(output -> {
+                        output.setBackground(Tex.buttonOver);
+                        output.add(Stat.output.localized()).fontScale(1.2f).row();
+                        output.table(stageTableTable -> RecipeTable.addRecipeTable(stageTableTable, plan.outputRecipe));
+                    }).pad(10).center();
+
+                }).growX().pad(10).top();
+
+                //table.row();
+            }
+        });
     }
 
     @Override
@@ -246,13 +281,14 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         private void updateRecipeTable(Table table) {
             table.clear();
             if (hoveredPlan == -1) return;
-            table.margin(10);
 
             MultiPayloadPlan plan = plans.get(hoveredPlan);
 
             Recipe inputRecipe = plan.inputRecipe;
             table.add(Stat.input.localized()).height(48).row();
             RecipeTable.addRecipeTable(table, inputRecipe);
+
+            table.row();
 
             Recipe outputRecipe = plan.outputRecipe;
             table.add(Stat.output.localized()).height(48).row();
