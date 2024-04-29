@@ -15,7 +15,8 @@ import mindustry.world.consumers.ConsumeLiquidsDynamic;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.move.MovePayload;
 import Ovulam.world.type.PositionPayload;
-import Ovulam.world.type.RecipeMover;
+
+import java.util.HashMap;
 
 public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
     public ConsumeMultiPayloadBlock(String name) {
@@ -89,24 +90,14 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
 
         public abstract float getInputPower();
 
-        public abstract RecipeMover[] getMover();
+        public abstract HashMap<UnlockableContent, MovePayload> getInputMover();
 
         public abstract float getCraftTime();
 
-        public MovePayload findMovePayload(RecipeMover[] getRecipeMovers,UnlockableContent payload) {
-            MovePayload recipeMover = null;
-            for (RecipeMover moveInMover1 : getRecipeMovers) {
-                if (moveInMover1.unlockableContent == payload) {
-                    recipeMover = moveInMover1.movePayload;
-                    break;
-                }
-            }
-            return recipeMover;
-        }
 
         public void moveInPayloads(){
             positionPayloads.each(positionPayload -> {
-                MovePayload movePayload = findMovePayload(getMover(), positionPayload.content());
+                MovePayload movePayload = getInputMover().get(positionPayload.content());
 
                 int index = 0;
                 for (PositionPayload positionPayload1 : positionPayloads){

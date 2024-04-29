@@ -113,7 +113,7 @@ public class MultiPayloadBlock extends Block {
             return positionPayloads;
         }
 
-        public int getPayloadsAmount(Seq<PayloadStack> payloadStacks, Payload payload) {
+        public int getMoverLimit(Seq<PayloadStack> payloadStacks, Payload payload) {
             PayloadStack ps = payloadStacks.find(payloadStack -> payloadStack.item == payload.content());
             return ps == null ? 0 : ps.amount;
         }

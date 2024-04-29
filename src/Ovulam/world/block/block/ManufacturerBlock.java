@@ -3,8 +3,8 @@ package Ovulam.world.block.block;
 import Ovulam.UI.RecipeTable;
 import Ovulam.world.block.production.ConsumeMultiPayloadBlock;
 import Ovulam.world.graphics.OvulamShaders;
+import Ovulam.world.move.MovePayload;
 import Ovulam.world.type.Recipe;
-import Ovulam.world.type.RecipeMover;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
@@ -14,6 +14,7 @@ import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Fx;
+import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Tex;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
@@ -23,6 +24,8 @@ import mindustry.type.PayloadStack;
 import mindustry.ui.Bar;
 import mindustry.world.Block;
 import mindustry.world.meta.Stat;
+
+import java.util.HashMap;
 
 import static mindustry.world.blocks.ConstructBlock.constructed;
 
@@ -88,14 +91,13 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     public static class ManufacturerStage {
         public float craftTime;
         public Recipe inputRecipe;
-        public RecipeMover[] recipeMover;
 
-        public ManufacturerStage(float craftTime, Recipe inputRecipe, RecipeMover[] recipeMover) {
+        public ManufacturerStage(float craftTime, Recipe inputRecipe) {
             this.craftTime = craftTime;
             this.inputRecipe = inputRecipe;
-            this.recipeMover = recipeMover;
         }
 
+        /*
         public ManufacturerStage(float craftTime,
                                  Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
                                  float inputPower, boolean inputLiquidCompletely,
@@ -107,6 +109,8 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
             this.recipeMover = recipeMover;
         }
+
+         */
     }
 
     public class ManufacturerBuild extends ConsumeMultiPayloadBuild {
@@ -200,7 +204,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public Seq<PayloadStack> getInputPayloads() {
-            return getRecipe().payloadStacks;
+            return stages.get(currentStage).inputRecipe.payloadStacks();
         }
 
         @Override
@@ -209,8 +213,10 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         }
 
         @Override
-        public RecipeMover[] getMover() {
-            return stages.get(currentStage).recipeMover;
+        public HashMap<UnlockableContent, MovePayload> getInputMover() {
+            HashMap<UnlockableContent, MovePayload> map = new HashMap<>();
+            getRecipe().payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
+            return map;
         }
 
         @Override

@@ -10,7 +10,7 @@ public class RecipeTable {
         table.row();
         recipe.liquidStacks.each(liquidStack -> table.add(new RecipeItemImage(liquidStack, recipe.liquidCompletely)));
         table.row();
-        recipe.payloadStacks.each(payloadStack -> table.add(new RecipeItemImage(payloadStack)));
+        recipe.payloadStacks().each(payloadStack -> table.add(new RecipeItemImage(payloadStack)));
         if (recipe.power > 0){
             table.row();
             table.add(new RecipeItemImage(recipe.power));

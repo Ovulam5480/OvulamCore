@@ -40,7 +40,8 @@ public class ShowShowDamageForceProjector extends Block{
     protected static final Cons<Bullet> shieldConsumer = bullet -> {
         if(bullet.team != paramEntity.team 
                 && bullet.type.absorbable 
-                && Intersector.isInRegularPolygon(((ShowShowDamageForceProjector)(paramEntity.block)).sides, paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, 0, bullet.x, bullet.y)){
+                && Intersector.isInRegularPolygon(((ShowShowDamageForceProjector)(paramEntity.block)).sides,
+                paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, 0, bullet.x, bullet.y)){
             bullet.absorb();
             paramEffect.at(bullet);
             paramEntity.buildup += bullet.damage;

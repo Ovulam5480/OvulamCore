@@ -16,7 +16,7 @@ import Ovulam.world.move.MovePayload;
 public class DrawMultiConstruct extends DrawBlock {
     public void draw(Building build){
         if(!(build instanceof MultiPayloadCrafter.MultiPayloadCrafterBuild crafterBuild)){return;}
-        Seq<PayloadStack> outputs = crafterBuild.getCurrentPlan().outputRecipe.payloadStacks;
+        Seq<PayloadStack> outputs = crafterBuild.getCurrentPlan().outputRecipe.payloadStacks();
 
         if(outputs == null) return;
 

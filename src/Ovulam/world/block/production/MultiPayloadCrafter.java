@@ -4,13 +4,11 @@ import Ovulam.UI.RecipeTable;
 import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
-import Ovulam.world.move.MoveCustomP9;
 import Ovulam.world.move.MoveOut;
 import Ovulam.world.move.MovePayload;
 import Ovulam.world.move.MoveSize;
 import Ovulam.world.type.PositionPayload;
 import Ovulam.world.type.Recipe;
-import Ovulam.world.type.RecipeMover;
 import arc.Core;
 import arc.Events;
 import arc.graphics.g2d.Draw;
@@ -63,9 +61,11 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     //列
     public int tableColumns = 8;
 
-    public MovePayload moveInMover = new MoveCustomP9(16);
+    //待加工区
     public MovePayload moveCapital = new MoveSize();
+    //输出区
     public MovePayload moveOutMover = new MoveOut();
+
     public float outMoverCapitalMulti = 2f;
 
     private final PayloadStack[] emptyPayloadStacks = {};
@@ -180,21 +180,18 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         public TextureRegion icon = new TextureRegion();
         public Recipe inputRecipe;
         public Recipe outputRecipe;
-        public RecipeMover[] recipeMover;
 
         public MultiPayloadPlan(float craftTime, float warmupSpeed, String name,
-                                Recipe inputRecipe, Recipe outputRecipe,
-                                RecipeMover[] recipeMover) {
+                                Recipe inputRecipe, Recipe outputRecipe) {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
 
             this.inputRecipe = inputRecipe;
             this.outputRecipe = outputRecipe;
-
-            this.recipeMover = recipeMover;
         }
 
+        /*
         public MultiPayloadPlan(float craftTime, float warmupSpeed, String name,
                                 Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
                                 float inputPower, boolean inputLiquidCompletely,
@@ -212,6 +209,8 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
             this.recipeMover = recipeMover;
         }
+
+         */
     }
 
     /////////////////////////////////
@@ -325,14 +324,14 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         //必须空间 和 混合空间
         @Override
         public boolean acceptPayload(Building source, Payload payload) {
-            //当前配方不需要输入载荷
+            //当前配方不需要载荷, 或者不需要该载荷
             if (currentPlan == -1 || getInputPayloads().size == 0 || !getInputPayloads().contains(payloadStack ->
                     payloadStack.item == payload.content())) return false;
 
             //必须的空间
             //第一倍的载荷输入到moveIn,所以总是能够输入
             //以外的载荷输入到moveCapital
-            int place = getPayloadsAmount(getInputPayloads(), payload) + moveCapital.maxCapital(block);
+            int place = getMoverLimit(getInputPayloads(), payload) + moveCapital.maxCapital(block);
 
             for (PayloadStack payloadStack : getInputPayloads()) {
                 place -= Math.max(getPayloadAmount(payloadStack.item) -
@@ -373,12 +372,19 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
         @Override
         public Seq<PayloadStack> getInputPayloads() {
-            return getCurrentPlan().inputRecipe.payloadStacks;
+            return getCurrentPlan().inputRecipe.payloadStacks();
         }
 
         @Override
         public float getInputPower() {
             return getCurrentPlan().inputRecipe.power;
+        }
+
+        @Override
+        public HashMap<UnlockableContent, MovePayload> getInputMover() {
+            HashMap<UnlockableContent, MovePayload> map = new HashMap<>();
+            getCurrentPlan().inputRecipe.payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
+            return map;
         }
 
         @Override
@@ -395,7 +401,17 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
         public Seq<PayloadStack> getOutputPayloads() {
-            return getCurrentPlan().outputRecipe.payloadStacks;
+            return getCurrentPlan().outputRecipe.payloadStacks();
+        }
+
+        public float getOutputPower() {
+            return getCurrentPlan().outputRecipe.power;
+        }
+
+        public HashMap<UnlockableContent, MovePayload> getOutputMover() {
+            HashMap<UnlockableContent, MovePayload> map = new HashMap<>();
+            getCurrentPlan().outputRecipe.payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
+            return map;
         }
 
         public boolean change() {
@@ -501,7 +517,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         int amount = craftPositionPayloads.count(positionPayload1 ->
                                 positionPayload1.content() == positionPayload.content()
                         );
-                        if (amount < getPayloadsAmount(getInputPayloads(), positionPayload.payload)) {
+                        if (amount < getMoverLimit(getInputPayloads(), positionPayload.payload)) {
                             craftPositionPayloads.add(positionPayload);
                         }
 
@@ -530,7 +546,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             for (PositionPayload positionPayload : craftPositionPayloads) {
 
                 int index = 0;
-                MovePayload movePayload = findMovePayload(positionPayload.content());
+                MovePayload movePayload = getInputMover().get(positionPayload.content());
 
                 if (movePayload == null) {
                     movePayload = moveInMover;
@@ -680,35 +696,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         return;
                     }
 
-                    //如果存在配方mover
-                    MovePayload movePayload = findMovePayload(payload.content());
-                    if (movePayload == null) {
-                        handlePayload(this, payload);
-                    } else
-                        handlePositionPayload(new PositionPayload(payload, setTargetPosition(i, movePayload), Vec2.ZERO));
-
+                    MovePayload movePayload = getInputMover().get(output.item);
+                    handlePositionPayload(new PositionPayload(payload, setTargetPosition(i, movePayload), Vec2.ZERO));
                 }
 
             }
 
             progress %= 1f;
         }
-
-        public MovePayload findMovePayload(UnlockableContent payload) {
-            MovePayload recipeMover = null;
-            for (RecipeMover moveInMover1 : getCurrentPlan().recipeMover) {
-                if (moveInMover1.unlockableContent == payload) {
-                    recipeMover = moveInMover1.movePayload;
-                    break;
-                }
-            }
-            return recipeMover;
-        }
-
-        @Override
-        public RecipeMover[] getMover() {
-            return getCurrentPlan().recipeMover;
-        }
-
     }
 }

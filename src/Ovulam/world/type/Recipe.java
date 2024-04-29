@@ -8,17 +8,21 @@ import mindustry.type.PayloadStack;
 public class Recipe {
     public Seq<ItemStack> itemStacks;
     public Seq<LiquidStack> liquidStacks;
-    public Seq<PayloadStack> payloadStacks;
+    public Seq<RecipePayloadManager> payloadManagers;
     public float power;
     public boolean liquidCompletely;
 
     //todo contentStacks?
-    public Recipe(Seq<ItemStack> itemStacks, Seq<LiquidStack> liquidStacks, Seq<PayloadStack> payloadStacks,
+    public Recipe(Seq<ItemStack> itemStacks, Seq<LiquidStack> liquidStacks, Seq<RecipePayloadManager> payloadManagers,
                   float Power, boolean liquidCompletely) {
         this.itemStacks = itemStacks;
         this.liquidStacks = liquidStacks;
-        this.payloadStacks = payloadStacks;
+        this.payloadManagers = payloadManagers;
         this.power = power;
         this.liquidCompletely = liquidCompletely;
+    }
+
+    public Seq<PayloadStack> payloadStacks(){
+        return RecipePayloadManager.getPayloadStacks(payloadManagers);
     }
 }

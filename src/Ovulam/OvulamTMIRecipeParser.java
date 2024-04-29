@@ -21,13 +21,13 @@ public class OvulamTMIRecipeParser{
             planIn.itemStacks.forEach(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
             planIn.liquidStacks.forEach(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
                     planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planIn.payloadStacks.forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
+            planIn.payloadStacks().forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
             if(planIn.power > 0) recipe.addMaterialPresec(PowerMark.INSTANCE, planIn.power);
 
             planOut.itemStacks.forEach(itemStack -> recipe.addProduction(getWrap(itemStack.item), itemStack.amount));
             planOut.liquidStacks.forEach(liquidStack -> recipe.addProduction(getWrap(liquidStack.liquid),
                     planOut.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planOut.payloadStacks.forEach(payloadStack -> recipe.addProduction(getWrap(payloadStack.item), payloadStack.amount));
+            planOut.payloadStacks().forEach(payloadStack -> recipe.addProduction(getWrap(payloadStack.item), payloadStack.amount));
             if(planOut.power > 0)recipe.addProductionPresec(PowerMark.INSTANCE, planOut.power);
         }
 
@@ -58,7 +58,7 @@ public class OvulamTMIRecipeParser{
             planIn.itemStacks.forEach(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
             planIn.liquidStacks.forEach(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
                     planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planIn.payloadStacks.forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
+            planIn.payloadStacks().forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
             if(planIn.power > 0) recipe.addMaterialPresec(PowerMark.INSTANCE, planIn.power);
         }
 
