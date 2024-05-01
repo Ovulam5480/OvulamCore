@@ -1,4 +1,4 @@
-package Ovulam.type.bullet;
+package Ovulam.entities.bullet;
 
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;

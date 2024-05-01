@@ -1,6 +1,6 @@
 package Ovulam.mod;
 
-import Ovulam.type.unit.InvitationUnitType;
+import Ovulam.entities.unit.InvitationUnitType;
 import mindustry.entities.abilities.ForceFieldAbility;
 import mindustry.type.UnitType;
 

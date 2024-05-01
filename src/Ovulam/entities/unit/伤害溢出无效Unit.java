@@ -1,4 +1,4 @@
-package Ovulam.type.unit;
+package Ovulam.entities.unit;
 
 import mindustry.gen.CrawlUnit;
 

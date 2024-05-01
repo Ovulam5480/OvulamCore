@@ -4,7 +4,7 @@ import Ovulam.UI.StoryTable;
 import Ovulam.mod.OvulamBlocks;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
-import Ovulam.type.unit.InvitationUnitType;
+import Ovulam.entities.unit.InvitationUnitType;
 import Ovulam.world.graphics.OvulamShaders;
 import arc.Events;
 import mindustry.content.UnitTypes;
@@ -24,6 +24,7 @@ public class OvulamMod extends Mod{
 
     @Override
     public void loadContent(){
+
         OvulamBlocks.load();
         OvulamItems.load();
         OvulamUnits.load();

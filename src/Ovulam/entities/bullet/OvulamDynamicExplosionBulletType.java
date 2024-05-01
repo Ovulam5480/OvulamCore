@@ -1,6 +1,6 @@
-package Ovulam.type.bullet;
+package Ovulam.entities.bullet;
 
-import Ovulam.type.OvulamDynamicExplosion;
+import Ovulam.entities.OvulamDynamicExplosion;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Bullet;
 

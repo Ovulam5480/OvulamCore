@@ -1,6 +1,6 @@
-package Ovulam.type;
+package Ovulam.entities;
 
-import Ovulam.type.bullet.PierceContinuousBulletType;
+import Ovulam.entities.bullet.PierceContinuousBulletType;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Lines;
 import arc.math.Angles;

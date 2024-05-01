@@ -1,6 +1,6 @@
-package Ovulam.type.bullet;
+package Ovulam.entities.bullet;
 
-import Ovulam.type.LightningTree;
+import Ovulam.entities.LightningTree;
 import arc.graphics.Color;
 import mindustry.content.Fx;
 import mindustry.content.StatusEffects;

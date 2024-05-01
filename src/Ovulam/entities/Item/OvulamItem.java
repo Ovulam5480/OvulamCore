@@ -1,4 +1,4 @@
-package Ovulam.type.Item;
+package Ovulam.entities.Item;
 
 import arc.graphics.Color;
 import mindustry.type.Item;

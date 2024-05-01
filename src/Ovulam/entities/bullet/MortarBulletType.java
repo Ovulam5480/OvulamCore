@@ -1,4 +1,4 @@
-package Ovulam.type.bullet;
+package Ovulam.entities.bullet;
 
 import arc.Core;
 import arc.graphics.Color;

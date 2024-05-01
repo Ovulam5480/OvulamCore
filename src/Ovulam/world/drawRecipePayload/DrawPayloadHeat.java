@@ -21,7 +21,7 @@ public class DrawPayloadHeat extends DrawRecipePayload{
 
     @Override
     public void draw(Building building, float offsetX, float offsetY) {
-        Draw.alpha(OvulamScaled.fparabola(building.progress(), 0.8f));
+        Draw.alpha(OvulamScaled.fparabola(building.progress()));
         Draw.rect(heat, building.x + offsetX, building.y + offsetY);
         Draw.alpha(building.progress());
         Draw.rect(payload.icon(), building.x + offsetX, building.y + offsetY);

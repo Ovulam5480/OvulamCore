@@ -1,6 +1,6 @@
 package Ovulam.world.block.defense;
 
-import Ovulam.type.bullet.OvulamDynamicExplosionBulletType;
+import Ovulam.entities.bullet.OvulamDynamicExplosionBulletType;
 import mindustry.content.Fx;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Building;

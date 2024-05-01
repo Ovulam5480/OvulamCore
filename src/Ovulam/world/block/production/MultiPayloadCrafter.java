@@ -1,6 +1,7 @@
 package Ovulam.world.block.production;
 
 import Ovulam.UI.RecipeTable;
+import Ovulam.entities.OvulamFx;
 import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
@@ -23,6 +24,7 @@ import arc.struct.Seq;
 import arc.util.Eachable;
 import mindustry.content.Fx;
 import mindustry.ctype.UnlockableContent;
+import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
 import mindustry.game.EventType;
 import mindustry.gen.Building;
@@ -61,6 +63,8 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     //列
     public int tableColumns = 8;
 
+    public Effect crafterDestroyEffect = OvulamFx.destroyTitanBlock;
+
     //待加工区
     public MovePayload moveCapital = new MoveSize();
     //输出区
@@ -73,6 +77,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     //todo 方块保存配置 与 地图保存配置
     public MultiPayloadCrafter(String name) {
         super(name);
+        destroyEffect = Fx.none;
         size = 3;
         configurable = true;
         clearOnDoubleTap = true;
@@ -294,6 +299,12 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             RecipeTable.addRecipeTable(table, outputRecipe);
 
             hoveredPlan = -1;
+        }
+
+        @Override
+        public void onDestroyed() {
+            crafterDestroyEffect.at(x, y, rotation, block);
+            super.onDestroyed();
         }
 
         @Override

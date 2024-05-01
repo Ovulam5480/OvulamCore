@@ -1,6 +1,6 @@
-package Ovulam.type.unit;
+package Ovulam.entities.unit;
 
-import Ovulam.type.OvulamEventType;
+import Ovulam.entities.OvulamEventType;
 import Ovulam.world.block.storage.BaseCoreBlock;
 import arc.Core;
 import arc.Events;

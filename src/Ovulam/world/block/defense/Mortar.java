@@ -1,7 +1,7 @@
 package Ovulam.world.block.defense;
 
-import Ovulam.type.bullet.MortarBulletType;
-import Ovulam.type.bullet.OvulamDynamicExplosionBulletType;
+import Ovulam.entities.bullet.MortarBulletType;
+import Ovulam.entities.bullet.OvulamDynamicExplosionBulletType;
 import Ovulam.world.block.payload.MultiPayloadBlock;
 import arc.Core;
 import arc.graphics.Color;

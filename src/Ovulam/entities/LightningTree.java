@@ -1,4 +1,4 @@
-package Ovulam.type;
+package Ovulam.entities;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;

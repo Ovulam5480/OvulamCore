@@ -1,6 +1,6 @@
 package Ovulam.mod;
 
-import Ovulam.type.Item.OvulamItem;
+import Ovulam.entities.Item.OvulamItem;
 import mindustry.type.Item;
 
 public class OvulamItems {

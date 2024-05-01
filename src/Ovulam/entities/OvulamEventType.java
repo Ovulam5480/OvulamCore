@@ -1,4 +1,4 @@
-package Ovulam.type;
+package Ovulam.entities;
 
 import mindustry.gen.Unit;
 

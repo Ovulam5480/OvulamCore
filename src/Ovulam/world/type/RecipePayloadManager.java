@@ -42,7 +42,18 @@ public class RecipePayloadManager {
         return payloadStacks;
     }
 
-    public void draw(Building building){
+    public void drawRecipePayload(Building building, float progress){
+        for (int i = 0; i < movePayload.maxCapital(building.block); i++){
+            drawRecipePayload.draw(building, movePayload.setTargetPosition(building, i));
+        }
+    }
+
+    public void drawInput(Building building){
+        for (int i = 0; i < movePayload.maxCapital(building.block); i++){
+            drawRecipePayload.draw(building, movePayload.setTargetPosition(building, i));
+        }
+    }
+    public void drawOutput(Building building){
         for (int i = 0; i < movePayload.maxCapital(building.block); i++){
             drawRecipePayload.draw(building, movePayload.setTargetPosition(building, i));
         }

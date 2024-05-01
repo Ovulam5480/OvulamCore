@@ -25,11 +25,7 @@ public class DrawKnitter extends DrawBlock {
     public float centerRadiusTo;
 
     public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier, float centerRadius){
-        this.spindleRadius = spindleRadius;
-        this.spindleAmount = spindleAmount;
-        this.speedMultiplier = speedMultiplier;
-        this.centerRadiusFrom = centerRadius;
-        this.centerRadiusTo = centerRadius;
+        this(spindleRadius, spindleAmount, speedMultiplier, centerRadius, centerRadius);
     }
     
     public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier,
