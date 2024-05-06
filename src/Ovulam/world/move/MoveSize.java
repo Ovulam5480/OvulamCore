@@ -8,7 +8,7 @@ import mindustry.world.Block;
 
 public class MoveSize extends MovePayload{
     @Override
-    public int maxCapital(Block block){return sizeCapital(block) * 3;}
+    public int maxCapacity(Block block){return sizeCapital(block) * 3;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
         int sideAmount = Mathf.mod(index, sizeCapital(build.block));

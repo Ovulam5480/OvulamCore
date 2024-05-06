@@ -12,6 +12,8 @@ import mindustry.graphics.Layer;
 import mindustry.world.Block;
 import mindustry.world.draw.DrawBlock;
 
+import java.util.HashMap;
+
 public class DrawKnitter extends DrawBlock {
     public TextureRegion region, spindleRegion, iconRegion, nodeRegion;
     //轴距离设定中心的半径, 轴本身的半径(节点围绕半径)根据轴数计算出
@@ -23,6 +25,8 @@ public class DrawKnitter extends DrawBlock {
     //中心
     public float centerRadiusFrom;
     public float centerRadiusTo;
+
+    public HashMap<Building, Float> buildProgress = new HashMap<>();
 
     public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier, float centerRadius){
         this(spindleRadius, spindleAmount, speedMultiplier, centerRadius, centerRadius);
@@ -47,7 +51,15 @@ public class DrawKnitter extends DrawBlock {
     @Override
     public void draw(Building build){
         Draw.rect(region, build.x, build.y);
-        float centerRadius = Mathf.approach(centerRadiusFrom, centerRadiusTo, build.progress());
+        if(!buildProgress.containsKey(build))buildProgress.put(build, 0f);
+
+        //最后记录的半径
+        float progress = buildProgress.get(build);
+        //根据进程,获得的半径
+        float centerRadius = Mathf.lerp(centerRadiusFrom, centerRadiusTo, build.progress());
+
+        float realRadius = Mathf.approach(progress, centerRadius, Math.abs(progress - centerRadius) * 0.1f);
+        buildProgress.replace(build, realRadius);
 
         for (int i = 0; i < spindleAmount; i++){
             Draw.z(Layer.blockOver + 1);
@@ -67,20 +79,21 @@ public class DrawKnitter extends DrawBlock {
             Draw.z(Layer.blockOver + 2);
 
             float nodeRadius = (float) (Math.cos((90 - 180f / spindleAmount) * Mathf.degreesToRadians) * spindleRadius);
-            float[] nodeRotates = new float[4];
 
             for (int j = 0; j < 4; j ++){
-                nodeRotates[j] = rotate + j * 90;
+                float rot = rotate + j * 90;
                 boolean b = j % 2 == 0;
 
-                float lx = (float) (Math.cos((nodeRotates[j]) * Mathf.degreesToRadians) * nodeRadius);
-                float ly = (float) (Math.sin((nodeRotates[j]) * Mathf.degreesToRadians) * nodeRadius);
+                float lx = (float) (Math.cos(rot * Mathf.degreesToRadians) * nodeRadius);
+                float ly = (float) (Math.sin(rot * Mathf.degreesToRadians) * nodeRadius);
 
                 float centerAngle = Mathf.angle(sx + lx, sy + ly) - Mathf.sign(b) * 90;
-                float lx2 = (float) (Math.cos(centerAngle * Mathf.degreesToRadians) * centerRadius);
-                float ly2 = (float) (Math.sin(centerAngle * Mathf.degreesToRadians) * centerRadius);
+                float lx2 = (float) (Math.cos(centerAngle * Mathf.degreesToRadians) * realRadius);
+                float ly2 = (float) (Math.sin(centerAngle * Mathf.degreesToRadians) * realRadius);
 
-                float angle = nodeRotates[j] - 360f * i / spindleAmount;
+                float angle = rot - 360f * i / spindleAmount;
+
+                //Lines.stroke();
 
                 if(angleWithin(angle, 67.5f) != (pow == 1) && b ||
                         angleWithin(angle, 67.5f) == (pow == 1) && !b){

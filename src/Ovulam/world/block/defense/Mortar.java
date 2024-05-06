@@ -170,11 +170,11 @@ public class Mortar extends MultiPayloadBlock {
                     }
                     podUsed += Mathf.sqr(payload.payload.size() / tilesize);
                     //感觉得改改
-                    Fx.placeBlock.at(payload.currentPosition.x + x, payload.currentPosition.y + y, build.block.size);
-                    Fx.payloadReceive.at(payload.currentPosition.x + x, payload.currentPosition.y + y);
+                    Fx.placeBlock.at(payload.x(this), payload.y(this), build.block.size);
+                    Fx.payloadReceive.at(payload.x(this), payload.y(this));
                     positionPayloads.remove(payload);
                 } else if(launchCounter >= launchTime){ //通常不会用到这个
-                    Fx.breakBlock.at(payload.currentPosition.x + x, payload.currentPosition.y + y, build.block.size);
+                    Fx.breakBlock.at(payload.x(this), payload.y(this), build.block.size);
                     positionPayloads.remove(payload);
                 } else movePayloads(payload);
             });

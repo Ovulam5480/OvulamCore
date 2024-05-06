@@ -7,7 +7,7 @@ import mindustry.world.Block;
 
 public class Moved4 extends MovePayload{
     @Override
-    public int maxCapital(Block block){return 4;}
+    public int maxCapacity(Block block){return 4;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
         return new Vec2(Geometry.d4(index).x * 16,Geometry.d4(index).y * 16);

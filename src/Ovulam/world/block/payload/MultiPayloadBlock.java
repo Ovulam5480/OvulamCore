@@ -7,6 +7,8 @@ import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
 import arc.struct.Seq;
+import arc.util.Log;
+import arc.util.Nullable;
 import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Building;
 import mindustry.gen.Unit;
@@ -15,7 +17,6 @@ import mindustry.type.PayloadStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.payloads.Payload;
 
-import static mindustry.Vars.indexer;
 import static mindustry.Vars.tilesize;
 
 public class MultiPayloadBlock extends Block {
@@ -163,24 +164,23 @@ public class MultiPayloadBlock extends Block {
             return Mathf.mod(Mathf.angle(building.x - x, building.y - y) + 45 - rotdeg(), 360) < 90;
         }
 
-        public Seq<Building> nearBuildings(PositionPayload positionPayload, float range) {
-            Seq<Building> others = new Seq<>();
-            indexer.eachBlock(team, positionPayload.currentPosition.x + x, positionPayload.currentPosition.y + y,
-                    range, building -> building.acceptPayload(this, positionPayload.payload), others::add);
-            return others;
+        //载荷应当输出到的建筑, 哪怕这个建筑不能输入载荷
+        public @Nullable Building dumpTargetBuilding(PositionPayload todump) {
+            return proximity.find(building -> {
+                float ang = Mathf.angle(building.x - todump.x(this), building.y - todump.y(this));
+                return Math.abs(ang - rotdeg()) < 45f;
+            });
         }
 
-        //todo 以后写个更好的
         public boolean dumpPositionPayload(PositionPayload todump) {
-            Seq<Building> others = nearBuildings(todump, 1f);
-            if (others.size == 0) {
-                return false;
-            }
+            Building target = dumpTargetBuilding(todump);
+            if (target == null || !target.acceptPayload(this, todump.payload)) return false;
 
+            Log.info(target.x + " and " + target.y);
             Building position = PositionBuild.create();
-            position.set(todump.currentPosition.x + x, todump.currentPosition.y + y);
+            position.set(todump.x(this), todump.y(this));
 
-            others.first().handlePayload(position, todump.payload);
+            target.handlePayload(position, todump.payload);
             positionPayloads.remove(todump);
             position.remove();
             return true;
@@ -190,7 +190,7 @@ public class MultiPayloadBlock extends Block {
         public void updatePayload(PositionPayload payload) {
             payRotation = Angles.moveToward(payRotation, block.rotate ? rotdeg() : 90f, payloadRotateSpeed * delta());
             payload.currentPosition.approach(payload.targetPosition, payloadSpeed * delta());
-            payload.payload.set(x + payload.currentPosition.x, y + payload.currentPosition.y, payRotation);
+            payload.payload.set(payload.x(this), payload.y(this), payRotation);
         }
 
         //输入的目标位置

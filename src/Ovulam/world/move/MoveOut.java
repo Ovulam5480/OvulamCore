@@ -7,9 +7,8 @@ import mindustry.world.Block;
 
 public class MoveOut extends MovePayload{
 
-    //todo 为啥
     @Override
-    public int maxCapital(Block block){return (block.size - 1) / 2;}
+    public int maxCapacity(Block block){return (block.size - 1) / 2;}
 
     // 3:1   4:1   5:2
     @Override

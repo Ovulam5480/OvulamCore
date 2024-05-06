@@ -19,7 +19,7 @@ public class Moved8c extends MovePayload{
             new Point2(0, 0),
     };
     @Override
-    public int maxCapital(Block block){return 9;}
+    public int maxCapacity(Block block){return 9;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
         return new Vec2(d8c[Mathf.mod(index, 9)].x * 16,d8c[Mathf.mod(index, 9)].y * 16);

@@ -95,6 +95,7 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
         public abstract float getCraftTime();
 
 
+        //只消耗载荷时, 所有的positionPayload都属于输入
         public void moveInPayloads(){
             positionPayloads.each(positionPayload -> {
                 MovePayload movePayload = getInputMover().get(positionPayload.content());

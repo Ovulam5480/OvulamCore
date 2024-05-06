@@ -16,14 +16,22 @@ import Ovulam.world.drawBlock.DrawBatchFactory;
 import Ovulam.world.drawBlock.DrawKnitter;
 import Ovulam.world.drawBlock.DrawMixer;
 import Ovulam.world.drawBlock.DrawOrganize;
+import Ovulam.world.drawRecipePayload.DrawPayloadConstruct;
+import Ovulam.world.drawRecipePayload.DrawPayloadExpansion;
+import Ovulam.world.move.MoveCircle;
+import Ovulam.world.move.MoveCustomP4;
+import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipePayloadManager;
 import arc.struct.Seq;
 import mindustry.Vars;
+import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
+import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 
 public class OvulamBlocks {
@@ -140,7 +148,6 @@ public class OvulamBlocks {
             drawer = new DrawBatchFactory();
             requirements(Category.defense, new ItemStack[]{});
             size = 15;
-            ignorePayloadFullness = true;
             changeClear = true;
 
             plans = new Seq<>();
@@ -156,8 +163,27 @@ public class OvulamBlocks {
         knitter = new MultiPayloadCrafter("knitter") {{
             requirements(Category.defense, new ItemStack[]{});
             size = 15;
-            drawer = new DrawKnitter(32f, 16, 2f, 6f);
-            plans = Seq.with();
+            drawer = new DrawKnitter(32f, 16, 2f, 0f,16f);
+            plans = Seq.with(
+                    new MultiPayloadPlan(300f, 1f, "123",
+                            new Recipe(
+                                    ItemStack.list(Items.coal, 300, Items.sand, 300),
+                                    LiquidStack.list(),
+                                    RecipePayloadManager.list(
+                                            Blocks.copperWallLarge, 16, new MoveCircle(32), new DrawPayloadConstruct()
+                                    ),
+                                    0f, true
+                            ),
+                            new Recipe(
+                                    ItemStack.list(),
+                                    LiquidStack.list(),
+                                    RecipePayloadManager.list(
+                                            Blocks.thoriumWallLarge, 4, new MoveCustomP4(16), new DrawPayloadExpansion()
+                                    ),
+                                    0f, true
+                            )
+                    )
+            );
         }};
 
         batchFactoryBase = new ManufacturerBlock("batch-factory-base") {{

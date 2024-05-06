@@ -35,7 +35,7 @@ public abstract class MoveCustomPoint extends MovePayload{
 
 
     @Override
-    public int maxCapital(Block block){return currentPoints().length;}
+    public int maxCapacity(Block block){return currentPoints().length;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
         return new Vec2(

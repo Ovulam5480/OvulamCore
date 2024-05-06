@@ -1,5 +1,6 @@
 package Ovulam.world.graphics;
 
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.files.Fi;
 import arc.graphics.Texture;
@@ -25,7 +26,7 @@ public class OvulamShaders {
     public static class OvulamFragShader extends Shader{
         public static Fi getModShaderFi(String file){
             //咱也不知道为啥变成小写的了
-            return Vars.mods.getMod("ovulam").root.child("shaders").child(file + ".frag");
+            return Vars.mods.getMod(OvulamMod.class).root.child("shaders").child(file + ".frag");
         }
 
         public OvulamFragShader(String frag){

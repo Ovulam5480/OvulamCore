@@ -2,6 +2,7 @@ package Ovulam.world.type;
 
 import arc.math.geom.Vec2;
 import mindustry.ctype.UnlockableContent;
+import mindustry.gen.Building;
 import mindustry.world.blocks.payloads.Payload;
 
 public class PositionPayload{
@@ -17,6 +18,14 @@ public class PositionPayload{
 
     public UnlockableContent content(){
         return payload.content();
+    }
+
+    public float x(Building building){
+        return currentPosition.x + building.x;
+    }
+
+    public float y(Building building){
+        return currentPosition.y + building.y;
     }
 
 }

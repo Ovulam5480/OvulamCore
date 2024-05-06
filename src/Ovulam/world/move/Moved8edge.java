@@ -8,7 +8,7 @@ import mindustry.world.Block;
 
 public class Moved8edge extends MovePayload{
     @Override
-    public int maxCapital(Block block){return 4;}
+    public int maxCapacity(Block block){return 4;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
         return new Vec2(Geometry.d8edge[Mathf.mod(index, 4)].x * 16,Geometry.d8edge[Mathf.mod(index, 4)].y * 16);

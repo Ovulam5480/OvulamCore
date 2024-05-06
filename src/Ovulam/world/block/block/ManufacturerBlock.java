@@ -42,6 +42,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     @Override
     public void init() {
         size = targetBlock.size;
+        stages.each(stage -> stage.inputRecipe.payloadManagers.forEach(pm -> pm.init(this)));
         super.init();
     }
 
@@ -57,6 +58,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         for (int i = 0; i <= stages.size; i++) {
             stageRegion[i] = Core.atlas.find(targetBlock.name + "-stage-" + i);
         }
+        stages.each((stage) -> stage.inputRecipe.payloadManagers.each(rpm -> rpm.drawRecipePayload.load(this)));
     }
 
     @Override
@@ -133,9 +135,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             if (progress >= stages.get(currentStage).craftTime) {
 
                 positionPayloads.each(positionPayload ->
-                        Fx.placeBlock.at(positionPayload.currentPosition.x + x,
-                                positionPayload.currentPosition.y + y,
-                                positionPayload.payload.size() / 8f));
+                        Fx.placeBlock.at(positionPayload.x(this), positionPayload.y(this), positionPayload.payload.size() / 8f));
 
                 consume();
                 progress %= 1f;

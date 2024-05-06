@@ -4,13 +4,16 @@ import arc.math.geom.Vec2;
 import mindustry.gen.Building;
 import mindustry.world.Block;
 
+//todo 存在BUG, 暂时不清楚什么原因导致的
 public class MoveDefault extends MovePayload{
     @Override
-    public int maxCapital(Block block){
-        return super.maxCapital(block);
+    public int maxCapacity(Block block){
+        return 9999;
     }
     @Override
     public Vec2 setTargetPosition(Building build, int index){
-        return super.setTargetPosition(build, index);
+        return Vec2.ZERO;
     }
+
+    public MoveDefault(){}
 }

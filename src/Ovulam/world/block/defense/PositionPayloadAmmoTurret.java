@@ -79,7 +79,7 @@ public class PositionPayloadAmmoTurret extends PayloadAmmoTurret {
         public void updatePayload(PositionPayload payload) {
             payRotation = Angles.moveToward(payRotation, block.rotate ? rotdeg() : 90f, payloadRotateSpeed * delta());
             payload.currentPosition.approach(payload.targetPosition, payloadSpeed * delta());
-            payload.payload.set(x + payload.currentPosition.x, y + payload.currentPosition.y, payRotation);
+            payload.payload.set(payload.x(this), payload.y(this), payRotation);
         }
 
         //设置载荷的目标位置

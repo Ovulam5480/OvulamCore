@@ -12,6 +12,7 @@ import Ovulam.world.type.PositionPayload;
 import Ovulam.world.type.Recipe;
 import arc.Core;
 import arc.Events;
+import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
@@ -31,6 +32,7 @@ import mindustry.gen.Building;
 import mindustry.gen.Icon;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
+import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.logic.LAccess;
@@ -55,7 +57,6 @@ import static mindustry.Vars.control;
 public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public static Seq<MultiPayloadPlan> plans = new Seq<>(5);
     public DrawBlock drawer = new DrawDefault();
-    public boolean ignorePayloadFullness = false;
     //改变配方清除自身携带的载荷
     public boolean changeClear;
     //行
@@ -70,7 +71,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     //输出区
     public MovePayload moveOutMover = new MoveOut();
 
-    public float outMoverCapitalMulti = 2f;
+    public float outMoverCapacityMulti = 2f;
 
     private final PayloadStack[] emptyPayloadStacks = {};
 
@@ -113,6 +114,8 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             for (LiquidStack stack : plan.inputRecipe.liquidStacks) {
                 liquidCapacity = Math.max(liquidCapacity, stack.amount * 2f * (plan.inputRecipe.liquidCompletely ? 1 : plan.craftTime));
             }
+            plan.inputRecipe.payloadManagers.each(pm -> pm.init(this));
+            plan.outputRecipe.payloadManagers.each(pm -> pm.init(this));
         }
         super.init();
     }
@@ -129,7 +132,11 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public void load() {
         super.load();
         drawer.load(this);
-        plans.each((plan) -> plan.icon = Core.atlas.find(name + "-" + plan.name));
+        plans.each((plan) -> {
+            plan.inputRecipe.payloadManagers.each(rpm -> rpm.drawRecipePayload.load(this));
+            plan.outputRecipe.payloadManagers.each(rpm -> rpm.drawRecipePayload.load(this));
+            plan.icon = Core.atlas.find(name + "-" + plan.name);
+        });
     }
 
     @Override
@@ -224,11 +231,12 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         public int previousPlan = -1;
         public int currentPlan = -1;
         public int hoveredPlan = -1;
-        public Seq<PositionPayload> inputPositionPayloads = new Seq<>();
-        public Seq<PositionPayload> craftPositionPayloads = new Seq<>();
-        public HashMap<PositionPayload, Integer> outputPositionPayloads = new HashMap<>();
+        public Seq<PositionPayload> inputPayloads = new Seq<>();
+        public Seq<PositionPayload> craftPayloads = new Seq<>();
+        public HashMap<PositionPayload, Integer> outputPayloads = new HashMap<>();
         public Seq<PositionPayload> remover = new Seq<>();
 
+        //todo 载荷透明度
         public void buildConfiguration(Table table) {
             table.table(configTable -> {
                 Table recipeShow = new Table(Styles.black3);
@@ -325,11 +333,52 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             return currentPlan == -1 ? 0 : progress / getCurrentPlan().craftTime;
         }
 
+        public void drawTargetPosition(){
+            positionPayloads.each(positionPayload -> Drawf.dashCircle(x + positionPayload.targetPosition.x,
+                    y + positionPayload.targetPosition.y, 3, Pal.accent));
+        }
+        public void drawInputTargetPosition(){
+            inputPayloads.each(positionPayload -> Drawf.dashCircle(x + positionPayload.targetPosition.x,
+                    y + positionPayload.targetPosition.y, 3, Color.cyan));
+        }
+        public void drawOutputTargetPosition(){
+            for (PositionPayload positionPayload : outputPayloads.keySet()){
+                Drawf.dashCircle(x + positionPayload.targetPosition.x,
+                        y + positionPayload.targetPosition.y, 3, Color.orange);
+            }
+        }
+
+        public void drawOutputLine(){
+            for (PositionPayload positionPayload : outputPayloads.keySet()){
+                Drawf.line(Color.pink,
+                        positionPayload.x(this), positionPayload.y(this),
+                        positionPayload.x(this), positionPayload.y(this));
+            }
+        }
+
         @Override
         public void draw() {
             drawer.draw(this);
             Draw.z(Layer.blockOver);
-            drawPayload();
+
+            //总是渲染输出载荷
+            for (PositionPayload positionPayload : outputPayloads.keySet()){
+                positionPayload.payload.draw();
+            }
+
+            if(efficiency > 0){
+                //工厂加工时, 只渲染非加工区的载荷, 否则渲染全部的输入载荷
+                inputPayloads.each(positionPayload -> {
+                    if(!craftPayloads.contains(positionPayload)) positionPayload.payload.draw();
+                });
+                //渲染加工效果
+                getCurrentPlan().inputRecipe.payloadManagers.each(recipePayloadManager -> recipePayloadManager.drawInput(this));
+                getCurrentPlan().outputRecipe.payloadManagers.each(recipePayloadManager -> recipePayloadManager.drawOutput(this));
+            }else inputPayloads.each(positionPayload -> positionPayload.payload.draw());
+
+            drawInputTargetPosition();
+            drawOutputTargetPosition();
+            drawOutputLine();
         }
 
         //必须空间 和 混合空间
@@ -342,7 +391,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             //必须的空间
             //第一倍的载荷输入到moveIn,所以总是能够输入
             //以外的载荷输入到moveCapital
-            int place = getMoverLimit(getInputPayloads(), payload) + moveCapital.maxCapital(block);
+            int place = getMoverLimit(getInputPayloads(), payload) + moveCapital.maxCapacity(block);
 
             for (PayloadStack payloadStack : getInputPayloads()) {
                 place -= Math.max(getPayloadAmount(payloadStack.item) -
@@ -469,7 +518,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         Fx.breakBlock.at(payload.x(), payload.y(), payload.size() / 8f);
                     });
                     positionPayloads.clear();
-                    outputPositionPayloads.clear();
+                    outputPayloads.clear();
                 }
             }
             continueAddBar();
@@ -490,7 +539,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                 }
             }
 
-            setPositionPayloads();
+            checkPositionPayloads();
             moveOutPayloads();
             moveInPayloads();
             dumpOutputs();
@@ -498,49 +547,53 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
         //输出载荷 的最小索引
         public int getMinimumIndex() {
-            float amount = outputPositionPayloads.size();
+            int amount = outputPayloads.size();
             for (int i = 0; i < amount; i++) {
-                if (!outputPositionPayloads.containsValue(i)) {
+                if (!outputPayloads.containsValue(i)) {
                     return i;
                 }
             }
-            return (int) amount;
+            return amount;
+        }
+
+        public int getOutMoverCapacity(){
+            return (int) (moveOutMover.maxCapacity(block) * outMoverCapacityMulti);
         }
 
         //区分建筑内的载荷是输入(输入 和 缓存)还是输出
-        public void setPositionPayloads() {
-            inputPositionPayloads.clear();
-            craftPositionPayloads.clear();
+        public void checkPositionPayloads() {
+            inputPayloads.clear();
+            craftPayloads.clear();
             //配方中不存在输入载荷时，所有载荷都应该输出
 
             if (currentPlan == -1 || getInputPayloads().size == 0) {
                 positionPayloads.each(positionPayload ->
-                        outputPositionPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
+                        outputPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
             } else {
                 /////////////////////
                 //否则将所以非输入的载荷设为输出
                 for (PositionPayload positionPayload : positionPayloads) {
-                    //如果该 载荷 包含在 工作载荷(使用moveIn) 中
+                    //如果该 载荷 包含在 加工载荷(使用moveIn) 中
                     if (getInputPayloads().contains(payloadStack ->
                             positionPayload.content() == payloadStack.item)) {
 
-                        //判断数量，如果工作载荷能容纳该载荷，则加入该载荷
-                        int amount = craftPositionPayloads.count(positionPayload1 ->
+                        //判断数量，如果加工载荷能容纳该载荷，则加入该载荷
+                        int amount = craftPayloads.count(positionPayload1 ->
                                 positionPayload1.content() == positionPayload.content()
                         );
                         if (amount < getMoverLimit(getInputPayloads(), positionPayload.payload)) {
-                            craftPositionPayloads.add(positionPayload);
+                            craftPayloads.add(positionPayload);
                         }
 
-                        inputPositionPayloads.add(positionPayload);
-                        outputPositionPayloads.remove(positionPayload);
+                        inputPayloads.add(positionPayload);
+                        outputPayloads.remove(positionPayload);
                     }
                 }
                 //非 输入载荷 都应该输出
                 Seq<PositionPayload> output = positionPayloads.copy();
-                output.removeAll(inputPositionPayloads);
+                output.removeAll(inputPayloads);
 
-                output.each(positionPayload -> outputPositionPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
+                output.each(positionPayload -> outputPayloads.putIfAbsent(positionPayload, getMinimumIndex()));
 
             }
         }
@@ -550,20 +603,20 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
         //输入的载荷优先填充moveIn，然后填充moveCapital
-        //不以moveInMover的容量去判断moveIn是否填满，工作区容纳一次工作所需要的所以载荷
+        //不以moveInMover的容量去判断moveIn是否填满，加工区容纳一次加工所需要的所以载荷
         @Override
         public void moveInPayloads() {
             //输入判断，所有非输入的载荷都应该输出
-            for (PositionPayload positionPayload : craftPositionPayloads) {
+            for (PositionPayload positionPayload : craftPayloads) {
 
                 int index = 0;
                 MovePayload movePayload = getInputMover().get(positionPayload.content());
 
                 if (movePayload == null) {
                     movePayload = moveInMover;
-                    index = craftPositionPayloads.indexOf(positionPayload);
+                    index = craftPayloads.indexOf(positionPayload);
                 } else {
-                    for (PositionPayload positionPayload1 : craftPositionPayloads) {
+                    for (PositionPayload positionPayload1 : craftPayloads) {
                         if (positionPayload1.content() == positionPayload.content()) {
                             if (positionPayload1 == positionPayload) break;
                             index++;
@@ -576,10 +629,10 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
             int place = 0;
 
-            for (PositionPayload positionPayload : inputPositionPayloads) {
-                int index = inputPositionPayloads.indexOf(positionPayload);
-                //如果载荷属于工作区载荷
-                if (!craftPositionPayloads.contains(positionPayload)) {
+            for (PositionPayload positionPayload : inputPayloads) {
+                int index = inputPayloads.indexOf(positionPayload);
+                //如果载荷属于加工区载荷
+                if (!craftPayloads.contains(positionPayload)) {
                     positionPayload.targetPosition = setTargetPosition(index - place, moveCapital);
                 } else {
                     place++;
@@ -588,21 +641,23 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             }
         }
 
-        //输出载荷非线性,载荷和索引一对
+        //输出载荷
         public void moveOutPayloads() {
-            if (outputPositionPayloads.isEmpty()) return;
-            outputPositionPayloads.forEach((positionPayload, integer) -> {
+            outputPayloads.forEach((positionPayload, integer) -> {
                 //如果载荷的索引 大于 sideAmount()，并且输出载荷不包含 （索引 减去 sideAmount()）的值
                 //该载荷“前方”有空位，改变索引移动到空位
-                if (integer >= sideAmount() && !outputPositionPayloads.containsValue(integer - sideAmount())) {
+                if (integer >= sideAmount() && !outputPayloads.containsValue(integer - sideAmount())) {
                     integer -= sideAmount();
                 }
-                outputPositionPayloads.replace(positionPayload, integer);
+
+                //如果 输出区存在空间, 索引改为空间的索引
+                if(integer >= getOutMoverCapacity())integer = Math.min(integer, getMinimumIndex());
+                //否则更新载荷位置
+                else updatePayload(positionPayload);
+
+                outputPayloads.replace(positionPayload, integer);
                 positionPayload.targetPosition = setTargetPosition(integer, moveOutMover);
-
-                updatePayload(positionPayload);
             });
-
         }
 
 
@@ -624,20 +679,20 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                 }
             }
 
-            outputPositionPayloads.forEach((positionPayload, integer) -> {
-                //如果载荷位于边缘 并且载荷已经到达目标位置，并且已经被输出
+            outputPayloads.forEach((positionPayload, integer) -> {
+                //如果载荷位于边缘 并且载荷已经到达目标位置
                 if (integer < sideAmount() && hasArrived(positionPayload)) {
-                    //移除该载荷
+                    //如果能够输出到某种建筑, 移除该载荷
                     if (dumpPositionPayload(positionPayload)) {
                         remover.add(positionPayload);
-                    } else if (nearBuildings(positionPayload, 1f).size == 0 && positionPayload.payload.dump()) {
+                    } else if (positionPayload.payload.dump()) {//如果(单位)载荷自己输出
                         //todo 单位输出时 并且 面前有建筑时，应当给堵上
                         remover.add(positionPayload);
                         positionPayloads.remove(positionPayload);
                     }
                 }
             });
-            remover.each(positionPayload -> outputPositionPayloads.remove(positionPayload));
+            remover.each(positionPayload -> outputPayloads.remove(positionPayload));
             remover.clear();
         }
 
@@ -646,30 +701,20 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             if (currentPlan == -1) return false;
             //如果生产后物品总量大于物品容量，返回否
             for (var output : getOutputItems()) {
-                if (items.get(output.item) + output.amount > itemCapacity) {
-                    return false;
-                }
+                if (items.get(output.item) + output.amount > itemCapacity) return false;
             }
-
 
             for (var output : getOutputLiquids()) {
-                if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
-                    return false;
-                }
+                if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) return false;
             }
 
-
-            for (PositionPayload positionPayload : craftPositionPayloads) {
-                if (!hasArrived(positionPayload)) {
-                    return false;
-                }
+            //所有的加工载荷到齐后再进行加工
+            for (PositionPayload positionPayload : craftPayloads) {
+                if (!hasArrived(positionPayload)) return false;
             }
 
-            int amount = getOutputPayloads().sum(payloadStack -> payloadStack.amount);
-
-            return outputPositionPayloads.size() + (ignorePayloadFullness ? 0 : amount) <=
-                    moveOutMover.maxCapital(block) * outMoverCapitalMulti && enabled;
-
+            //超出输出区容量暂时堆积的载荷, 到达输出区后再进行进行加工
+            return !(outputPayloads.size() > getOutMoverCapacity()) && enabled;
         }
 
         //todo 电力生产，消耗
@@ -693,7 +738,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             }
 
             for (var output : getOutputPayloads()) {
-                //量子纠缠遗址
+                //量子纠缠遗址, 一个载荷复制了N遍导致的
                 for (int i = 0; i < output.amount; i++) {
                     Payload payload;
                     if (output.item instanceof Block b) {
@@ -707,8 +752,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         return;
                     }
 
-                    MovePayload movePayload = getInputMover().get(output.item);
-                    handlePositionPayload(new PositionPayload(payload, setTargetPosition(i, movePayload), Vec2.ZERO));
+                    MovePayload movePayload = getOutputMover().get(output.item);
+                    PositionPayload positionPayload = new PositionPayload(payload, setTargetPosition(i, movePayload), Vec2.ZERO);
+
+                    handlePositionPayload(positionPayload);
+                    //立即更新一次, 很奇怪的时, 不更新就不会渲染载荷
+                    //todo 查找原因
+                    updatePayload(positionPayload);
                 }
 
             }
