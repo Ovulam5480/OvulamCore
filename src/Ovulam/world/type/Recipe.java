@@ -14,7 +14,7 @@ public class Recipe {
 
     //todo contentStacks?
     public Recipe(Seq<ItemStack> itemStacks, Seq<LiquidStack> liquidStacks, Seq<RecipePayloadManager> payloadManagers,
-                  float Power, boolean liquidCompletely) {
+                  float power, boolean liquidCompletely) {
         this.itemStacks = itemStacks;
         this.liquidStacks = liquidStacks;
         this.payloadManagers = payloadManagers;

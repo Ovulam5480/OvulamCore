@@ -19,6 +19,7 @@ import mindustry.world.blocks.payloads.Payload;
 
 import static mindustry.Vars.tilesize;
 
+//能够接收多个载荷的方块
 public class MultiPayloadBlock extends Block {
 
     public float payloadSpeed = 0.7f, payloadRotateSpeed = 5f;
@@ -154,6 +155,8 @@ public class MultiPayloadBlock extends Block {
 
         public void handlePositionPayload(PositionPayload positionPayload) {
             positionPayloads.add(positionPayload);
+            //立即更新一次, 很奇怪的时, 不更新就不会渲染载荷
+            updatePayload(positionPayload);
         }
 
         public float payloadUsed() {

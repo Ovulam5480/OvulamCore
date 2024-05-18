@@ -40,18 +40,6 @@ public class ItemBlock extends Block {
     @Override
     public void load(){
         super.load();
-        /*
-        Fi fi = Vars.tree.get("sprites/方块/walls 墙/ItemBlock-2.png");
-
-        Pixmap pixmap = new Pixmap(fi);
-        pixmap.fill(itemColor());
-
-        Texture texture = new Texture(pixmap);
-        region = new TextureRegion(texture);
-
-        //region = Core.atlas.find(OvulamMod.ovulamName() + "-ItemBlock-" + size);
-
-         */
     }
 
 

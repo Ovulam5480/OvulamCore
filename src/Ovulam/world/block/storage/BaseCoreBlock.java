@@ -10,10 +10,7 @@ import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.content.UnitTypes;
 import mindustry.game.Team;
-import mindustry.gen.Building;
-import mindustry.gen.Call;
-import mindustry.gen.Player;
-import mindustry.gen.Unit;
+import mindustry.gen.*;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
@@ -24,21 +21,21 @@ import mindustry.world.blocks.storage.CoreBlock;
 
 import java.util.Arrays;
 
-//todo 核心单位复活时间，储存核心单位
-//todo 核心摧毁 游戏结束
-//todo 木马物品(这个应该交给Events实现功能
+//todo 木马物品(这个应该交给Events实现功能?
 //会到处跑的核心？
 
-
-//todo 仓库（插件）的全局变量问题
 
 public class BaseCoreBlock extends CoreBlock{
     //玩家单位重生时间
     public float spawnTime = 200f;
     //额外建造的单位数
     public int extraSpawnAmount = 1;
-    //这个核心被摧毁时，是否游戏结束
+    //这个核心被摧毁时，是否直接游戏结束
     public boolean destroyGameOver = false;
+    //超过复活限制时,核心才能被攻击
+    public boolean spawnProtect = false;
+    //玩家复活次数限制,超过限制时,核心才能被攻击
+    public int spawnLimitation = -1;
 
     public BaseCoreBlock(String name){
         super(name);
@@ -65,9 +62,27 @@ public class BaseCoreBlock extends CoreBlock{
         public float unitSpawnCounter = 0, playerSpawnCounter = 0;
         public Player spawnPlayer;
         public Building[] coreAugment = new Building[4];
+        public int spawnCounter = 0;
 
         public boolean destroyGameOver(){
             return destroyGameOver;
+        }
+
+        //如果启用玩家保护, 并且玩家都存活, 则核心处于无敌状态
+        public boolean protectValid(){
+            return spawnProtect && spawnCounter < spawnLimitation;
+        }
+
+        @Override
+        public boolean collision(Bullet other) {
+            if(protectValid())return false;
+            return super.collision(other);
+        }
+
+        @Override
+        public void damage(float damage) {
+            if(protectValid())return;
+            super.damage(damage);
         }
 
         @Override
@@ -123,6 +138,7 @@ public class BaseCoreBlock extends CoreBlock{
             //请求重生需要队列里面为空
             if(!(playerSpawnCounter > spawnTime)) return;
             Call.playerSpawn(tile, player);
+            spawnCounter ++;
             spawnPlayer = null;
             playerSpawnCounter = 0f;
         }

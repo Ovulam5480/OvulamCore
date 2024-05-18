@@ -31,7 +31,7 @@ import static mindustry.world.blocks.ConstructBlock.constructed;
 
 public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     public Block targetBlock = Blocks.router;
-    public static Seq<ManufacturerStage> stages = new Seq<>(5);
+    public Seq<ManufacturerStage> stages = new Seq<>(5);
     public TextureRegion[] stageRegion = new TextureRegion[5];
 
     public ManufacturerBlock(String name) {
@@ -115,6 +115,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
          */
     }
 
+    //todo stage 为0引发的问题
     public class ManufacturerBuild extends ConsumeMultiPayloadBuild {
         public int currentStage = 0;
 
@@ -150,11 +151,12 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             }
         }
 
+        //todo 显然没必要复制一份一模一样的贴图
         @Override
         public void draw() {
             Draw.rect(stageRegion[0], x, y);
 
-            Draw.draw(Layer.blockOver - 1f, () -> {
+            Draw.draw(Layer.blockBuilding, () -> {
                 for (int i = 0; i < stages.size; i++) {
                     float stageProgress;
 
@@ -166,14 +168,11 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
                     OvulamShaders.blockManufacturer.time = Time.time;
                     OvulamShaders.blockManufacturer.region = stageRegion[i + 1];
 
-                    Draw.shader(OvulamShaders.blockManufacturer);
                     Draw.rect(stageRegion[i + 1], x, y);
-                    Draw.shader();
-
                 }
             });
 
-            Draw.z(Layer.blockOver);
+            Draw.z(Layer.blockBuilding + 1f);
             Draw.alpha(progress());
             drawPayload();
         }

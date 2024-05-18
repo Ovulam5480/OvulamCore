@@ -1,5 +1,6 @@
 package Ovulam.world.block.No9527;
 
+import arc.struct.ObjectMap;
 import mindustry.Vars;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Building;
@@ -23,6 +24,7 @@ public class 扣核心资源ItemTurret extends Turret {
     public void setStats(){
         super.setStats();
         stats.add(Stat.ammo, StatValues.items(false, itemStacks));
+        stats.add(Stat.ammo, StatValues.ammo(ObjectMap.of(this, shootType)));
     }
 
     @Override

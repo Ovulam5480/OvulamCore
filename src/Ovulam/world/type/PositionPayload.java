@@ -28,4 +28,9 @@ public class PositionPayload{
         return currentPosition.y + building.y;
     }
 
+    //shader
+    public void draw(float alpha){
+        payload.draw();
+    }
+
 }

@@ -1,13 +1,14 @@
 package Ovulam.entities;
 
+import Ovulam.math.OvulamScaled;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.Fill;
 import arc.math.Angles;
 import arc.math.Mathf;
-import arc.math.geom.Vec2;
 import mindustry.entities.Effect;
+import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
-import mindustry.graphics.Layer;
 import mindustry.world.Block;
 
 public class OvulamFx {
@@ -15,32 +16,38 @@ public class OvulamFx {
     none = new Effect(0, 0f, e -> {}),
 
     destroyTitanBlock = new Effect(200f, e -> {
-        if(!(e.data instanceof Block block)) return;
+        if (!(e.data instanceof Block block)) return;
 
         int index = Mathf.floor(e.time / 2f);
         float progress = e.time / 2f - index;
 
-        Vec2 from = new Vec2();
-        Angles.randLenVectors(e.id + index, 1, 12, from::add);
+        Angles.randLenVectors(e.id + index, 1, 12, ((x1, y1) ->
+                Angles.randLenVectors(e.id + index + 1, 1, 12, (x2, y2) -> {
+                    float rx = e.x + Mathf.lerp(x1, x2, progress) * OvulamScaled.fparabola(e.fin());
+                    float ry = e.y + Mathf.lerp(y1, y2, progress) * OvulamScaled.fparabola(e.fin());
 
-        Vec2 to = new Vec2();
-        Angles.randLenVectors(e.id + index + 1, 1, 12, to::add);
+                    Drawf.squareShadow(rx, ry, block.size * 8 * 1.85f, e.fout());
 
-        float rx = e.x + Mathf.lerp(from.x, to.x, progress) * e.foutpow();
-        float ry = e.y + Mathf.lerp(from.y, to.y, progress) * e.foutpow();
+                    Draw.alpha(e.foutpow());
+                    Draw.rect(block.fullIcon, rx, ry);
+                    Draw.reset();
 
-        Draw.z(Layer.block);
-        Drawf.squareShadow(rx, ry, block.size * 8 * 1.85f, e.foutpow());
+                    Draw.mixcol(Color.white, e.foutpow());
+                    Draw.alpha(e.foutpow());
+                    Draw.rect(block.fullIcon, e.x, e.y);
 
-        Draw.alpha(e.foutpow());
-        Draw.rect(block.fullIcon, rx, ry);
+                    Draw.reset();
+                })));
+    }),
 
-        Draw.reset();
-
-        Draw.mixcol(Color.white, e.fout());
-        Draw.alpha(e.fout());
-        Draw.rect(block.fullIcon, e.x, e.y);
-
-        Draw.reset();
+    //todo 相位碎块
+    phaseFragment = new Effect(200f, e -> {
+        if (!(e.data instanceof Building building)) return;
+        int size = building.block.size;
+        Angles.randLenVectors(e.id, size * 2, size * 8 / 4f, size * 8 / 2f, ((x, y) -> {
+            Fill.circle(e.x + x, e.y + y, 4);
+        }));
     });
+
+
 }

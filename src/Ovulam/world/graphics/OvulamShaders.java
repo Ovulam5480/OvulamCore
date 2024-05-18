@@ -13,34 +13,32 @@ import static mindustry.Vars.renderer;
 import static mindustry.graphics.Shaders.getShaderFi;
 
 public class OvulamShaders {
-    public static OvulamBlockManufacturerShader blockManufacturer;
+    public static BlockManufacturerShader blockManufacturer;
     public static OvulamSurfaceShader subspaceShader;
+    public static Alpha alpha;
 
 
     public static void init() {
-        blockManufacturer = new OvulamBlockManufacturerShader();
+        blockManufacturer = new BlockManufacturerShader();
         subspaceShader = new OvulamSurfaceShader("Subspace");
+        alpha = new Alpha();
     }
 
-///////////////////////////////////////////////////////////
-    public static class OvulamFragShader extends Shader{
-        public static Fi getModShaderFi(String file){
-            //咱也不知道为啥变成小写的了
-            return Vars.mods.getMod(OvulamMod.class).root.child("shaders").child(file + ".frag");
-        }
-
-        public OvulamFragShader(String frag){
-            super(getShaderFi("default.vert"), getModShaderFi(frag));
+    ///////////////////////////////////////////////////////////
+    public static class Alpha extends OvulamFragShader {
+        public float alpha;
+        public Alpha() {
+            super("Alpha");
         }
     }
 
-///////////////////////////
-    public static class OvulamBlockManufacturerShader extends OvulamFragShader {
+    ///////////////////////////////////////////////////////////
+    public static class BlockManufacturerShader extends OvulamFragShader {
         public float progress;
         public TextureRegion region = new TextureRegion();
         public float time;
 
-        public OvulamBlockManufacturerShader() {
+        public BlockManufacturerShader() {
             super("BlockManufacturer");
         }
 
@@ -54,16 +52,16 @@ public class OvulamShaders {
         }
     }
 
-//////////////////////////
-    public static class OvulamSurfaceShader extends OvulamFragShader{
+    ///////////////////////////////////////////////////////////
+    public static class OvulamSurfaceShader extends OvulamFragShader {
         Texture noiseTex;
 
-        public OvulamSurfaceShader(String frag){
+        public OvulamSurfaceShader(String frag) {
             super(frag);
             loadNoise();
         }
 
-        public void loadNoise(){
+        public void loadNoise() {
             Core.assets.load("sprites/noise.png", Texture.class).loaded = t -> {
                 t.setFilter(Texture.TextureFilter.linear);
                 t.setWrap(Texture.TextureWrap.repeat);
@@ -71,13 +69,13 @@ public class OvulamShaders {
         }
 
         @Override
-        public void apply(){
+        public void apply() {
             setUniformf("u_campos", Core.camera.position.x - Core.camera.width / 2, Core.camera.position.y - Core.camera.height / 2);
             setUniformf("u_resolution", Core.camera.width, Core.camera.height);
             setUniformf("u_time", Time.time);
 
-            if(hasUniform("u_noise")){
-                if(noiseTex == null){
+            if (hasUniform("u_noise")) {
+                if (noiseTex == null) {
                     noiseTex = Core.assets.get("sprites/noise.png", Texture.class);
                 }
 
@@ -86,6 +84,18 @@ public class OvulamShaders {
 
                 setUniformi("u_noise", 1);
             }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////
+    public static class OvulamFragShader extends Shader {
+        public OvulamFragShader(String frag) {
+            super(getShaderFi("default.vert"), getModShaderFi(frag));
+        }
+
+        public static Fi getModShaderFi(String file) {
+            //咱也不知道为啥变成小写的了
+            return Vars.mods.getMod(OvulamMod.class).root.child("shaders").child(file + ".frag");
         }
     }
 }

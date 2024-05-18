@@ -15,7 +15,7 @@ import mindustry.world.draw.DrawBlock;
 import java.util.HashMap;
 
 public class DrawKnitter extends DrawBlock {
-    public TextureRegion region, spindleRegion, iconRegion, nodeRegion;
+    public TextureRegion region, spindleRegion, iconRegion, nodeRegion, topRegion;
     //轴距离设定中心的半径, 轴本身的半径(节点围绕半径)根据轴数计算出
     public float spindleRadius;
     //轴的数量
@@ -44,6 +44,7 @@ public class DrawKnitter extends DrawBlock {
     @Override
     public void load(Block block){
         region = Core.atlas.find(block.name);
+        topRegion = Core.atlas.find(block.name + "-top");
         spindleRegion = Core.atlas.find(block.name + "-spindle");
         iconRegion = Core.atlas.find(block.name + "-icon");
         nodeRegion = Core.atlas.find(block.name + "-node");
@@ -61,8 +62,11 @@ public class DrawKnitter extends DrawBlock {
         float realRadius = Mathf.approach(progress, centerRadius, Math.abs(progress - centerRadius) * 0.1f);
         buildProgress.replace(build, realRadius);
 
+        Draw.z(Layer.blockBuilding - 1f);
+        Draw.rect(topRegion, build.x, build.y);
+
         for (int i = 0; i < spindleAmount; i++){
-            Draw.z(Layer.blockOver + 1);
+            Draw.z(Layer.blockBuilding - 0.9f);
             int pow = Mathf.pow(-1, i);
 
             //正多边形内角的角度
@@ -76,7 +80,7 @@ public class DrawKnitter extends DrawBlock {
 
             Drawf.spinSprite(spindleRegion, build.x + sx, build.y + sy, rotate - 45);
 
-            Draw.z(Layer.blockOver + 2);
+            Draw.z(Layer.blockBuilding - 0.8f);
 
             float nodeRadius = (float) (Math.cos((90 - 180f / spindleAmount) * Mathf.degreesToRadians) * spindleRadius);
 

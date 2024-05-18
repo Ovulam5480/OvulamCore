@@ -38,7 +38,7 @@ public class DrawMixer extends DrawBlock {
         float sx = Mathf.cos(-approach * 2) * radiusSmail;
         float sy = Mathf.sin(-approach * 2) * radiusSmail;
 
-        Draw.z(Layer.blockOver + 2);
+        Draw.z(Layer.blockOver + 1);
 
         Drawf.spinSprite(rotatorRegion,build.x + bx * 2, build.y + by * 2, build.totalProgress() * 12);
         Drawf.spinSprite(rotatorRegion,build.x - bx + sx, build.y - by + sy, build.totalProgress() * 12);

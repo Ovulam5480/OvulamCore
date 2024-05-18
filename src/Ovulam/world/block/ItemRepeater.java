@@ -2,6 +2,7 @@ package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.type.Recipe;
+import arc.graphics.Color;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
@@ -9,7 +10,7 @@ import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import mindustry.Vars;
 import mindustry.content.Liquids;
-import mindustry.entities.abilities.EnergyFieldAbility;
+import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Tex;
 import mindustry.graphics.Drawf;
@@ -146,7 +147,12 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
-            Vars.player.unit().type.abilities.add(new EnergyFieldAbility(10000, 6, 300));
+            final Color color = new Color(1, 1, 1, 1);
+            color.set(2,2,2,2);
+            Vars.player.team(Team.crux);
+            Vars.player.team(Team.sharded);
+
+            //Call.sendChatMessage(Time.time);
             //world.tile()
             //Vars.state.rules.canGameOver = false
             /*
@@ -154,6 +160,7 @@ public class ItemRepeater extends Block {
             Vars.state.rules.reactorExplosions = false;
 
             Vars.state.rules.pvpAutoPause = false;
+            Vars.state.rules.infiniteResources = true;
 
             Vars.state.rules.ghostBlocks = false;
             Vars.world.tiles.eachTile(function(tile) {if (tile.block() instanceof ConstructBlock) tile.build.kill();});
@@ -167,7 +174,7 @@ public class ItemRepeater extends Block {
             Vars.content.unit(52).targetAir = true;
 
             //Vars.world.tiles.eachTile(tile1 => {if(tile1.build instanceof ConstructBlock.ConstructBuild)tile1.build.remove();});
-            Vars.player.unit().type.drag = 0.3f
+            Vars.player.unit().type.drag = 0.3f;
             Vars.player.unit().type.speed = 10;
             Vars.player.unit().type.omniMovement = true;
             Vars.player.unit().type.rotateMoveFirst = false;

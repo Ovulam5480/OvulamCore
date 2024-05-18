@@ -21,7 +21,7 @@ public class DrawBatchFactory extends DrawBlock {
         Draw.z(Layer.blockOver - 1f);
         Draw.rect(sideRegion, build.x, build.y, build.rotdeg());
 
-        Draw.z(Layer.blockOver + 1f);
+        Draw.z(Layer.blockBuilding - 1);
         Draw.rect(topRegion, build.x, build.y);
         Draw.reset();
     }

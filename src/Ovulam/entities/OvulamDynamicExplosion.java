@@ -23,9 +23,7 @@ public class OvulamDynamicExplosion {
     public OvulamDynamicExplosion(float x, float y, @Nullable Team team,
                                   float flammability, float explosiveness,
                                   float radioactivity, float charge) {
-
-
-        //flammability
+        //todo 非常需要平衡!!
         BulletType fire = new PierceContinuousBulletType(){{
             damage = flammability * 100 / 1200;
             lifetime = 1200;

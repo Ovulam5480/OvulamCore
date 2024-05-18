@@ -41,7 +41,7 @@ public class ConsumePositionPayloadsDynamic extends Consume {
         for(PayloadStack stack : positionPayloadStack.get(build)){
             int amount = ((MultiPayloadBlock.MultiPayloadBlockBuild)build).getPayloadAmount(stack.item);
             table.add(new ReqImage(new ItemImage(stack.item.uiIcon, amount),
-                    () -> amount > stack.amount)).size(Vars.iconMed).padRight(8);
+                    () -> amount >= stack.amount)).size(Vars.iconMed).padRight(8);
             if(++i % 4 == 0) table.row();
         }
     }

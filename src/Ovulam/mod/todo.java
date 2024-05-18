@@ -36,7 +36,7 @@
     //todo 裂解光线 与 烧蚀盾 （√
     //todo “核心”单位
     //todo 巨构---斗轮挖掘站？
-    //todo TMI配方
+    //todo TMI配方 (√
     //todo 动态BUFF
     //todo 遗迹
     //todo 单位地雷能力

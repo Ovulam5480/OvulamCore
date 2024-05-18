@@ -95,6 +95,7 @@ public class BaseStorageBlock extends StorageBlock {
         }
 
         //获得核心提升
+        //todo 肾上腺素时刻
         public boolean coreAugment(){
             return hasCoreMerge() && completelyLinkedCore() != null;
         }

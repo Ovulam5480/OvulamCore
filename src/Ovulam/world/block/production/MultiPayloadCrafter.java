@@ -2,6 +2,7 @@ package Ovulam.world.block.production;
 
 import Ovulam.UI.RecipeTable;
 import Ovulam.entities.OvulamFx;
+import Ovulam.world.block.payload.MultiPayloadBlock;
 import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
@@ -10,10 +11,10 @@ import Ovulam.world.move.MovePayload;
 import Ovulam.world.move.MoveSize;
 import Ovulam.world.type.PositionPayload;
 import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipePayloadManager;
 import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
@@ -33,7 +34,6 @@ import mindustry.gen.Icon;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.graphics.Drawf;
-import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.logic.LAccess;
 import mindustry.type.*;
@@ -54,8 +54,9 @@ import java.util.HashMap;
 import static mindustry.Vars.content;
 import static mindustry.Vars.control;
 
-public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
-    public static Seq<MultiPayloadPlan> plans = new Seq<>(5);
+//能够消耗, 产出载荷和其他资源的多合成工厂
+public class MultiPayloadCrafter extends MultiPayloadBlock {
+    public Seq<MultiPayloadPlan> plans = new Seq<>(5);
     public DrawBlock drawer = new DrawDefault();
     //改变配方清除自身携带的载荷
     public boolean changeClear;
@@ -65,6 +66,8 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     public int tableColumns = 8;
 
     public Effect crafterDestroyEffect = OvulamFx.destroyTitanBlock;
+
+    public Effect craftEffect = Fx.placeBlock;
 
     //待加工区
     public MovePayload moveCapital = new MoveSize();
@@ -76,15 +79,14 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
     private final PayloadStack[] emptyPayloadStacks = {};
 
     //todo 方块保存配置 与 地图保存配置
+    //todo 只要一个配方的方块不需要设置配方
     public MultiPayloadCrafter(String name) {
         super(name);
         destroyEffect = Fx.none;
-        size = 3;
+
         configurable = true;
         clearOnDoubleTap = true;
-        outputsPayload = true;
-        rotate = true;
-        rotateDraw = false;
+
         //todo ???
         dumpFacing = true;
         consumeBuilder.clear();
@@ -116,7 +118,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             }
             plan.inputRecipe.payloadManagers.each(pm -> pm.init(this));
             plan.outputRecipe.payloadManagers.each(pm -> pm.init(this));
+
+            if(!plan.outputRecipe.liquidStacks.isEmpty())outputsLiquid = true;
+            if(!plan.outputRecipe.payloadStacks().isEmpty())outputsPayload = true;
+            if(plan.outputRecipe.power > 0)outputsPower = true;
+            if(plan.inputRecipe.power > 0)consumesPower = true;
         }
+
         super.init();
     }
 
@@ -203,44 +211,63 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             this.outputRecipe = outputRecipe;
         }
 
-        /*
         public MultiPayloadPlan(float craftTime, float warmupSpeed, String name,
                                 Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
                                 float inputPower, boolean inputLiquidCompletely,
                                 Object[] outputItems, Object[] outputLiquids, Object[] outputPayloads,
-                                float outputPower, boolean outputLiquidCompletely,
-                                RecipeMover[] recipeMover) {
+                                float outputPower, boolean outputLiquidCompletely) {
             this.craftTime = craftTime;
             this.warmupSpeed = warmupSpeed;
             this.name = name;
 
             this.inputRecipe = new Recipe(ItemStack.list(inputItems), LiquidStack.list(inputLiquids),
-                    PayloadStack.list(inputPayloads), inputPower, inputLiquidCompletely);
+                    RecipePayloadManager.list(inputPayloads), inputPower, inputLiquidCompletely);
             this.outputRecipe = new Recipe(ItemStack.list(outputItems), LiquidStack.list(outputLiquids),
-                    PayloadStack.list(outputPayloads), outputPower, outputLiquidCompletely);
-
-            this.recipeMover = recipeMover;
+                    RecipePayloadManager.list(outputPayloads), outputPower, outputLiquidCompletely);
         }
 
-         */
     }
 
     /////////////////////////////////
-    //todo 耗电与发电
-    public class MultiPayloadCrafterBuild extends ConsumeMultiPayloadBuild {
+    public class MultiPayloadCrafterBuild extends MultiPayloadBlockBuild {
         public int previousPlan = -1;
         public int currentPlan = -1;
         public int hoveredPlan = -1;
+        //输入到载荷内作为材料的载荷
         public Seq<PositionPayload> inputPayloads = new Seq<>();
+        //作为材料的载荷当中, 用于当前工作的载荷
         public Seq<PositionPayload> craftPayloads = new Seq<>();
+        //输出的产物载荷
         public HashMap<PositionPayload, Integer> outputPayloads = new HashMap<>();
+        public float inputPayloadsAlpha = 1f;
+        public float craftPayloadsAlpha = 1f;
+        public float outputPayloadsAlpha = 1f;
+
         public Seq<PositionPayload> remover = new Seq<>();
+
+        public float progress;
+        public float totalProgress;
+        public float warmup;
+
+        @Override
+        public float progress() {
+            return currentPlan == -1 ? 0 : progress / getCurrentPlan().craftTime;
+        }
+
+        @Override
+        public float totalProgress() {
+            return totalProgress;
+        }
+
+        @Override
+        public float warmup() {
+            return warmup;
+        }
 
         //todo 载荷透明度
         public void buildConfiguration(Table table) {
             table.table(configTable -> {
                 Table recipeShow = new Table(Styles.black3);
-                recipeShow.defaults().size(48, 48).left();
 
                 Table topCont = new Table();
                 int col = Mathf.ceil((float) plans.size / tableColumns);
@@ -260,6 +287,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                                 control.input.config.hideConfig()).tooltip(plan.name).get();
 
                         button.setChecked(currentPlan == index);
+                        //todo icons
                         button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
                         button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
 
@@ -269,13 +297,14 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         });
                         if (i % tableRows == tableRows - 1) cont.row();
                     }
-                    table.fill(table1 -> {
-                        table1.top();
-                        table1.setPosition(0, -40 * col);
-                        table1.add(recipeShow);
-                    });
                 };
                 rebuild.run();
+
+                table.fill(recipeTable -> {
+                    recipeTable.top();
+                    recipeTable.setPosition(0, -40 * col);
+                    recipeTable.add(recipeShow);
+                });
 
                 Table scrollPane = new Table();
                 ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
@@ -290,6 +319,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             });
         }
 
+        //配方表
         private void updateRecipeTable(Table table) {
             table.clear();
             if (hoveredPlan == -1) return;
@@ -297,13 +327,13 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             MultiPayloadPlan plan = plans.get(hoveredPlan);
 
             Recipe inputRecipe = plan.inputRecipe;
-            table.add(Stat.input.localized()).height(48).row();
+            table.label(Stat.input::localized).height(36).row();
             RecipeTable.addRecipeTable(table, inputRecipe);
 
             table.row();
 
             Recipe outputRecipe = plan.outputRecipe;
-            table.add(Stat.output.localized()).height(48).row();
+            table.label(Stat.output::localized).height(36).row();
             RecipeTable.addRecipeTable(table, outputRecipe);
 
             hoveredPlan = -1;
@@ -328,11 +358,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
         }
 
 
-        @Override
-        public float progress() {
-            return currentPlan == -1 ? 0 : progress / getCurrentPlan().craftTime;
-        }
-
         public void drawTargetPosition(){
             positionPayloads.each(positionPayload -> Drawf.dashCircle(x + positionPayload.targetPosition.x,
                     y + positionPayload.targetPosition.y, 3, Pal.accent));
@@ -347,7 +372,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                         y + positionPayload.targetPosition.y, 3, Color.orange);
             }
         }
-
         public void drawOutputLine(){
             for (PositionPayload positionPayload : outputPayloads.keySet()){
                 Drawf.line(Color.pink,
@@ -356,10 +380,17 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             }
         }
 
+        //region  block
+        //sideRegion blockOver - 1
+        //payloads blockOver
+        //workRegion blockOver + 1
+        //topRegion blockBuilding - 1
+        //todo supportRegion blockBuilding - 1, topRegion flyingUnit + 1
+
+        //todo 载荷透明度, 可能会用到着色器?
         @Override
         public void draw() {
             drawer.draw(this);
-            Draw.z(Layer.blockOver);
 
             //总是渲染输出载荷
             for (PositionPayload positionPayload : outputPayloads.keySet()){
@@ -376,9 +407,9 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                 getCurrentPlan().outputRecipe.payloadManagers.each(recipePayloadManager -> recipePayloadManager.drawOutput(this));
             }else inputPayloads.each(positionPayload -> positionPayload.payload.draw());
 
-            drawInputTargetPosition();
-            drawOutputTargetPosition();
-            drawOutputLine();
+            //drawInputTargetPosition();
+            //drawOutputTargetPosition();
+            //drawOutputLine();
         }
 
         //必须空间 和 混合空间
@@ -402,52 +433,51 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
         @Override
         public boolean acceptLiquid(Building source, Liquid liquid) {
-            return currentPlan != -1 && super.acceptLiquid(source, liquid);
+            if(currentPlan == -1) return false;
+            return getInputLiquids().contains(liquidStack -> liquidStack.liquid == liquid);
         }
 
         @Override
         public boolean acceptItem(Building source, Item item) {
-            return currentPlan != -1 && super.acceptItem(source, item);
+            if(currentPlan == -1) return false;
+            ItemStack stack = getInputItems().find(itemStack -> itemStack.item == item);
+            return stack != null && items.get(stack.item) < getMaximumAccepted(item);
         }
 
+        public Seq<MultiPayloadPlan> getPlans(){
+            return plans;
+        }
 
         public MultiPayloadPlan getCurrentPlan() {
             return currentPlan == -1 ? null : plans.get(currentPlan);
         }
 
-        @Override
         public Seq<ItemStack> getInputItems() {
             return getCurrentPlan().inputRecipe.itemStacks;
         }
 
-        @Override
         public Seq<LiquidStack> getInputLiquids() {
             return getCurrentPlan().inputRecipe.liquidStacks;
         }
 
-        @Override
         public boolean getInputLiquidsCompletely() {
             return getCurrentPlan().inputRecipe.liquidCompletely;
         }
 
-        @Override
         public Seq<PayloadStack> getInputPayloads() {
             return getCurrentPlan().inputRecipe.payloadStacks();
         }
 
-        @Override
         public float getInputPower() {
             return getCurrentPlan().inputRecipe.power;
         }
 
-        @Override
         public HashMap<UnlockableContent, MovePayload> getInputMover() {
             HashMap<UnlockableContent, MovePayload> map = new HashMap<>();
             getCurrentPlan().inputRecipe.payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
             return map;
         }
 
-        @Override
         public float getCraftTime() {
             return getCurrentPlan().craftTime;
         }
@@ -535,7 +565,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
                 if (progress >= getCurrentPlan().craftTime) {
                     craft();
-                    Fx.placeBlock.at(x, y, size);
+                    craftEffect.at(x, y, rotation, this);
                 }
             }
 
@@ -604,7 +634,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
 
         //输入的载荷优先填充moveIn，然后填充moveCapital
         //不以moveInMover的容量去判断moveIn是否填满，加工区容纳一次加工所需要的所以载荷
-        @Override
         public void moveInPayloads() {
             //输入判断，所有非输入的载荷都应该输出
             for (PositionPayload positionPayload : craftPayloads) {
@@ -667,6 +696,7 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                 dump(items.first());
             } else if (timer(timerDump, dumpTime / timeScale)) {
                 for (ItemStack output : getOutputItems()) {
+                    //dumpA
                     dump(output.item);
                 }
             }
@@ -717,10 +747,9 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             return !(outputPayloads.size() > getOutMoverCapacity()) && enabled;
         }
 
-        //todo 电力生产，消耗
         @Override
         public float getPowerProduction() {
-            return getCurrentPlan().outputRecipe.power * efficiency;
+            return currentPlan == -1 ? 0 : getOutputPower() * efficiency;
         }
 
         public void craft() {
@@ -729,7 +758,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
             for (var output : getOutputItems()) {
                 this.handleStack(output.item, output.amount, this);
             }
-
 
             if (!getCurrentPlan().outputRecipe.liquidCompletely) {
                 for (var output : getOutputLiquids()) {
@@ -756,9 +784,6 @@ public class MultiPayloadCrafter extends ConsumeMultiPayloadBlock {
                     PositionPayload positionPayload = new PositionPayload(payload, setTargetPosition(i, movePayload), Vec2.ZERO);
 
                     handlePositionPayload(positionPayload);
-                    //立即更新一次, 很奇怪的时, 不更新就不会渲染载荷
-                    //todo 查找原因
-                    updatePayload(positionPayload);
                 }
 
             }

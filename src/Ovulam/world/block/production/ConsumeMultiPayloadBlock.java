@@ -18,16 +18,11 @@ import Ovulam.world.type.PositionPayload;
 
 import java.util.HashMap;
 
+//对载荷和其他资源进行消耗的方块
 public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
     public ConsumeMultiPayloadBlock(String name) {
         super(name);
         size = 15;
-        hasLiquids = true;
-        hasItems = true;
-        acceptsItems = true;
-        solid = true;
-        itemCapacity = 10;
-        liquidCapacity = 100f;
 
         consume(new ConsumeItemDynamic((ConsumeMultiPayloadBuild e) -> e.getInputItems().toArray(ItemStack.class)));
         consume(new ConsumeLiquidsDynamic((ConsumeMultiPayloadBuild e) -> !e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
