@@ -2,15 +2,12 @@ package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.type.Recipe;
-import arc.graphics.Color;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
-import mindustry.Vars;
 import mindustry.content.Liquids;
-import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Tex;
 import mindustry.graphics.Drawf;
@@ -147,10 +144,6 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
-            final Color color = new Color(1, 1, 1, 1);
-            color.set(2,2,2,2);
-            Vars.player.team(Team.crux);
-            Vars.player.team(Team.sharded);
 
             //Call.sendChatMessage(Time.time);
             //world.tile()

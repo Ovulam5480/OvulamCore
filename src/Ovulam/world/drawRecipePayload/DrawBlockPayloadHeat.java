@@ -22,7 +22,7 @@ public class DrawBlockPayloadHeat extends DrawRecipePayload{
 
     @Override
     public void load(Block block) {
-        this.heat = Core.atlas.find(OvulamMod.ovulamName() + "-payload-heat");
+        this.heat = Core.atlas.find(OvulamMod.OvulamModName() + "-payload-heat");
     }
 
     @Override

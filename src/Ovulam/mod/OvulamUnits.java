@@ -1,11 +1,13 @@
 package Ovulam.mod;
 
 import Ovulam.entities.unit.InvitationUnitType;
+import Ovulam.entities.unit.OvulamUnitType;
+import arc.struct.Seq;
 import mindustry.entities.abilities.ForceFieldAbility;
 import mindustry.type.UnitType;
 
 public class OvulamUnits {
-    public static UnitType invitation;
+    public static UnitType invitation, SSS;
 
     public static void load() {
         invitation = new InvitationUnitType("invitation") {{
@@ -17,7 +19,10 @@ public class OvulamUnits {
             flying = true;
             rotateMoveFirst = true;
             rotateSpeed = 0.05f;
+            weapons = new Seq<>();
 
         }};
+
+        SSS = new OvulamUnitType("SSS");
     }
 }

@@ -1,10 +1,8 @@
 package Ovulam.world.block.storage;
 
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Font;
 import arc.math.Mathf;
 import arc.struct.Seq;
-import arc.util.Align;
 import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Fx;
@@ -15,11 +13,8 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.ui.Bar;
-import mindustry.ui.Fonts;
 import mindustry.world.Tile;
 import mindustry.world.blocks.storage.CoreBlock;
-
-import java.util.Arrays;
 
 //todo 木马物品(这个应该交给Events实现功能?
 //会到处跑的核心？
@@ -97,9 +92,9 @@ public class BaseCoreBlock extends CoreBlock{
         @Override
         public void draw(){
             super.draw();
-            Font font = Fonts.outline;
-            font.draw(Arrays.toString(coreAugment), x, y - 20, Align.center);
-            font.draw(String.valueOf(unitSpawnCounter), x, y + 20, Align.center);
+            //Font font = Fonts.outline;
+            //font.draw(Arrays.toString(coreAugment), x, y - 20, Align.center);
+            //font.draw(String.valueOf(unitSpawnCounter), x, y + 20, Align.center);
 
             float spawnCounter = Math.max(playerSpawnCounter, unitSpawnCounter);
             if(spawnCounter > 0.1f){

@@ -19,16 +19,16 @@ public class OvulamTMIRecipeParser{
                                  Ovulam.world.type.Recipe planOut){
             recipe.setTime(craftTime);
 
-            planIn.itemStacks.forEach(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
-            planIn.liquidStacks.forEach(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
+            planIn.itemStacks.each(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
+            planIn.liquidStacks.each(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
                     planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planIn.payloadStacks().forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
+            planIn.payloadStacks().each(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
             if(planIn.power > 0) recipe.addMaterialPersec(PowerMark.INSTANCE, planIn.power);
 
-            planOut.itemStacks.forEach(itemStack -> recipe.addProduction(getWrap(itemStack.item), itemStack.amount));
-            planOut.liquidStacks.forEach(liquidStack -> recipe.addProduction(getWrap(liquidStack.liquid),
+            planOut.itemStacks.each(itemStack -> recipe.addProduction(getWrap(itemStack.item), itemStack.amount));
+            planOut.liquidStacks.each(liquidStack -> recipe.addProduction(getWrap(liquidStack.liquid),
                     planOut.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planOut.payloadStacks().forEach(payloadStack -> recipe.addProduction(getWrap(payloadStack.item), payloadStack.amount));
+            planOut.payloadStacks().each(payloadStack -> recipe.addProduction(getWrap(payloadStack.item), payloadStack.amount));
             if(planOut.power > 0)recipe.addProductionPersec(PowerMark.INSTANCE, planOut.power);
         }
 
@@ -43,7 +43,7 @@ public class OvulamTMIRecipeParser{
             Seq<Recipe> recipes = new Seq<>();
 
             block.plans.each(plan -> {
-                Recipe recipe = new Recipe(RecipeType.getFactory());
+                Recipe recipe = new Recipe(RecipeType.factory);
                 recipe.setBlock(getWrap(block));
                 planToRecipe(recipe, plan.craftTime, plan.inputRecipe, plan.outputRecipe);
                 recipes.add(recipe);
@@ -58,10 +58,10 @@ public class OvulamTMIRecipeParser{
         public void planToRecipe(Recipe recipe, float craftTime, Ovulam.world.type.Recipe planIn){
             recipe.setTime(craftTime);
 
-            planIn.itemStacks.forEach(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
-            planIn.liquidStacks.forEach(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
+            planIn.itemStacks.each(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
+            planIn.liquidStacks.each(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
                     planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
-            planIn.payloadStacks().forEach(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
+            planIn.payloadStacks().each(payloadStack -> recipe.addMaterial(getWrap(payloadStack.item), payloadStack.amount));
             if(planIn.power > 0) recipe.addMaterialPersec(PowerMark.INSTANCE, planIn.power);
         }
 
@@ -76,7 +76,7 @@ public class OvulamTMIRecipeParser{
             Seq<Recipe> recipes = new Seq<>();
 
             block.stages.each(stage -> {
-                Recipe recipe = new Recipe(RecipeType.getBuilding());
+                Recipe recipe = new Recipe(RecipeType.building);
                 recipe.setBlock(getWrap(block.targetBlock));
                 planToRecipe(recipe, stage.craftTime, stage.inputRecipe);
                 recipes.add(recipe);

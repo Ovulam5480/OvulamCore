@@ -18,6 +18,7 @@ public class PayloadStorageBlock extends BaseStorageBlock{
     public float payloadSpeed = 0.7f, payloadRotateSpeed = 5f;
     public PayloadStorageBlock(String name) {
         super(name);
+        acceptsPayload = true;
     }
 
     public class PayloadStorageBuild extends BaseStorageBuild {

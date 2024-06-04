@@ -5,6 +5,7 @@ import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Lines;
 import arc.math.Mathf;
 import arc.math.geom.Rect;
+import arc.struct.IntMap;
 import mindustry.Vars;
 import mindustry.game.Team;
 import mindustry.gen.Building;
@@ -13,9 +14,6 @@ import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.graphics.Shaders;
 import mindustry.world.Block;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static arc.util.Time.time;
 import static mindustry.Vars.indexer;
@@ -45,7 +43,7 @@ public class TeamChangeTower extends Block {
 
 
     public class DerelictChangeTowerBuild extends Building {
-        Map<Integer, Float> cprogress = new HashMap<>();
+        IntMap<Float> cprogress = new IntMap<>();
         public float progress;
 
         public Rect rect(float x, float y, float size){
@@ -86,7 +84,7 @@ public class TeamChangeTower extends Block {
         @Override
         public void updateTile(){
             nearBuildings(Team.derelict, maxCapital, t -> {
-                cprogress.putIfAbsent(t.pos(), 0f);
+                cprogress.put(t.pos(), 0f);
                 if(cprogress.get(t.pos()) >= t.block.buildCost){
                     t.changeTeam(this.team);
                     t.enabled = true;

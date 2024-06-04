@@ -21,6 +21,7 @@ import mindustry.world.blocks.storage.StorageBlock;
 import static mindustry.Vars.player;
 import static mindustry.Vars.world;
 
+//todo 仓库周围放置核心时, 仓库的物品合并到核心内
 public class BaseStorageBlock extends StorageBlock {
     public TextureRegion region, topRegion, teamRegion1, teamRegion2, iconRegion;
 

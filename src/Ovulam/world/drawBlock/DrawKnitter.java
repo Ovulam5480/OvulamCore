@@ -5,14 +5,13 @@ import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
+import arc.struct.ObjectMap;
 import mindustry.content.Items;
 import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.world.Block;
 import mindustry.world.draw.DrawBlock;
-
-import java.util.HashMap;
 
 public class DrawKnitter extends DrawBlock {
     public TextureRegion region, spindleRegion, iconRegion, nodeRegion, topRegion;
@@ -26,7 +25,7 @@ public class DrawKnitter extends DrawBlock {
     public float centerRadiusFrom;
     public float centerRadiusTo;
 
-    public HashMap<Building, Float> buildProgress = new HashMap<>();
+    public ObjectMap<Building, Float> buildProgress = new ObjectMap<>();
 
     public DrawKnitter(float spindleRadius, int spindleAmount, float speedMultiplier, float centerRadius){
         this(spindleRadius, spindleAmount, speedMultiplier, centerRadius, centerRadius);
@@ -60,7 +59,7 @@ public class DrawKnitter extends DrawBlock {
         float centerRadius = Mathf.lerp(centerRadiusFrom, centerRadiusTo, build.progress());
 
         float realRadius = Mathf.approach(progress, centerRadius, Math.abs(progress - centerRadius) * 0.1f);
-        buildProgress.replace(build, realRadius);
+        buildProgress.put(build, realRadius);
 
         Draw.z(Layer.blockBuilding - 1f);
         Draw.rect(topRegion, build.x, build.y);

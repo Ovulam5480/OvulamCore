@@ -114,6 +114,7 @@ public class InvitationUnitType extends UnitType {
             }
         }
 
+        @Override
         public boolean hittable() {
             if (resurrecting) return false;
             return super.hittable();

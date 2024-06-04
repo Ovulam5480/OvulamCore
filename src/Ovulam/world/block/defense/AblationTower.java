@@ -12,6 +12,7 @@ import arc.math.geom.Geometry;
 import arc.math.geom.Intersector;
 import arc.math.geom.Vec2;
 import arc.struct.FloatSeq;
+import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Align;
 import arc.util.Time;
@@ -27,8 +28,6 @@ import mindustry.logic.LAccess;
 import mindustry.ui.Fonts;
 import mindustry.world.Block;
 import mindustry.world.consumers.Consume;
-
-import java.util.HashMap;
 
 import static mindustry.Vars.tilesize;
 
@@ -105,7 +104,7 @@ public class AblationTower extends Block {
 
 
     public class AblationTowerBuild extends Building {
-        public HashMap<Bullet, int[]> bulletAndPoint = new HashMap<>();
+        public ObjectMap<Bullet, int[]> bulletAndPoint = new ObjectMap<>();
         public int color;
         public float lerpDeltaRadius = 0;
         public int previousPoint = segmentPoint;
@@ -182,7 +181,7 @@ public class AblationTower extends Block {
                     lerpDeltaRadius * 2f, lerpDeltaRadius * 2f).select(bullet ->
                     Intersector.isInPolygon(polygon(x, y, side, lerpDeltaRadius), 0, side * 2, bullet.x, bullet.y));
 
-            HashMap<Bullet, int[]> bulletPositions = new HashMap<>();
+            ObjectMap<Bullet, int[]> bulletPositions = new ObjectMap<>();
             bulletSeq.each(bullet -> {
                 int[] positions = new int[side / 2];
                 for (int i = 0; i < side / 2; i++) {
@@ -198,10 +197,10 @@ public class AblationTower extends Block {
                 bulletPositions.put(bullet, positions);
             });
 
-            bulletPositions.forEach(this::damageBullet);
+            bulletPositions.each(this::damageBullet);
 
             Seq<Bullet> bullets = new Seq<>();
-            bulletAndPoint.forEach((bullet, ints) -> {
+            bulletAndPoint.each((bullet, ints) -> {
                 if (!bulletPositions.containsKey(bullet)) bullets.add(bullet);
             });
             bullets.each(bulletAndPoint::remove);

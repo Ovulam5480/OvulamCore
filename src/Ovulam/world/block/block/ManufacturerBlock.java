@@ -9,6 +9,7 @@ import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
+import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Time;
 import mindustry.Vars;
@@ -25,8 +26,6 @@ import mindustry.ui.Bar;
 import mindustry.world.Block;
 import mindustry.world.meta.Stat;
 
-import java.util.HashMap;
-
 import static mindustry.world.blocks.ConstructBlock.constructed;
 
 public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
@@ -42,7 +41,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     @Override
     public void init() {
         size = targetBlock.size;
-        stages.each(stage -> stage.inputRecipe.payloadManagers.forEach(pm -> pm.init(this)));
+        stages.each(stage -> stage.inputRecipe.payloadManagers.each(pm -> pm.init(this)));
         super.init();
     }
 
@@ -212,8 +211,8 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         }
 
         @Override
-        public HashMap<UnlockableContent, MovePayload> getInputMover() {
-            HashMap<UnlockableContent, MovePayload> map = new HashMap<>();
+        public ObjectMap<UnlockableContent, MovePayload> getInputMover() {
+            ObjectMap<UnlockableContent, MovePayload> map = new ObjectMap<>();
             getRecipe().payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
             return map;
         }

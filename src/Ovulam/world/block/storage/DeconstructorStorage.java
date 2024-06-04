@@ -2,12 +2,10 @@ package Ovulam.world.block.storage;
 
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
-import arc.graphics.g2d.Font;
 import arc.graphics.g2d.Lines;
 import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
-import arc.util.Align;
 import arc.util.Nullable;
 import mindustry.Vars;
 import mindustry.content.Fx;
@@ -21,16 +19,14 @@ import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.type.ItemSeq;
 import mindustry.type.ItemStack;
-import mindustry.ui.Fonts;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.UnitPayload;
 
-import java.util.Arrays;
-
 import static arc.graphics.g2d.Draw.color;
 import static arc.math.Angles.randLenVectors;
-import static mindustry.Vars.*;
+import static mindustry.Vars.content;
+import static mindustry.Vars.tilesize;
 
 public class DeconstructorStorage extends PayloadStorageBlock {
     public float deconstructSpeed = 2.5f;
@@ -49,28 +45,22 @@ public class DeconstructorStorage extends PayloadStorageBlock {
     public class DeconstructorStorageBuild extends PayloadStorageBuild {
         public @Nullable Payload deconstructing;
         public float progress;
+        //输出目标, 通常是自身, 与核心相贴时是核心
         public Building target;
         public @Nullable float[] accum = new float[content.items().size];
         public float time, speedScl, lineX;
-        public ItemSeq requirements;
+        public ItemSeq requirements = new ItemSeq();
 
 
         public boolean acceptUnitPayload(Unit unit) {
             return payload == null && deconstructing == null && unit.type.allowedInPayloads && !unit.spawnedByCore
-                    && unit.type.getTotalRequirements().length > 0 && unit.hitSize / tilesize <= maxPayloadSize
+                    && unit.hitSize / tilesize <= maxPayloadSize
                     && (unit.type().payloadCapacity == 0 || !(unit instanceof Payloadc p && p.hasPayload()));
         }
 
         @Override
         public boolean acceptPayload(Building source, Payload payload) {
-            return deconstructing == null && this.payload == null && super.acceptPayload(source, payload)
-                    && payload.requirements().length > 0 && payload.fits(maxPayloadSize);
-        }
-
-        @Override
-        public void handlePayload(Building source, Payload payload) {
-            super.handlePayload(source, payload);
-            accum = null;
+            return this.payload == null && deconstructing == null && payload.fits(maxPayloadSize);
         }
 
         public void handlePayloadItem(Payload payload, Item item) {
@@ -85,7 +75,7 @@ public class DeconstructorStorage extends PayloadStorageBlock {
             }
 
             int itemSpace = target.block.itemCapacity - target.items.get(item);
-            target.items.add(item, Math.min(itemSpace, itemAmount));
+            target.items.add(item, Mathf.clamp(itemSpace, 0, itemAmount));
         }
 
         public boolean canAcceptItem(Item item) {
@@ -100,55 +90,51 @@ public class DeconstructorStorage extends PayloadStorageBlock {
         public void updateTile() {
             super.updateTile();
 
+            boolean canProgress = deconstructing != null;
+
+            payRotation = Angles.moveToward(payRotation, 90f, payloadRotateSpeed * edelta() * (coreAugment() ? 10 : 1));
+            speedScl = Mathf.lerpDelta(speedScl, Mathf.sign(canProgress), 0.1f);
+
             if (hasCoreMerge()) target = getProximityCore().first();
             else target = this;
 
-            boolean canProgress = true;
-
-            //如果存在解构载荷
-            if (deconstructing != null) {
-                //如果accum的某个值大于1(canAcceptItem 为 false),停止工作，用于taken
-                //开启核心焚烧时不停止工作
-                for (int i = 0; i < content.items().size; i++) {
-                    if ((accum[i] >= 1 && !state.rules.coreIncinerates)){
-                        canProgress = false;
-                        break;
-                    }
-                }
-            }else progress = 0f;
-
-            payRotation = Angles.moveToward(payRotation, 90f, payloadRotateSpeed * edelta());
-            speedScl = Mathf.lerpDelta(speedScl, Mathf.sign(canProgress), 0.1f);
-
-            for (Item item : content.items()) {
-                //核心对于该物品的剩余空间
-                int taken = acceptItemAmount(item);
-                if (canAcceptItem(item)) {
-                    target.items.add(item, taken);
-                    accum[item.id] -= taken;
-                }
-            }
-
-            //如果能进行
             if (canProgress) {
-
                 //特效
                 float ey = Mathf.range(size * tilesize / 2f);
                 if (Mathf.chanceDelta(Math.abs(Mathf.cos(time, 20f, 1)))) {
                     DeconstructorEffect.at(x + lineX, y + ey, rotation);
                 }
                 //转化值
-                float shift = edelta() * deconstructSpeed / deconstructing.buildTime();
-                float realShift = Math.min(shift, 1f - progress);
+                float shift;
+                float realShift;
 
-                progress += shift;
+                if(coreAugment()){
+                    realShift = progress = 1f;
+                }else {
+                    shift = edelta() * deconstructSpeed / deconstructing.buildTime();
+                    realShift = Math.min(shift, 1f - progress);
+                    progress += shift;
+                }
                 time += edelta();
 
                 for (Item item : content.items()) {
                     accum[item.id] += requirements.get(item) * (payload instanceof BuildPayload ?
                             Vars.state.rules.buildCostMultiplier : Vars.state.rules.unitCost(team)) * realShift;
                 }
-            }
+
+                //处理 解构载荷时 的物品获取
+                for (Item item : content.items()) {
+                    int has = Mathf.floor(accum[item.id]);
+                    //todo state.rules.coreIncinerates
+                    if(has == 0)continue;
+                    //对于该物品的剩余空间, 确保不会溢出物品
+                    int taken = Math.min(has, acceptItemAmount(item));
+                    if (canAcceptItem(item)) {
+                        target.items.add(item, taken);
+                        accum[item.id] -= taken;
+                    }
+                }
+            }else progress = 0f;
 
             if (progress >= 1f) {
                 boolean checkErrors = true;
@@ -169,7 +155,6 @@ public class DeconstructorStorage extends PayloadStorageBlock {
                     Fx.breakBlock.at(x, y, deconstructing.size() / tilesize);
                     deconstructing = null;
                 }
-
                 requirements.clear();
             }
 
@@ -190,10 +175,7 @@ public class DeconstructorStorage extends PayloadStorageBlock {
 
         @Override
         public void draw() {
-            Font font = Fonts.outline;
             Draw.rect(region, x, y);
-
-            font.draw(Arrays.toString(accum), x, y - 20, Align.center);
 
             Draw.z(Layer.blockOver);
             drawPayload();
@@ -227,6 +209,7 @@ public class DeconstructorStorage extends PayloadStorageBlock {
             //todo 颜色应当对齐  team和remove
             Draw.color(linkedCore != null ? team.color : Pal.remove);
             Draw.rect(Mathf.mod((rotation), 4) < 2 ? teamRegion1 : teamRegion2, x, y, rotation * 90);
+            Draw.reset();
 
         }
 

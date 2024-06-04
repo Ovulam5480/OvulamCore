@@ -26,9 +26,14 @@ public class OvulamShaders {
 
     ///////////////////////////////////////////////////////////
     public static class Alpha extends OvulamFragShader {
-        public float alpha;
+        public float alpha = 1f;
         public Alpha() {
             super("Alpha");
+        }
+
+        @Override
+        public void apply() {
+            setUniformf("u_alpha", alpha);
         }
     }
 
@@ -94,7 +99,6 @@ public class OvulamShaders {
         }
 
         public static Fi getModShaderFi(String file) {
-            //咱也不知道为啥变成小写的了
             return Vars.mods.getMod(OvulamMod.class).root.child("shaders").child(file + ".frag");
         }
     }

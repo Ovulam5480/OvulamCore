@@ -2,25 +2,26 @@ package Ovulam.mod;
 
 import Ovulam.entities.bullet.MortarBulletType;
 import Ovulam.mod.Blocks.Crafting;
-import Ovulam.world.block.No9527.Drill9527;
-import Ovulam.world.block.No9527.LaserMassDriver;
+import Ovulam.mod.Blocks.Effect;
+import Ovulam.world.No9527.Drill9527;
+import Ovulam.world.No9527.LaserLaserBulletType;
+import Ovulam.world.No9527.RoundBUFFAbility;
+import Ovulam.world.block.AAABlock;
 import Ovulam.world.block.block.ItemBlock;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.defense.ItemStackTurret;
 import Ovulam.world.block.defense.Mortar;
 import Ovulam.world.block.production.PayloadDrill;
-import Ovulam.world.block.storage.PayloadDeconstructorStorage;
 import Ovulam.world.drawBlock.DrawOrganize;
 import mindustry.Vars;
-import mindustry.content.Blocks;
-import mindustry.content.Items;
-import mindustry.content.Liquids;
+import mindustry.content.*;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.turrets.LaserTurret;
 
 public class OvulamBlocks {
     //大型垃圾堆
@@ -38,16 +39,24 @@ public class OvulamBlocks {
 
     public static void load() {
         Crafting.load();
+        Effect.load();
+
+        UnitTypes.mono.abilities.add(new RoundBUFFAbility(StatusEffects.overclock, 60f * 6, 60f * 6f, 60f));
+
+        SSSSS = new AAABlock("SSSSS"){{
+            requirements(Category.defense, new ItemStack[]{});
+        }};
+
+        ((LaserTurret)Blocks.meltdown).shootType = new LaserLaserBulletType(){{
+            length = 180f;
+            drawSize = 420f;
+        }};
 
         itemBlocks = new Block[Vars.content.items().size];
         for (int i = 0; i < Vars.content.items().size; i++){
             itemBlocks[i] = new ItemBlock(Vars.content.item(i), 2);
 
         }
-
-        Blocks.massDriver = new LaserMassDriver("ssss"){{
-            requirements(Category.defense, new ItemStack[]{});
-        }};
 
         AblationTower = new AblationTower("AblationTower") {{
             side = 8;
@@ -121,11 +130,6 @@ public class OvulamBlocks {
             consumeLiquid(Liquids.slag, 0.1f).boost();
             tier = 9527;
             liquidBoostIntensity = 2f;
-        }};
-
-        PayloadDeconstructorStorage = new PayloadDeconstructorStorage("payload-deconstructor-storage") {{
-            requirements(Category.defense, new ItemStack[]{});
-            size = 6;
         }};
     }
 }

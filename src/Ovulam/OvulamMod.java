@@ -1,17 +1,14 @@
 package Ovulam;
 
-import Ovulam.UI.StoryTable;
-import Ovulam.entities.unit.InvitationUnitType;
 import Ovulam.mod.OvulamBlocks;
+import Ovulam.mod.OvulamEvents;
 import Ovulam.mod.OvulamItems;
 import Ovulam.mod.OvulamUnits;
 import Ovulam.world.graphics.OvulamShaders;
-import arc.Events;
-import mindustry.content.UnitTypes;
 import mindustry.mod.Mod;
 
 public class OvulamMod extends Mod{
-    public static String ovulamName(){
+    public static String OvulamModName(){
         return "ovulam";
     }
 
@@ -19,18 +16,17 @@ public class OvulamMod extends Mod{
     }
     @Override
     public void init() {
+        OvulamEvents.init();
     }
 
     @Override
     public void loadContent(){
 
+        OvulamShaders.init();
+
         OvulamBlocks.load();
         OvulamItems.load();
         OvulamUnits.load();
-
-        OvulamShaders.init();
-
-        Events.on(InvitationUnitType.InvitationUnitEntity.class, invitationUnitEntity -> new StoryTable(UnitTypes.mono.fullIcon,"AAAAAA"));
 
         //OvulamUI.init();
     }

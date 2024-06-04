@@ -3,6 +3,7 @@ package Ovulam.world.block.production;
 import Ovulam.world.block.payload.MultiPayloadBlock;
 import Ovulam.world.consumers.ConsumeLiquidsDynamicCompletely;
 import Ovulam.world.consumers.ConsumePowerDynamicCanBeNegative;
+import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Building;
@@ -15,8 +16,6 @@ import mindustry.world.consumers.ConsumeLiquidsDynamic;
 import Ovulam.world.consumers.ConsumePositionPayloadsDynamic;
 import Ovulam.world.move.MovePayload;
 import Ovulam.world.type.PositionPayload;
-
-import java.util.HashMap;
 
 //对载荷和其他资源进行消耗的方块
 public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
@@ -85,7 +84,7 @@ public class ConsumeMultiPayloadBlock extends MultiPayloadBlock {
 
         public abstract float getInputPower();
 
-        public abstract HashMap<UnlockableContent, MovePayload> getInputMover();
+        public abstract ObjectMap<UnlockableContent, MovePayload> getInputMover();
 
         public abstract float getCraftTime();
 
