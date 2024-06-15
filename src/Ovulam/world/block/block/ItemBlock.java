@@ -1,7 +1,10 @@
 package Ovulam.world.block.block;
 
+import Ovulam.OvulamMod;
+import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import mindustry.gen.Building;
 import mindustry.type.Item;
@@ -10,6 +13,7 @@ import mindustry.world.Block;
 
 public class ItemBlock extends Block {
     public Item item;
+    public TextureRegion itemRegion;
 
     public ItemBlock(Item item, int blockSize){
         super("ItemBlock-" + item.name + "-" + blockSize);
@@ -27,8 +31,16 @@ public class ItemBlock extends Block {
 
     @Override
     public void init(){
+        //pixmap真是太他🐎的离谱了哎!!!
         this.requirements = new ItemStack[]{new ItemStack(item, 72 * Mathf.pow(size, 3))};
         super.init();
+    }
+
+    @Override
+    public void load() {
+        super.load();
+        itemRegion = item.fullIcon;
+        region = Core.atlas.find(OvulamMod.OvulamModName() + "ItemBlock-" + size);
     }
 
     public Color itemColor(){
@@ -36,27 +48,26 @@ public class ItemBlock extends Block {
         return color.fromHsv(color.hue(),color.saturation() * 1.5f,color.value() * 1.3f);
     }
 
-    //name这玩意真麻烦
-    @Override
-    public void load(){
-        super.load();
-    }
+    //@Override
+    //public TextureRegion[] icons() {
+    //    return new TextureRegion[]{itemRegion, region};
+    //}
 
 
     public class ItemBlockBuild extends Building {
 
         @Override
-        public void draw(){
+        public void draw() {
             Draw.color(itemColor());
             Draw.rect(region, x, y);
             Draw.reset();
         }
+
 
         @Override
         public void damage(float damage){
             damage = Math.max((1 + Mathf.pow(maxHealth, -1 / (1 + damage))) * maxHealth / 10f, damage);
             super.damage(damage);
         }
-
     }
 }

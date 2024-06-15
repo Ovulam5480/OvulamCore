@@ -36,7 +36,7 @@ import Ovulam.world.block.block.PayloadOre;
 import static arc.util.Time.time;
 import static mindustry.Vars.*;
 
-public class PayloadDrill extends PayloadBlock {
+public class  PayloadDrill extends PayloadBlock {
     public PayloadOre oreBlock;
     protected final ObjectIntMap<Item> oreCount = new ObjectIntMap<>();
     protected final Seq<Item> itemArray = new Seq<>();

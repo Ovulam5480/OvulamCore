@@ -28,9 +28,13 @@ public class PositionPayload{
         return currentPosition.y + building.y;
     }
 
-    //shader
+    //todo shader
     public void draw(float alpha){
         payload.draw();
+    }
+    @Override
+    public String toString(){
+        return payload.content().localizedName + " at " + currentPosition.toString();
     }
 
 }

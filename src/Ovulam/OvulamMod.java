@@ -1,15 +1,12 @@
 package Ovulam;
 
-import Ovulam.mod.OvulamBlocks;
-import Ovulam.mod.OvulamEvents;
-import Ovulam.mod.OvulamItems;
-import Ovulam.mod.OvulamUnits;
+import Ovulam.mod.*;
 import Ovulam.world.graphics.OvulamShaders;
 import mindustry.mod.Mod;
 
 public class OvulamMod extends Mod{
     public static String OvulamModName(){
-        return "ovulam";
+        return "ovulam-";
     }
 
     public OvulamMod(){
@@ -21,13 +18,13 @@ public class OvulamMod extends Mod{
 
     @Override
     public void loadContent(){
-
         OvulamShaders.init();
+        OvulamUnitTypes.load();
 
         OvulamBlocks.load();
         OvulamItems.load();
-        OvulamUnits.load();
 
+        OvulamPlanets.load();
         //OvulamUI.init();
     }
 }

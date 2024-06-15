@@ -1,5 +1,6 @@
 package Ovulam.mod.Blocks;
 
+import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.storage.*;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
@@ -7,12 +8,13 @@ import mindustry.world.Block;
 
 public class Effect {
     public static Block
-            baseCore,
-            deconstructorStorage, playerSpawnStorage, unloaderStorage;
+            coreMartialDragon,
+            deconstructorStorage, playerSpawnStorage, unloaderStorage,
+            AblationTower;
 
     public static void load(){
-        baseCore = new BaseCoreBlock("core-base"){{
-            size = 8;
+        coreMartialDragon = new BaseCoreBlock("core-martial-dragon"){{
+            size = 15;
             requirements(Category.effect, new ItemStack[]{});
         }};
 
@@ -29,6 +31,12 @@ public class Effect {
         unloaderStorage = new UnloaderStorage("unloader-storage"){{
             size = 8;
             requirements(Category.effect, new ItemStack[]{});
+        }};
+
+        AblationTower = new AblationTower("AblationTower") {{
+            side = 8;
+            size = 4;
+            requirements(Category.defense, new ItemStack[]{});
         }};
 
     }

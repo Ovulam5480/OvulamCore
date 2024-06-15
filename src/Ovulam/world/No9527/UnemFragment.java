@@ -114,7 +114,7 @@ public class UnemFragment extends MenuFragment {
             TextureRegion[] logos = new TextureRegion[frames];
 
             for (int i = 0; i < frames; i++){
-                logos[i] = Core.atlas.find(OvulamMod.OvulamModName() + "-Image" + i);
+                logos[i] = Core.atlas.find(OvulamMod.OvulamModName() + "Image" + i);
             }
 
             int index = (int) ((Time.time / 100 * 60 / frames间隔) % frames);

@@ -32,6 +32,11 @@ public class ItemRepeater extends Block {
     }
 
     @Override
+    public void init() {
+        super.init();
+    }
+
+    @Override
     public void load(){
         super.load();
     }

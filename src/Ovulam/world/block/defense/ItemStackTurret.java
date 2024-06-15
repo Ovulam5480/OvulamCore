@@ -19,6 +19,7 @@ public class ItemStackTurret extends Turret {
         hasItems = true;
         maxAmmo = 150;
         range = 400;
+        separateItemCapacity = false;
 
         shootEffect = Fx.shootBig;
     }
@@ -27,6 +28,12 @@ public class ItemStackTurret extends Turret {
     @Override
     public void init(){
         itemCapacity = maxAmmo;
+
+        bullet.fragBullet = new OvulamDynamicExplosionBulletType();
+        bullet.fragBullets = 1;
+
+        limitRange(bullet, 0f);
+
         super.init();
     }
 
@@ -79,21 +86,14 @@ public class ItemStackTurret extends Turret {
         @Override
         public BulletType peekAmmo(){
             BulletType bulletType = bullet.copy();
+            float flammability = items.sum((item, amount) -> item.flammability * amount) * flammabilityMultiplier;
+            float explosiveness = items.sum((item, amount) -> item.explosiveness * amount) * explosivenessMultiplier;
+            float radioactivity = items.sum((item, amount) -> item.radioactivity * amount) * radioactivityMultiplier;
+            float charge = items.sum((item, amount) -> item.charge * amount) * chargeMultiplier;
 
-            float flammability = items.sum((item, amount) -> item.flammability * amount * flammabilityMultiplier);
-            float explosiveness = items.sum((item, amount) -> item.explosiveness * amount * explosivenessMultiplier);
-            float radioactivity = items.sum((item, amount) -> item.radioactivity * amount * radioactivityMultiplier);
-            float charge = items.sum((item, amount) -> item.charge * amount * chargeMultiplier);
-
-            bulletType.fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
-            bulletType.fragBullets = 1;
+            ((OvulamDynamicExplosionBulletType)bulletType.fragBullet).setAttribute(flammability, explosiveness, radioactivity, charge);
 
             return bulletType;
-        }
-
-        @Override
-        public byte version(){
-            return 2;
         }
 
         @Override

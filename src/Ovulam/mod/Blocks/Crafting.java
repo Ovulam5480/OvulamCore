@@ -1,11 +1,14 @@
 package Ovulam.mod.Blocks;
 
 import Ovulam.entities.OvulamFx;
+import Ovulam.world.block.block.ManufacturerBlock;
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.drawBlock.DrawBatchFactory;
 import Ovulam.world.drawBlock.DrawKnitter;
 import Ovulam.world.drawBlock.DrawMixer;
 import Ovulam.world.drawRecipePayload.DrawPayloadDefault;
+import Ovulam.world.drawRecipePayload.DrawPayloadExpansion;
+import Ovulam.world.move.MoveCustomP16;
 import Ovulam.world.move.MoveCustomP9;
 import arc.struct.Seq;
 import mindustry.content.Blocks;
@@ -18,27 +21,12 @@ import mindustry.world.Block;
 public class Crafting {
     public static Block
             knitter, mixer, batchFactory,
-            batchFactoryBase ,mixerBase;
+            knitterBase, mixerBase, batchFactoryBase;
     public static void load(){
         batchFactory = new MultiPayloadCrafter("batch-factory") {{
-            requirements(Category.defense, new ItemStack[]{});
+            requirements(Category.crafting, new ItemStack[]{});
             size = 15;
             drawer = new DrawBatchFactory();
-            plans = new Seq<>();
-        }};
-
-        mixer = new MultiPayloadCrafter("mixer") {{
-            requirements(Category.defense, new ItemStack[]{});
-            size = 15;
-            drawer = new DrawMixer();
-            plans = new Seq<>();
-        }};
-
-        knitter = new MultiPayloadCrafter("knitter") {{
-            requirements(Category.defense, new ItemStack[]{});
-            size = 15;
-            craftEffect = OvulamFx.phaseFragment;
-            drawer = new DrawKnitter(32f, 16, 2f, 0f,16f);
             plans = Seq.with(
                     new MultiPayloadPlan(300f, 1f, "123",
                             new Object[]{},
@@ -53,6 +41,115 @@ public class Crafting {
                                     Blocks.titaniumWallLarge, 3, new MoveCustomP9(new int[]{0, 4, 8}, 16f), new DrawPayloadDefault()
                             }, 120, true
                     )
+            );
+        }};
+
+        mixer = new MultiPayloadCrafter("mixer") {{
+            requirements(Category.crafting, new ItemStack[]{});
+            size = 15;
+            drawer = new DrawMixer();
+            plans = Seq.with(
+                    new MultiPayloadPlan(300f, 1f, "123",
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{
+                                    Blocks.copperWallLarge, 5, new MoveCustomP9(new int[]{0,2,4,6,8},16f), new DrawPayloadDefault(),
+                                    Blocks.thoriumWallLarge, 4, new MoveCustomP9(new int[]{1,3,5,7},16f), new DrawPayloadDefault()
+                            }, 0f, false,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{
+                                    Blocks.titaniumWallLarge, 3, new MoveCustomP9(new int[]{0, 4, 8}, 16f), new DrawPayloadDefault()
+                            }, 120, true
+                    )
+            );
+        }};
+
+        knitter = new MultiPayloadCrafter("knitter") {{
+            requirements(Category.crafting, new ItemStack[]{});
+            size = 15;
+            craftEffect = OvulamFx.phaseFragment;
+            drawer = new DrawKnitter(32f, 16, 2f, 0f,16f);
+            plans = Seq.with(
+                    new MultiPayloadPlan(300f, 1f, "123",
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{
+                                    Blocks.copperWallLarge, 5, new MoveCustomP9(new int[]{0,2,4,6,8},16f), new DrawPayloadDefault(),
+                                    Blocks.thoriumWallLarge, 4, new MoveCustomP9(new int[]{1,3,5,7},16f), new DrawPayloadDefault()
+                            }, 0f, false,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{
+                                    Blocks.titaniumWallLarge, 3, new MoveCustomP9(new int[]{0,4,8}, 16f), new DrawPayloadDefault()
+                            }, 120, true
+                    )
+            );
+        }};
+
+        knitterBase = new ManufacturerBlock("knitter-base"){{
+            requirements(Category.crafting, new ItemStack[]{});
+            targetBlock = knitter;
+            stages = Seq.with(
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                            120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{1,2,4,7,8,11,13,14}, 16f), new DrawPayloadExpansion()},
+                            120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                            120f, false)
+            );
+        }};
+
+        mixerBase = new ManufacturerBlock("mixer-base"){{
+            requirements(Category.crafting, new ItemStack[]{});
+            targetBlock = mixer;
+            stages = Seq.with(
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                            120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{1,2,4,7,8,11,13,14}, 16f), new DrawPayloadExpansion()},
+                            120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                            120f, false)
+            );
+        }};
+
+        batchFactoryBase = new ManufacturerBlock("batch-factory-base"){{
+            requirements(Category.crafting, new ItemStack[]{});
+            targetBlock = batchFactory;
+            stages = Seq.with(
+                    new ManufacturerStage(300f,
+                    new Object[]{},
+                    new Object[]{},
+                    new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                    120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{1,2,4,7,8,11,13,14}, 16f), new DrawPayloadExpansion()},
+                            120f, false),
+                    new ManufacturerStage(300f,
+                            new Object[]{},
+                            new Object[]{},
+                            new Object[]{Blocks.copperWallLarge, 8, new MoveCustomP16(new int[]{0,3,5,6,9,10,12,15}, 16f), new DrawPayloadExpansion()},
+                            120f, false)
             );
         }};
     }

@@ -7,6 +7,8 @@ import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
+import arc.math.geom.Vec2;
+import arc.struct.ObjectMap;
 import arc.util.Time;
 import arc.util.Tmp;
 import mindustry.content.Fx;
@@ -19,35 +21,65 @@ import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.world.Block;
 
-import static arc.graphics.g2d.Draw.scl;
 import static mindustry.Vars.tilesize;
 
+//该子弹的寿命是固定的
 public class MortarBulletType extends BulletType {
-    private float rotation;
 
-    public String name;
-    public float height;
+    public float bulletRange;
+    //炮弹在Y轴的位移倍率
     public float offsideMultiplier = 1f;
+    //炮弹的贴图缩放倍率
+    public float sclMultiplier = 1f;
+    //子弹旋转速度倍率
+    public float rotateMultiplier = 1f;
+    //阴影的X轴的位移倍率
+    public float shadowOffsideMultiplier = 2f;
+    //是否有图标贴图
+    public boolean hasIcon = false;
+    //是否有推进器贴图
+    public boolean hasThrusters = false;
 
     public TextureRegion podBulletRegion, podBulletIconRegion, podBulletThrustersRegion;
 
-    public MortarBulletType(Block block){
-        this.name = block.name;
+    public Effect podExplosion = new Effect(300, e -> {
+        Draw.color(Pal.accent);
+        Lines.stroke(10f * e.foutpow());
+        Lines.circle(e.x, e.y, e.rotation * e.finpow());
+    });
 
-        fragBullet = new OvulamDynamicExplosionBulletType(0 , 0 , 0 , 0);
+    public ObjectMap<Bullet, Float> rotations = new ObjectMap<>();
+    public ObjectMap<Bullet, Vec2> beginning = new ObjectMap<>();
+
+    private final String blockName;
+
+    public MortarBulletType(Block block, float bulletRange){
+        //用于贴图
+        this.blockName = block.name;
         hitEffect = Fx.none;
         despawnEffect = Fx.none;
-        fragBullets = 1;
         hittable = false;
         reflectable = false;
         despawnHit = true;
         collidesTiles = false;
+        //总不能给影子写一个实体吧
+        this.bulletRange = drawSize = bulletRange;
     }
 
     @Override
     public void init(Bullet b){
-        float speed = Mathf.dst(b.x, b.y, b.aimX, b.aimY) / lifetime;
+
+        rotations.put(b, 0f);
+        beginning.put(b, new Vec2(b.x, b.y));
+
         float angle = Mathf.angle(b.aimX - b.x,b.aimY - b.y);
+
+        Tmp.v1.trns(angle, Math.min(bulletRange, Mathf.dst(b.x, b.y, b.aimX, b.aimY)));
+
+        b.aimX = b.x + Tmp.v1.x;
+        b.aimY = b.y + Tmp.v1.y;
+
+        float speed = Mathf.dst(b.x, b.y, b.aimX, b.aimY) / lifetime;
 
         b.initVel(angle, speed);
         super.init(b);
@@ -56,32 +88,41 @@ public class MortarBulletType extends BulletType {
     @Override
     public void load(){
         super.load();
-        if(podBulletRegion == null)podBulletRegion = Core.atlas.find(name + "-pod");
-        if(podBulletIconRegion == null)podBulletIconRegion = Core.atlas.find(name + "-pod-icon");
-        if(podBulletThrustersRegion == null)podBulletThrustersRegion = Core.atlas.find(name + "-pod-thrusters");
+        podBulletRegion = Core.atlas.find(blockName + "-pod");
+        if(hasIcon)podBulletIconRegion = Core.atlas.find(blockName + "-pod-icon");
+        if(hasThrusters)podBulletThrustersRegion = Core.atlas.find(blockName + "-pod-thrusters");
+    }
+
+    //子弹的进度函数, 确保这个函数在0到1的积分为0
+    public float heightProgress(Bullet b){
+        return progress(b) - 1/3f;
     }
 
     public float progress(Bullet b){
-        return Mathf.sqr(b.time / lifetime);
+        //return b.fin() - 1/2f;
+        return Mathf.sqr(b.fin());
     }
 
-    //代表单位高度的二次函数
-    public float aFloat(float progress){
-        return (-Mathf.sqr(progress) + progress) * height;
+    //假定炮弹高度的二次函数, 用于贴图缩放
+    public float heightScl(float progress){
+        //0到1到0, 开口朝下的二次函数
+        return (-Mathf.sqr(progress) + progress) * 4;
     }
 
     //子弹的贴图真的不应该这么大
     @Override
     public void draw(Bullet b){
-        float progress = progress(b);
         float sin = 0.95f + Mathf.absin(2f, 0.1f);
+        float progress = progress(b);
+        float height = heightScl(progress);
 
-        Draw.reset();
+        float rotation = rotations.get(b);
 
+        //使"更高"的炮弹, 显示在更高的图层
         Draw.z(Layer.playerName + height);
 
-        float scl = 1 + height * aFloat(progress);
-        scl(scl);
+        float scl = 1 + height * sclMultiplier;
+        Draw.scl(scl);
 
         for (int i = 0; i < 4; i++){
             Tmp.v1.trns(i * 90 + rotation, 1f);
@@ -96,25 +137,36 @@ public class MortarBulletType extends BulletType {
         }
 
         Drawf.spinSprite(podBulletRegion, b.x, b.y, rotation);
-        if(podBulletThrustersRegion.found()) Drawf.spinSprite(podBulletThrustersRegion, b.x, b.y, rotation);
-        if(podBulletIconRegion.found()) Draw.rect(podBulletIconRegion, b.x, b.y, rotation);
+        if(hasIcon) Draw.rect(podBulletIconRegion, b.x, b.y, rotation);
+        if(hasThrusters) Drawf.spinSprite(podBulletThrustersRegion, b.x, b.y, rotation);
 
+        Draw.scl(scl * 1.3f);
+        drawShadow(b, b.fin(), rotation);
+
+        Draw.scl();
         Draw.reset();
     }
 
-    public Effect podExplosion = new Effect(300, e -> {
-        Draw.color(Pal.accent);
-        Lines.stroke(10f * e.foutpow());
-        Lines.circle(e.x, e.y, e.rotation * e.finpow());
-    });
+    public void drawShadow(Bullet b, float progress, float rotation){
+        Tmp.v2.set(beginning.get(b)).lerp(b.aimX, b.aimY, progress);
+        float distance = Math.abs(b.y - Tmp.v2.y) * shadowOffsideMultiplier;
+
+        float sx = Tmp.v2.x - distance;
+        float sy = Tmp.v2.y - distance * 0.6f;
+
+        Draw.z(Layer.blockUnder);
+
+        Drawf.shadow(podBulletRegion, sx, sy, rotation);
+        if(hasThrusters) Drawf.shadow(podBulletThrustersRegion, sx, sy, rotation);
+    }
 
     @Override
     public void update(Bullet b){
         float progress = progress(b);
-        rotation += progress + aFloat(progress) * Time.delta * (2f + Mathf.randomSeedRange(b.id(), 1f));
+        rotations.put(b, rotations.get(b) + (1f + heightScl(progress)) * rotateMultiplier * Time.delta);
 
-        //效果并不好，改天再写个
-        b.move(0.5f * (progress - 0.33333333f) * Time.delta, -offsideMultiplier * (progress - 0.33333333f) * height * Time.delta);
+        float moveDelta = -offsideMultiplier * heightProgress(b) * Time.delta;
+        b.move(0f , moveDelta);
 
         super.update(b);
     }
@@ -123,6 +175,9 @@ public class MortarBulletType extends BulletType {
     @Override
     public void despawned(Bullet b){
         //还是直接写伤害好用，什么B碰撞
+        rotations.remove(b);
+        beginning.remove(b);
+
         Damage.damage(b.team, b.x, b.y, b.hitSize, b.damage);
         podExplosion.at(b.x, b.y, Mathf.sqrt(b.hitSize) * tilesize);
 

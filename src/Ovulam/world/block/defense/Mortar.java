@@ -30,7 +30,7 @@ public class Mortar extends MultiPayloadBlock {
     //炮弹持续时间
     public float totalTime = 600f;
     public float minLaunch = 16;
-    public float range = 999;
+    public float range = 9999;
     public TextureRegion region, arrowRegion, topRegion, topLightRegion, iconRegion, podThrustersRegion;
     public TextureRegion podRegion;
     public TextureRegion podIconRegion;
@@ -192,10 +192,12 @@ public class Mortar extends MultiPayloadBlock {
 
             float angle = Mathf.angle(target.x() - x, target.y() - y);
 
-            MortarBulletType pod = new MortarBulletType(block){{
+            MortarBulletType pod = new MortarBulletType(block, range){{
                 damage = health;
                 fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
-                height = 4f;
+                offsideMultiplier = 4f;
+                shadowOffsideMultiplier = 2f;
+                hasIcon = hasThrusters = true;
                 hitSize = Mathf.sqr(podSize);
                 lifetime = totalTime;
                 podBulletRegion = podRegion;

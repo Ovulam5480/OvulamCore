@@ -5,6 +5,7 @@ import Ovulam.world.block.production.ConsumeMultiPayloadBlock;
 import Ovulam.world.graphics.OvulamShaders;
 import Ovulam.world.move.MovePayload;
 import Ovulam.world.type.Recipe;
+import Ovulam.world.type.RecipePayloadManager;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
@@ -98,20 +99,12 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
             this.inputRecipe = inputRecipe;
         }
 
-        /*
-        public ManufacturerStage(float craftTime,
-                                 Object[] inputItems, Object[] inputLiquids, Object[] inputPayloads,
-                                 float inputPower, boolean inputLiquidCompletely,
-                                 RecipeMover[] recipeMover) {
+        public ManufacturerStage(float craftTime, Object[] inputItems, Object[] inputLiquids,
+                                 Object[] inputPayloads, float inputPower, boolean inputLiquidCompletely){
             this.craftTime = craftTime;
-
             this.inputRecipe = new Recipe(ItemStack.list(inputItems), LiquidStack.list(inputLiquids),
-                    PayloadStack.list(inputPayloads), inputPower, inputLiquidCompletely);
-
-            this.recipeMover = recipeMover;
+                    RecipePayloadManager.list(inputPayloads), inputPower, inputLiquidCompletely);
         }
-
-         */
     }
 
     //todo stage 为0引发的问题
@@ -121,6 +114,11 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         @Override
         public float warmup(){
             return 1;
+        }
+
+        @Override
+        public float progress() {
+            return progress / getCraftTime();
         }
 
         @Override
@@ -155,12 +153,13 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         public void draw() {
             Draw.rect(stageRegion[0], x, y);
 
-            Draw.draw(Layer.blockBuilding, () -> {
+            Draw.draw(Layer.blockOver, () -> {
                 for (int i = 0; i < stages.size; i++) {
                     float stageProgress;
 
                     if (i == currentStage) stageProgress = progress();
                     else stageProgress = Mathf.sign(i < currentStage);
+                    Draw.shader(OvulamShaders.blockManufacturer);
 
                     Draw.color(Pal.accent);
                     OvulamShaders.blockManufacturer.progress = stageProgress;
@@ -168,11 +167,11 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
                     OvulamShaders.blockManufacturer.region = stageRegion[i + 1];
 
                     Draw.rect(stageRegion[i + 1], x, y);
+                    Draw.shader();
                 }
             });
 
-            Draw.z(Layer.blockBuilding + 1f);
-            Draw.alpha(progress());
+            Draw.z(Layer.blockOver + 1f);
             drawPayload();
         }
 

@@ -20,7 +20,6 @@ public class LightningTreeBulletType extends BulletType {
         hitEffect = Fx.hitLancer;
         keepVelocity = false;
         hittable = false;
-        //for stats
         status = StatusEffects.shocked;
     }
 
