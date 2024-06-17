@@ -6,6 +6,9 @@ import mindustry.world.Block;
 
 //todo 存在BUG, 暂时不清楚什么原因导致的
 public class MoveDefault extends MovePayload{
+    public MoveDefault(){
+
+    }
     @Override
     public int maxCapacity(Block block){
         return 9999;
@@ -15,5 +18,4 @@ public class MoveDefault extends MovePayload{
         return Vec2.ZERO;
     }
 
-    public MoveDefault(){}
 }

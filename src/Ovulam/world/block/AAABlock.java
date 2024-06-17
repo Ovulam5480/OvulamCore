@@ -1,12 +1,11 @@
 package Ovulam.world.block;
 
-import Ovulam.world.graphics.OvulamShaders;
 import arc.Core;
-import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.graphics.gl.FrameBuffer;
-import arc.math.Mathf;
-import arc.util.Time;
+import arc.scene.ui.layout.Table;
+import mindustry.content.UnitTypes;
 import mindustry.gen.Building;
 import mindustry.world.Block;
 
@@ -15,6 +14,7 @@ public class AAABlock extends Block {
         super(name);
         update = true;
         sync = true;
+        configurable = true;
     }
 
     @Override
@@ -23,6 +23,7 @@ public class AAABlock extends Block {
 
     public class AAABuild extends Building{
         public FrameBuffer buffer = new FrameBuffer();
+        public boolean once = true;
 
         @Override
         public void configure(Object value) {
@@ -34,14 +35,20 @@ public class AAABlock extends Block {
         }
 
         @Override
+        public void buildConfiguration(Table table){
+            table.defaults().width(216f);
+            table.button("set true", () -> once = true);
+        }
+
+        @Override
         public void draw(){
-            OvulamShaders.alpha.alpha = 0.5f + Mathf.sin(Time.time / 10f) / 2;
             buffer.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
             buffer.begin();
-            Draw.color(Color.pink);
-            Draw.flush();
-            Draw.color();
+            Draw.rect(UnitTypes.mono.fullIcon, x, y);
             buffer.end();
+
+            Draw.rect(new TextureRegion(buffer.getTexture()), x, y);
+            Draw.rect(UnitTypes.mono.fullIcon, x, y);
         }
     }
 }

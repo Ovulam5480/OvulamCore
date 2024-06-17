@@ -132,8 +132,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
             if (progress >= stages.get(currentStage).craftTime) {
 
-                positionPayloads.each(positionPayload ->
-                        Fx.placeBlock.at(positionPayload.x(this), positionPayload.y(this), positionPayload.payload.size() / 8f));
+                positionPayloads.each(pp -> Fx.placeBlock.at(pp.x(this), pp.y(this), pp.payload.size() / 8f));
 
                 consume();
                 progress %= 1f;
@@ -177,7 +176,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
 
         @Override
         public boolean shouldConsume() {
-            return !positionPayloads.contains(positionPayload -> !hasArrived(positionPayload));
+            return !positionPayloads.contains(pp -> !hasArrived(pp));
         }
 
         public Recipe getRecipe() {
@@ -212,7 +211,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
         @Override
         public ObjectMap<UnlockableContent, MovePayload> getInputMover() {
             ObjectMap<UnlockableContent, MovePayload> map = new ObjectMap<>();
-            getRecipe().payloadManagers.each(manager -> map.put(manager.content(), manager.movePayload));
+            getRecipe().payloadManagers.each(rpm -> map.put(rpm.content(), rpm.movePayload));
             return map;
         }
 

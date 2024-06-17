@@ -14,6 +14,7 @@ public class EventBlock extends Block {
         super(name);
         update = true;
         //destructible = true;
+        //方块做事件, 简单可靠👍
         clipSize = 65536 * tilesize;
     }
     public class EventBlockBuild extends Building{

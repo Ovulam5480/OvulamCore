@@ -8,6 +8,7 @@ import mindustry.world.Block;
 
 public class Effect {
     public static Block
+            //todo 幻辉科技核心
             coreMartialDragon,
             deconstructorStorage, playerSpawnStorage, unloaderStorage,
             AblationTower;
@@ -33,10 +34,11 @@ public class Effect {
             requirements(Category.effect, new ItemStack[]{});
         }};
 
+        //todo de
         AblationTower = new AblationTower("AblationTower") {{
             side = 8;
             size = 4;
-            requirements(Category.defense, new ItemStack[]{});
+            requirements(Category.effect, new ItemStack[]{});
         }};
 
     }

@@ -26,7 +26,7 @@ public class ItemStackTurret extends Turret {
 
 
     @Override
-    public void init(){
+    public void init() {
         itemCapacity = maxAmmo;
 
         bullet.fragBullet = new OvulamDynamicExplosionBulletType();
@@ -38,66 +38,68 @@ public class ItemStackTurret extends Turret {
     }
 
     @Override
-    public void setBars(){
+    public void setBars() {
         super.setBars();
 
         addBar("ammo", (ItemStackTurretBuild entity) ->
                 new Bar(
                         "stat.ammo",
                         Pal.ammo,
-                        () -> (float)entity.totalAmmo / maxAmmo
+                        () -> (float) entity.totalAmmo / maxAmmo
                 )
         );
     }
 
     @Override
-    public void limitRange(BulletType bullet, float margin){
+    public void limitRange(BulletType bullet, float margin) {
         super.limitRange(bullet, margin);
     }
 
-    public class ItemStackTurretBuild extends TurretBuild{
+    public class ItemStackTurretBuild extends TurretBuild {
 
         @Override
-        public void updateTile(){
+        public void updateTile() {
             totalAmmo = items.total();
 
-            unit.ammo((float)unit.type().ammoCapacity * totalAmmo / maxAmmo);
+            unit.ammo((float) unit.type().ammoCapacity * totalAmmo / maxAmmo);
 
             super.updateTile();
         }
 
 
         @Override
-        public BulletType useAmmo(){
+        public BulletType useAmmo() {
             return peekAmmo();
         }
 
         @Override
-        protected void shoot(BulletType type){
+        protected void shoot(BulletType type) {
             super.shoot(type);
             items.clear();
         }
 
         @Override
-        public boolean hasAmmo(){
+        public boolean hasAmmo() {
             return totalAmmo >= minAmmo;
         }
 
         @Override
-        public BulletType peekAmmo(){
+        public BulletType peekAmmo() {
             BulletType bulletType = bullet.copy();
+            //todo
+
             float flammability = items.sum((item, amount) -> item.flammability * amount) * flammabilityMultiplier;
             float explosiveness = items.sum((item, amount) -> item.explosiveness * amount) * explosivenessMultiplier;
             float radioactivity = items.sum((item, amount) -> item.radioactivity * amount) * radioactivityMultiplier;
             float charge = items.sum((item, amount) -> item.charge * amount) * chargeMultiplier;
 
-            ((OvulamDynamicExplosionBulletType)bulletType.fragBullet).setAttribute(flammability, explosiveness, radioactivity, charge);
+            ((OvulamDynamicExplosionBulletType) bulletType.fragBullet).setAttribute(flammability, explosiveness, radioactivity, charge);
 
             return bulletType;
         }
 
         @Override
-        public boolean acceptItem(Building source, Item item){
+        public boolean acceptItem(Building source, Item item) {
             return items.get(item) < getMaximumAccepted(item);
         }
     }

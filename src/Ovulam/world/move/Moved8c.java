@@ -18,10 +18,19 @@ public class Moved8c extends MovePayload{
             new Point2(1, -1),
             new Point2(0, 0),
     };
+    public float distance;
+
+    public Moved8c(){
+        this(16);
+    }
+
+    public Moved8c(float distance){
+        this.distance = distance;
+    }
     @Override
     public int maxCapacity(Block block){return 9;}
     @Override
     public Vec2 setTargetPosition(Building build, int index){
-        return new Vec2(d8c[Mathf.mod(index, 9)].x * 16,d8c[Mathf.mod(index, 9)].y * 16);
+        return new Vec2(d8c[Mathf.mod(index, 9)].x * distance,d8c[Mathf.mod(index, 9)].y * distance);
     }
 }

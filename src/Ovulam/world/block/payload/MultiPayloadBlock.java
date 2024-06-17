@@ -212,8 +212,7 @@ public class MultiPayloadBlock extends Block {
         //绘制载荷
         public void drawPayload() {
             if (positionPayloads == null) return;
-            positionPayloads.each(PositionPayload -> PositionPayload.payload.draw());
-
+            positionPayloads.each(PositionPayload::draw);
         }
     }
 }

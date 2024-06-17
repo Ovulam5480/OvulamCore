@@ -10,8 +10,11 @@ import Ovulam.world.drawRecipePayload.DrawPayloadDefault;
 import Ovulam.world.drawRecipePayload.DrawPayloadExpansion;
 import Ovulam.world.move.MoveCustomP16;
 import Ovulam.world.move.MoveCustomP9;
+import Ovulam.world.move.MoveOut;
+import Ovulam.world.move.MoveSize;
 import arc.struct.Seq;
 import mindustry.content.Blocks;
+import mindustry.content.Liquids;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
@@ -30,16 +33,19 @@ public class Crafting {
             plans = Seq.with(
                     new MultiPayloadPlan(300f, 1f, "123",
                             new Object[]{},
+                            new Object[]{Liquids.water, 1f},
+                            new Object[]{}, 0f, false,
                             new Object[]{},
-                            new Object[]{
-                                    Blocks.copperWallLarge, 5, new MoveCustomP9(new int[]{0,2,4,6,8},16f), new DrawPayloadDefault(),
-                                    Blocks.thoriumWallLarge, 4, new MoveCustomP9(new int[]{1,3,5,7},16f), new DrawPayloadDefault()
-                            }, 0f, false,
+                            new Object[]{Liquids.oil, 1f},
+                            new Object[]{}, 120, true
+                    ),
+                    new MultiPayloadPlan(300f, 1f, "123",
                             new Object[]{},
+                            new Object[]{Liquids.cryofluid, 1f},
+                            new Object[]{}, 0f, false,
                             new Object[]{},
-                            new Object[]{
-                                    Blocks.titaniumWallLarge, 3, new MoveCustomP9(new int[]{0, 4, 8}, 16f), new DrawPayloadDefault()
-                            }, 120, true
+                            new Object[]{Liquids.slag, 1f},
+                            new Object[]{}, 120, false
                     )
             );
         }};
@@ -48,18 +54,20 @@ public class Crafting {
             requirements(Category.crafting, new ItemStack[]{});
             size = 15;
             drawer = new DrawMixer();
+            moveOutMover = new MoveOut(24);
+            moveCapital = new MoveSize(24);
             plans = Seq.with(
                     new MultiPayloadPlan(300f, 1f, "123",
                             new Object[]{},
                             new Object[]{},
                             new Object[]{
-                                    Blocks.copperWallLarge, 5, new MoveCustomP9(new int[]{0,2,4,6,8},16f), new DrawPayloadDefault(),
-                                    Blocks.thoriumWallLarge, 4, new MoveCustomP9(new int[]{1,3,5,7},16f), new DrawPayloadDefault()
+                                    Blocks.battery, 5, new MoveCustomP9(new int[]{0,2,4,6,8},24f), new DrawPayloadDefault(),
+                                    Blocks.massDriver, 4, new MoveCustomP9(new int[]{1,3,5,7},24f), new DrawPayloadDefault()
                             }, 0f, false,
                             new Object[]{},
                             new Object[]{},
                             new Object[]{
-                                    Blocks.titaniumWallLarge, 3, new MoveCustomP9(new int[]{0, 4, 8}, 16f), new DrawPayloadDefault()
+                                    Blocks.cyclone, 3, new MoveCustomP9(new int[]{0, 4, 8}, 16f), new DrawPayloadDefault()
                             }, 120, true
                     )
             );

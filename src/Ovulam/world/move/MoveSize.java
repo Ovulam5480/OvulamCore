@@ -3,25 +3,65 @@ package Ovulam.world.move;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
 import arc.math.geom.Vec2;
+import arc.struct.IntSeq;
+import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.world.Block;
 
 public class MoveSize extends MovePayload{
+    public float distance;
+
+    private final IntSeq seq = IntSeq.with(1, -1, 2);
+
+    public MoveSize(){
+        this(16);
+    }
+
+    public MoveSize(float distance){
+        this.distance = distance;
+    }
+
+    //总共的容量
     @Override
-    public int maxCapacity(Block block){return sizeCapital(block) * 3;}
+    public int maxCapacity(Block block){
+        return sizeCapital(block) * 3;
+    }
+
+    //每个边的容量
+    public int sizeCapital(Block block){
+        return Mathf.floor(block.size * Vars.tilesize / distance - Mathf.FLOAT_ROUNDING_ERROR);
+    }
+
     @Override
     public Vec2 setTargetPosition(Building build, int index){
-        int sideAmount = Mathf.mod(index, sizeCapital(build.block));
-        int rotation = build.rotation + index / sizeCapital(build.block) + 1;
-        float offsize = - sizeCapital(build.block) / 2f + sideAmount + 0.5f;
+        int amount = sizeCapital(build.block);
+        //位于第几个边
+        int rotation = build.rotation + seq.get(index / amount);
 
-        float trns = build.block.size / 2f - 1;
+        index = Mathf.mod(index, amount);
+        float trns = build.block.size * Vars.tilesize / 2f;
+
+        float x = Geometry.d4(rotation).x * (trns - distance / 2f);
+        float y = Geometry.d4(rotation).y * (trns - distance / 2f);
+
+        boolean isOdd = amount % 2 == 1;
+
         return new Vec2(
-                (trns * Geometry.d4x(rotation) + Mathf.pow(-1, rotation) *(offsize * 2) * Geometry.d4y(rotation)) * 8,
-                (trns * Geometry.d4y(rotation) + Mathf.pow(-1, rotation) *(offsize * 2) * Geometry.d4x(rotation)) * 8
+                x + getAmazingNumber(isOdd, index) * distance * Geometry.d4(rotation).y,
+                y + getAmazingNumber(isOdd, index) * distance * Geometry.d4(rotation).x
         );
     }
 
-    //4 : 0   5 : 1   6 : 1   7 : 2
-    public int sizeCapital(Block block){return Math.max((block.size - 3) / 2, 0);}
+    public float getAmazingNumber(boolean isOdd, int index){
+        float begin = 0;
+        boolean b = true;
+        //+1 -2 +3 -4 ......
+        for (int i = 0; i < index; i++){
+            begin += Mathf.sign(b) * (i + 1);
+            b = !b;
+        }
+
+        if(!isOdd) begin -= 0.5f;
+        return begin;
+    }
 }
