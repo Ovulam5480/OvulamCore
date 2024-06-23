@@ -1,15 +1,22 @@
 package Ovulam.world.block;
 
-import arc.Core;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.graphics.gl.FrameBuffer;
+import arc.graphics.g2d.Fill;
+import arc.graphics.g2d.Lines;
+import arc.math.geom.Vec2;
+import arc.math.geom.Vec3;
 import arc.scene.ui.layout.Table;
-import mindustry.content.UnitTypes;
+import arc.struct.Seq;
+import mindustry.content.Blocks;
 import mindustry.gen.Building;
+import mindustry.graphics.Layer;
 import mindustry.world.Block;
 
 public class AAABlock extends Block {
+    //
+    public Vec3 axis = new Vec3(2,1,3);
+    public float cubeRadius = 4f;
+
     public AAABlock(String name) {
         super(name);
         update = true;
@@ -17,38 +24,64 @@ public class AAABlock extends Block {
         configurable = true;
     }
 
-    @Override
-    public void init() {
-    }
-
     public class AAABuild extends Building{
-        public FrameBuffer buffer = new FrameBuffer();
-        public boolean once = true;
+        public Seq<Vec3> vec3s = Seq.with(new Vec3(),new Vec3(),new Vec3(),new Vec3(), new Vec3(),new Vec3(),new Vec3(),new Vec3());
 
-        @Override
-        public void configure(Object value) {
-            super.configure(value);
+        private final int[][] index = {{7,5,1,3},{5,4,0,1},{7,6,4,5},{6,2,0,4},{7,3,2,6},{3,1,0,2}};
+
+        public Vec2 v1 = new Vec2();
+        public Vec2 v2 = new Vec2();
+        public Vec2 v3 = new Vec2();
+        public Vec2 v4 = new Vec2();
+
+        public float rot3D;
+
+        public void buildConfiguration(Table table) {
+            table.table(configTable -> table.table(sliders -> {
+                sliders.slider(-1, 1f, 0.01f, axis.x, f -> axis.x = f);
+                sliders.row();
+                sliders.slider(-1, 1f, 0.01f, axis.y, f -> axis.y = f);
+                sliders.row();
+                sliders.slider(-1, 1f, 0.01f, axis.z, f -> axis.z = f);
+            }));
         }
 
         @Override
         public void updateTile(){
-        }
+            rot3D += delta();
+            axis.setLength(1);
 
-        @Override
-        public void buildConfiguration(Table table){
-            table.defaults().width(216f);
-            table.button("set true", () -> once = true);
+            //todo 二进制
+            int index = 0;
+            for (int i = -1; i <= 1; i += 2){
+                for (int j = -1; j <= 1; j += 2){
+                    for (int k = -1; k <= 1; k += 2){
+                        vec3s.get(index).set(i,j,k).rotate(axis, rot3D).scl(cubeRadius).add(x,y,0);
+                        index++;
+                    }
+                }
+            }
+
         }
 
         @Override
         public void draw(){
-            buffer.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
-            buffer.begin();
-            Draw.rect(UnitTypes.mono.fullIcon, x, y);
-            buffer.end();
+            Draw.z(Layer.blockOver);
+            Lines.stroke(4f);
 
-            Draw.rect(new TextureRegion(buffer.getTexture()), x, y);
-            Draw.rect(UnitTypes.mono.fullIcon, x, y);
+            for (int i = 0; i < 6; i++){
+                int[] ints = index[i];
+                v1.set(vec3s.get(ints[0]));
+                v2.set(vec3s.get(ints[1]));
+                v3.set(vec3s.get(ints[2]));
+                v4.set(vec3s.get(ints[3]));
+
+                Fill.quad(Blocks.airFactory.fullIcon,
+                        vec3s.get(ints[0]).x, vec3s.get(ints[0]).y,
+                        vec3s.get(ints[1]).x, vec3s.get(ints[1]).y,
+                        vec3s.get(ints[2]).x, vec3s.get(ints[2]).y,
+                        vec3s.get(ints[3]).x, vec3s.get(ints[3]).y);
+            }
         }
     }
 }

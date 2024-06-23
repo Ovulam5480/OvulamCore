@@ -3,6 +3,7 @@ package Ovulam.world.block.block;
 import Ovulam.OvulamMod;
 import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.Pixmap;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
@@ -32,6 +33,7 @@ public class ItemBlock extends Block {
     @Override
     public void init(){
         //pixmap真是太他🐎的离谱了哎!!!
+        Pixmap pixmap;
         this.requirements = new ItemStack[]{new ItemStack(item, 72 * Mathf.pow(size, 3))};
         super.init();
     }

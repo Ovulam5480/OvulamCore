@@ -2,6 +2,7 @@ package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.type.Recipe;
+import arc.graphics.g2d.TextureRegion;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
@@ -10,6 +11,7 @@ import arc.struct.Seq;
 import mindustry.content.Liquids;
 import mindustry.gen.Building;
 import mindustry.gen.Tex;
+import mindustry.graphics.CubemapMesh;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.type.ItemStack;
@@ -149,6 +151,9 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
+            CubemapMesh c = new CubemapMesh(null);
+            TextureRegion t = new TextureRegion();
+
 
             //Call.sendChatMessage(Time.time);
             //world.tile()

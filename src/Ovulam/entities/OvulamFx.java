@@ -1,6 +1,6 @@
 package Ovulam.entities;
 
-import Ovulam.math.OvulamScaled;
+import Ovulam.math.OvulamMath;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
@@ -23,8 +23,8 @@ public class OvulamFx {
 
         Angles.randLenVectors(e.id + index, 1, 12, ((x1, y1) ->
                 Angles.randLenVectors(e.id + index + 1, 1, 12, (x2, y2) -> {
-                    float rx = e.x + Mathf.lerp(x1, x2, progress) * OvulamScaled.fparabola(e.fin());
-                    float ry = e.y + Mathf.lerp(y1, y2, progress) * OvulamScaled.fparabola(e.fin());
+                    float rx = e.x + Mathf.lerp(x1, x2, progress) * OvulamMath.fparabola(e.fin());
+                    float ry = e.y + Mathf.lerp(y1, y2, progress) * OvulamMath.fparabola(e.fin());
 
                     Drawf.squareShadow(rx, ry, block.size * 8 * 1.85f, e.fout());
 

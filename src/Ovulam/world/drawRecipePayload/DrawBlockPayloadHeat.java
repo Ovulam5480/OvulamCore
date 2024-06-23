@@ -1,7 +1,7 @@
 package Ovulam.world.drawRecipePayload;
 
 import Ovulam.OvulamMod;
-import Ovulam.math.OvulamScaled;
+import Ovulam.math.OvulamMath;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
@@ -30,7 +30,7 @@ public class DrawBlockPayloadHeat extends DrawRecipePayload{
         if(!(payload instanceof Block block))return;
         heat.setWidth(block.size * 32);
 
-        Draw.alpha(OvulamScaled.fparabola(progress));
+        Draw.alpha(OvulamMath.fparabola(progress));
         Draw.rect(heat, building.x + offsetX, building.y + offsetY);
         Draw.alpha(progress);
         Draw.rect(payload.fullIcon, building.x + offsetX, building.y + offsetY);

@@ -96,19 +96,19 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         configurable = true;
 
         consume(new ConsumeItemDynamic((MultiPayloadCrafterBuild e) ->
-                e.validCurrentPlan() ? e.getInputItems().toArray(ItemStack.class) : ItemStack.empty));
+                e.validCraft() ? e.getInputItems().toArray(ItemStack.class) : ItemStack.empty));
 
         consume(new ConsumeLiquidsDynamic((MultiPayloadCrafterBuild e) ->
-                e.validCurrentPlan() && !e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
+                e.validCraft() && !e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
 
         consume(new ConsumeLiquidsDynamicCompletely((MultiPayloadCrafterBuild e) ->
-                e.validCurrentPlan() && e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
+                e.validCraft() && e.getInputLiquidsCompletely() ? e.getInputLiquids().toArray(LiquidStack.class) : LiquidStack.empty));
 
         consume(new ConsumePositionPayloadsDynamic((MultiPayloadCrafterBuild e) ->
-                e.validCurrentPlan() ? e.getInputPayloads().toArray(PayloadStack.class) : emptyPayloadStacks));
+                e.validCraft() ? e.getInputPayloads().toArray(PayloadStack.class) : emptyPayloadStacks));
 
         consume(new ConsumePowerDynamicCanBeNegative((MultiPayloadCrafterBuild e) ->
-                e.validCurrentPlan() ? e.getInputPower() : 0));
+                e.validCraft() ? e.getInputPower() : 0));
     }
 
     @Override
@@ -265,7 +265,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public float progress() {
-            return !validCurrentPlan() ? 0 : progress / getCurrentPlan().craftTime;
+            return !validCraft() ? 0 : progress / getCurrentPlan().craftTime;
         }
 
         @Override
@@ -278,6 +278,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             return warmup;
         }
 
+        @Override
         public void buildConfiguration(Table table) {
             table.table(configTable -> {
                 table.table(sliders -> {
@@ -383,7 +384,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             }
 
             //渲染加工区材料载荷 或者 加工效果
-            if(craftPayloadsAlpha > 0 && validCurrentPlan()){
+            if(craftPayloadsAlpha > 0 && validCraft()){
                 if(efficiency > 0){
                     drawAlphaPayloadManagers(craftFrameBuffer, getInputManagers(), craftPayloadsAlpha, true);
                     drawAlphaPayloadManagers(craftFrameBuffer, getOutputManagers(), craftPayloadsAlpha, false);
@@ -458,8 +459,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         @Override
         public boolean acceptPayload(Building source, Payload payload) {
             //当前配方不需要载荷, 或者不需要该载荷
-            if (!validCurrentPlan() || getInputPayloads().size == 0 || !getInputPayloads().contains(ps -> ps.item == payload.content()))
-                return false;
+            if (!validCraft() || getInputPayloads().size == 0 || !getInputPayloads().contains(ps -> ps.item == payload.content())) return false;
 
             //必须的空间
             //第一倍的载荷输入到moveIn,所以总是能够输入
@@ -474,20 +474,20 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public boolean acceptLiquid(Building source, Liquid liquid) {
-            if (!validCurrentPlan()) return false;
+            if (!validCraft()) return false;
             return getInputLiquids().contains(liquidStack -> liquidStack.liquid == liquid);
         }
 
         @Override
         public boolean acceptItem(Building source, Item item) {
-            if (!validCurrentPlan()) return false;
+            if (!validCraft()) return false;
             ItemStack stack = getInputItems().find(itemStack -> itemStack.item == item);
             return stack != null && items.get(stack.item) < getMaximumAccepted(item);
         }
 
         //////////////////获得配方数据////////////////////
 
-        public boolean validCurrentPlan(){
+        public boolean validCraft(){
             return currentPlan != -1;
         }
 
@@ -496,7 +496,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         }
 
         public MultiPayloadPlan getCurrentPlan() {
-            return !validCurrentPlan() ? null : plans.get(currentPlan);
+            return !validCraft() ? null : plans.get(currentPlan);
         }
 
         public Seq<ItemStack> getInputItems() {
@@ -617,7 +617,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 }
             }
 
-            if (validCurrentPlan()) {
+            if (validCraft()) {
                 warmup = Mathf.approachDelta(warmup, efficiency, getCurrentPlan().warmupSpeed * delta());
                 progress += warmup * edelta();
                 totalProgress += warmup * edelta();
@@ -656,7 +656,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
             inputPayloads.clear();
             craftPayloads.clear();
 
-            if (!validCurrentPlan() || getInputPayloads().size == 0) {
+            if (!validCraft() || getInputPayloads().size == 0) {
                 //配方中不存在输入载荷时，所有载荷都应该输出
                 temp.selectFrom(positionPayloads, p -> !outputPayloads.containsKey(p));
             } else {
@@ -744,7 +744,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
         }
 
         public void dumpOutputs() {
-            if (!validCurrentPlan()) {
+            if (!validCraft()) {
                 dump(items.first());
             } else if (timer(timerDump, dumpTime / timeScale)) {
                 for (ItemStack output : getOutputItems()) {
@@ -752,7 +752,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
                 }
             }
 
-            if (!validCurrentPlan()) {
+            if (!validCraft()) {
                 liquids.each((liquid, amount) -> dumpLiquid(liquid, 2f));
             } else {
                 for (LiquidStack liquidStack : getOutputLiquids()) {
@@ -779,7 +779,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public boolean shouldConsume() {
-            if (!validCurrentPlan()) return false;
+            if (!validCraft()) return false;
             //如果生产后物品总量大于物品容量，返回否
             for (ItemStack output : getOutputItems()) {
                 if (items.get(output.item) + output.amount > itemCapacity) return false;
@@ -800,7 +800,7 @@ public class MultiPayloadCrafter extends MultiPayloadBlock {
 
         @Override
         public float getPowerProduction() {
-            return !validCurrentPlan() ? 0 : getOutputPower() * efficiency;
+            return !validCraft() ? 0 : getOutputPower() * efficiency;
         }
 
         public void craft() {

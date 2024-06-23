@@ -7,6 +7,7 @@ import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.Lines;
 import arc.math.Mathf;
 import arc.math.geom.Intersector;
+import arc.scene.ui.layout.Table;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.game.Team;
@@ -27,7 +28,6 @@ import static mindustry.Vars.*;
 
 public class ShowShowDamageForceProjector extends Block{
     public final int timerUse = timers++;
-    //布的消耗时间（帧数）
     //半径
     public float radius = 10170f;
     //边长
@@ -51,6 +51,7 @@ public class ShowShowDamageForceProjector extends Block{
     public ShowShowDamageForceProjector(String name){
         super(name);
         update = true;
+        sync = true;
         solid = true;
         group = BlockGroup.projectors;
         hasPower = true;
@@ -95,6 +96,12 @@ public class ShowShowDamageForceProjector extends Block{
 
     public class ForceBuild extends Building implements Ranged{
         public float buildup, warmup, phaseHeat;
+
+        @Override
+        public void buildConfiguration(Table table){
+            table.defaults().width(216f);
+            table.button("set zero", () -> buildup = 0);
+        }
 
 
         //实际范围，

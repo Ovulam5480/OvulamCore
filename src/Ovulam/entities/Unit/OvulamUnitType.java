@@ -34,7 +34,10 @@ public class OvulamUnitType extends UnitType {
         super(name);
     }
 
-
+    @Override
+    public void init(){
+        super.init();
+    }
     @Override
     public void load() {
         super.load();
