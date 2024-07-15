@@ -1,4 +1,4 @@
-package Ovulam.world.No9527;
+package Ovulam.No9527垃圾堆;
 //区块名显示
 
 import arc.graphics.Color;

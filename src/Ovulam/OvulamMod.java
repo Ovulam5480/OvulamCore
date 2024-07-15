@@ -1,7 +1,6 @@
 package Ovulam;
 
 import Ovulam.mod.*;
-import Ovulam.world.No9527.test;
 import Ovulam.world.graphics.OvulamShaders;
 import mindustry.mod.Mod;
 
@@ -19,7 +18,7 @@ public class OvulamMod extends Mod{
 
     @Override
     public void loadContent(){
-        new test();
+
         OvulamShaders.init();
         OvulamUnitTypes.load();
 

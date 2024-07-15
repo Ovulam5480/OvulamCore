@@ -1,6 +1,6 @@
 package Ovulam.mod.Blocks;
 
-import Ovulam.world.No9527.Drill9527;
+import Ovulam.No9527垃圾堆.Drill9527;
 import Ovulam.world.block.block.PayloadOre;
 import Ovulam.world.block.production.PayloadDrill;
 import mindustry.content.Items;

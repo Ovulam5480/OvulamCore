@@ -157,7 +157,8 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
                     float stageProgress;
 
                     if (i == currentStage) stageProgress = progress();
-                    else stageProgress = Mathf.sign(i < currentStage);
+                    //todo 测试!!!
+                    else stageProgress = Mathf.num(i < currentStage);
                     Draw.shader(OvulamShaders.blockManufacturer);
 
                     Draw.color(Pal.accent);

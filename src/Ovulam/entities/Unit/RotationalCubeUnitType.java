@@ -71,6 +71,7 @@ public class RotationalCubeUnitType extends OvulamUnitType {
                     vec3s.get(ints[1]).x, vec3s.get(ints[1]).y,
                     vec3s.get(ints[2]).x, vec3s.get(ints[2]).y,
                     vec3s.get(ints[3]).x, vec3s.get(ints[3]).y);
+
             if (drawCircle && i == 3) {
                 float radius = circleRadius * (1f + Mathf.absin(2f, 0.1f));
 
@@ -84,6 +85,7 @@ public class RotationalCubeUnitType extends OvulamUnitType {
         }
     }
 
+    //todo
     @Override
     public void drawShadow(Unit unit) {
     }

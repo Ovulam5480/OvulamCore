@@ -11,7 +11,7 @@ import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-public class Turret {
+public abstract class Turret {
     public static Block order;
     public static Block organize;
     public static Block Mortar;
@@ -69,4 +69,6 @@ public class Turret {
 
 
     }
+
+    public abstract void draw();
 }

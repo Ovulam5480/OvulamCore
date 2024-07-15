@@ -1,30 +1,24 @@
 package Ovulam.mod;
 
 import Ovulam.OvulamMod;
-import Ovulam.entities.Unit.OvulamUnit;
-import Ovulam.entities.Unit.OvulamUnitType;
-import Ovulam.entities.Unit.RotationalCubeUnit;
-import Ovulam.entities.Unit.RotationalCubeUnitType;
-import Ovulam.world.No9527.大圈圈weapon;
+import Ovulam.entities.Unit.*;
 import arc.graphics.Color;
 import arc.struct.ObjectMap;
 import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.content.UnitTypes;
-import mindustry.entities.bullet.BasicBulletType;
 import mindustry.gen.EntityMapping;
 import mindustry.gen.Entityc;
 import mindustry.type.UnitType;
 
 public class OvulamUnitTypes {
-    public static UnitType delta, test, SS, S;
+    public static UnitType delta, SSS, SS, S;
 
     public static ObjectMap<Class<? extends Entityc>, Integer> ids = new ObjectMap<>();
 
     static {
         ids.put(OvulamUnit.class, EntityMapping.register(OvulamMod.OvulamModName() + "delta", OvulamUnit::new));
-        ids.put(RotationalCubeUnit.class, EntityMapping.register(OvulamMod.OvulamModName() + "SS", RotationalCubeUnit::new));
         ids.put(RotationalCubeUnit.class, EntityMapping.register(OvulamMod.OvulamModName() + "S", RotationalCubeUnit::new));
+        ids.put(RotationalCubeUnit.class, EntityMapping.register(OvulamMod.OvulamModName() + "SS", RotationalCubeUnit::new));
+        ids.put(RollCubeUnit.class, EntityMapping.register(OvulamMod.OvulamModName() + "SSS", RollCubeUnit::new));
     }
 
     public static int getId(Class<? extends Entityc> key) {
@@ -33,42 +27,11 @@ public class OvulamUnitTypes {
 
     public static void load() {
 
-        test = new UnitType("test") {
-            {
-                weapons.add(new 大圈圈weapon("large-weapon") {{
-                    mirror = false;
-                    reload = 13f;
-                    x = 16;
-                    y = 16;
-                    top = false;
-                    ejectEffect = Fx.casing1;
-
-                    bullet = new BasicBulletType(2.5f, 9) {{
-                        width = 7f;
-                        height = 9f;
-                        lifetime = 60f;
-                    }};
-                }});
-
-                weapons.add(new 大圈圈weapon("large-weapon") {{
-                    mirror = false;
-                    reload = 13f;
-                    x = 16;
-                    y = 16;
-                    top = false;
-                    ejectEffect = Fx.casing1;
-                    X初相 = 180f;
-
-                    bullet = new BasicBulletType(2.5f, 9) {{
-                        width = 7f;
-                        height = 9f;
-                        lifetime = 60f;
-                    }};
-                }});
-                constructor = UnitTypes.flare.constructor;
-                flying = true;
-            }
-        };
+        SSS = new RollCubeUnitType("SSS") {{
+            hitSize = 24f;
+            health = 1000;
+            armor = 10f;
+        }};
 
         delta = new OvulamUnitType("delta") {{
             coreUnitDock = true;
@@ -105,13 +68,13 @@ public class OvulamUnitTypes {
             faceTarget = false;
         }};
 
-        SS = new RotationalCubeUnitType("SS") {{
+        S = new RotationalCubeUnitType("S") {{
             hitSize = 8f;
             flying = true;
             rotationMulti = 3f;
         }};
 
-        S = new RotationalCubeUnitType("S") {{
+        SS = new RotationalCubeUnitType("SS") {{
             hitSize = 16f;
             flying = true;
             rotationMulti = 3f;

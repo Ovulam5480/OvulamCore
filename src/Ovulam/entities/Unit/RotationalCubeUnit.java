@@ -10,7 +10,9 @@ public class RotationalCubeUnit extends OvulamUnit{
     public float cubeRadius;
     public float rotationMulti;
 
-    public Seq<Vec3> vec3s = Seq.with(new Vec3(),new Vec3(),new Vec3(),new Vec3(), new Vec3(),new Vec3(),new Vec3(),new Vec3());
+    public Seq<Vec3> vec3s = Seq.with(
+            new Vec3(),new Vec3(),new Vec3(),new Vec3(),
+            new Vec3(),new Vec3(),new Vec3(),new Vec3());
 
 
     @Override
@@ -18,16 +20,13 @@ public class RotationalCubeUnit extends OvulamUnit{
         super.update();
         rot3D += vel.len() * Time.delta * rotationMulti;
 
-        //todo 二进制
-        int index = 0;
-        for (int i = -1; i <= 1; i += 2){
-            for (int j = -1; j <= 1; j += 2){
-                for (int k = -1; k <= 1; k += 2){
-                    vec3s.get(index).set(i,j,k).rotate(axis, rot3D).scl(cubeRadius).add(x,y,0);
-                    index++;
-                }
-            }
+        for (int i = 0; i < 8; i++){
+            float rx = i >> 2 & 1;
+            float ry = i >> 1 & 1;
+            float rz = i & 1;
+            vec3s.get(i).set(rx, ry, rz).scl(2).sub(1).rotate(axis, rot3D).scl(cubeRadius).add(x,y,0);
         }
     }
+
 
 }
