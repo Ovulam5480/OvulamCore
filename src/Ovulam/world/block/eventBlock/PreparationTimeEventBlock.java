@@ -1,4 +1,4 @@
-package Ovulam.world.block.block.EventBlock;
+package Ovulam.world.block.eventBlock;
 
 import arc.Events;
 import arc.graphics.Color;
@@ -8,29 +8,30 @@ import mindustry.type.Sector;
 
 import static mindustry.Vars.state;
 
-public class PreparationTimeBlock extends EventBlock{
+public class PreparationTimeEventBlock extends EventBlock{
     public float time = 900f;
-    public PreparationTimeBlock(String name) {
+    public PreparationTimeEventBlock(String name) {
         super(name);
     }
 
-    public class PreparationTimeBuild extends EventBlockBuild {
-        public boolean pre = true;
+    public class PreparationTimeEventBuild extends EventBlockBuild {
+        public boolean finish = false;
         public float timer;
 
         @Override
         public void updateTile(){
-            if(!pre)return;
+            if(finish)return;
             timer += delta();
 
             if(timer > time){
-                pre = false;
+                finish = true;
                 Events.fire(new PreparationFinish(state.getSector()));
             }
         }
 
+        @Override
         public void drawCamera(float cameraX, float cameraY, float tilesizeScl){
-            if(!pre)return;
+            if(finish)return;
 
             float progress = timer / time;
             Lines.stroke(8f * tilesizeScl);

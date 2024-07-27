@@ -37,4 +37,6 @@ public class OvulamMath {
         vec3.add(axis.cpy().scl(axis.cpy().dot(target)).scl(1 - Mathf.cosDeg(angle)));
         return vec3;
     }
+
+
 }

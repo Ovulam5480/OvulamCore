@@ -79,6 +79,11 @@ public class BaseStorageBlock extends StorageBlock {
     public class BaseStorageBuild extends StorageBuild{
         public int side = -1;
         public boolean remoteLink = false;
+        public boolean bossAugment;
+
+        public void setBossAugment(boolean bossAugment){
+            this.bossAugment = bossAugment;
+        }
 
         public @Nullable Seq<Building> getProximityCore(){
             return proximity.select(building -> building.block instanceof CoreBlock);
@@ -96,9 +101,8 @@ public class BaseStorageBlock extends StorageBlock {
         }
 
         //获得核心提升
-        //todo 肾上腺素时刻
         public boolean coreAugment(){
-            return hasCoreMerge() && completelyLinkedCore() != null;
+            return (hasCoreMerge() && completelyLinkedCore() != null) || bossAugment;
         }
 
         @Override

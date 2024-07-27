@@ -1,4 +1,4 @@
-package Ovulam.mod.Blocks;
+package Ovulam.modContent.Blocks;
 
 import Ovulam.No9527垃圾堆.Drill9527;
 import Ovulam.world.block.block.PayloadOre;
@@ -9,7 +9,7 @@ import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-public class Production {
+public class production {
     public static Block PayloadDrill, Drill9527;
     public static Block PayloadOreLarge;
 

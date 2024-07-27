@@ -1,4 +1,4 @@
-package Ovulam.world.block.block.EventBlock;
+package Ovulam.world.block.eventBlock;
 
 import arc.graphics.g2d.Draw;
 import mindustry.Vars;
@@ -14,13 +14,15 @@ public class EventBlock extends Block {
         super(name);
         update = true;
         //destructible = true;
-        //方块做事件, 简单可靠👍
+        //方块做事件, 简单可靠
         clipSize = 65536 * tilesize;
     }
     public class EventBlockBuild extends Building{
         @Override
         public void updateTile(){
+        }
 
+        public void drawCamera(float cameraX, float cameraY, float tilesizeScl){
         }
 
         @Override
@@ -34,9 +36,6 @@ public class EventBlock extends Block {
             drawCamera(camera.position.x, camera.position.y, cameraScl);
 
             Draw.reset();
-        }
-
-        public void drawCamera(float cameraX, float cameraY, float tilesizeScl){
         }
     }
 }

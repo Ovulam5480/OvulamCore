@@ -1,4 +1,4 @@
-package Ovulam.mod;
+package Ovulam.modContent;
 
 import arc.graphics.Color;
 import mindustry.content.Planets;

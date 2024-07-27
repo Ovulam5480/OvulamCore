@@ -1,4 +1,4 @@
-package Ovulam.mod;
+package Ovulam.modContent;
 
 import Ovulam.OvulamMod;
 import Ovulam.entities.Unit.*;

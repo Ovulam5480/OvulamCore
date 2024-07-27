@@ -43,7 +43,7 @@ public class 大圈圈weapon extends Weapon {
 
     public void update(Unit unit, WeaponMount mount){
         super.update(unit, mount);
-        //x = Mathf.cosDeg(Time.time * 移动速度倍率) * 移动半径 * X移动倍率;
+        //x = Mathf.cosDeg(Time.EventTime * 移动速度倍率) * 移动半径 * X移动倍率;
         x = Mathf.cos((Time.time * 移动速度倍率 + X初相) * Mathf.degreesToRadians) * 移动半径 * X移动倍率;
         y = Mathf.sin((Time.time * 移动速度倍率 + Y初相) * Mathf.degreesToRadians) * 移动半径 * Y移动倍率;
 

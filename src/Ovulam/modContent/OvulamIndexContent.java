@@ -1,4 +1,4 @@
-package Ovulam.mod;
+package Ovulam.modContent;
 
 import arc.struct.Seq;
 import mindustry.Vars;

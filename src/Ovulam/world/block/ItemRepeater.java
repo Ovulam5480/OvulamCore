@@ -2,6 +2,7 @@ package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.type.Recipe;
+import arc.graphics.g2d.Font;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
@@ -13,6 +14,7 @@ import mindustry.gen.Tex;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.type.ItemStack;
+import mindustry.ui.Fonts;
 import mindustry.ui.ItemImage;
 import mindustry.ui.ReqImage;
 import mindustry.ui.Styles;
@@ -149,10 +151,11 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
+            Font font = Fonts.outline;
 
             //Vars.state.rules.winWave = XXX;
 
-            //Call.sendChatMessage(Time.time);
+            //Call.sendChatMessage(Time.EventTime);
             //world.tile()
             //Vars.state.rules.canGameOver = false
             /*
@@ -179,7 +182,7 @@ public class ItemRepeater extends Block {
             Vars.player.unit().type.omniMovement = true;
             Vars.player.unit().type.rotateMoveFirst = false;
             Vars.player.unit().type.flying = true;
-            Vars.player.unit().rotation = Time.time * 20;
+            Vars.player.unit().rotation = Time.EventTime * 20;
 
              */
         }

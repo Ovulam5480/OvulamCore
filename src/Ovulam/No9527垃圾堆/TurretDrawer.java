@@ -19,7 +19,11 @@ public class TurretDrawer extends DrawTurret {
     //圆球位置
     public float cx = -16f, cy;
     //圆球半径
-    public float radius = 4f;
+    public float radius = 8f;
+    //小亮圆球半径
+    public float smradius = 5f;
+    //圆弧半径
+    public float arcRadius = 14f;
     //闪电链半径
     public float lightingRadius = 16f;
     //闪电链间隔
@@ -57,7 +61,7 @@ public class TurretDrawer extends DrawTurret {
 
         for(int i = 0; i < sectors; i++){
             float rot = build.rotation + i * 360f/sectors - Time.time * rotateSpeed;
-            Lines.arc(x2, y2, lightingRadius, sectorRad, rot);
+            Lines.arc(x2, y2, arcRadius, sectorRad, rot);
         }
 
         if (timers.containsKey(build)){
@@ -71,5 +75,6 @@ public class TurretDrawer extends DrawTurret {
         }else timers.put(build, 0f);
 
         Draw.color();
+        Fill.circle(x2, y2, smradius);
     }
 }

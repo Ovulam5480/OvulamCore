@@ -1,6 +1,6 @@
 package Ovulam.entities.Unit;
 
-import Ovulam.mod.OvulamUnitTypes;
+import Ovulam.modContent.OvulamUnitTypes;
 import arc.math.Mathf;
 import mindustry.game.Team;
 import mindustry.gen.UnitEntity;

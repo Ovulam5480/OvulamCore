@@ -1,4 +1,4 @@
-package Ovulam.mod.Blocks;
+package Ovulam.modContent.Blocks;
 
 import Ovulam.entities.bullet.MortarBulletType;
 import Ovulam.world.block.defense.ItemStackTurret;
@@ -11,7 +11,7 @@ import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-public abstract class Turret {
+public abstract class turret {
     public static Block order;
     public static Block organize;
     public static Block Mortar;

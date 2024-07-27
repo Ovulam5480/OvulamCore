@@ -12,6 +12,8 @@ import mindustry.Vars;
 import mindustry.entities.Effect;
 import mindustry.game.Team;
 import mindustry.gen.Building;
+import mindustry.type.Category;
+import mindustry.type.ItemStack;
 import mindustry.ui.Fonts;
 import mindustry.world.Block;
 import mindustry.world.Tile;
@@ -22,6 +24,7 @@ public class EffectBlock extends Block {
     public float etime = 150f;
     public EffectBlock(String name) {
         super(name);
+        requirements(Category.defense, new ItemStack[]{});
         update = true;
         sync = true;
         clipSize = 800f;

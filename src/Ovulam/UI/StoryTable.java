@@ -21,7 +21,7 @@ public class StoryTable {
     public String[] stageTexts;
     public TextureRegion[] stageRegions;
 
-    //[string1, region1, string2, region2...]
+    //[region1, string1, region2, string2...]
     public StoryTable(Object... objects) {
         stagesAmount = objects.length / 2;
         stageTexts = new String[stagesAmount];
@@ -31,7 +31,6 @@ public class StoryTable {
             stageRegions[i] = (TextureRegion) objects[i * 2];
             stageTexts[i] = (String) objects[i * 2 + 1];
         }
-
         rebuild();
     }
 

@@ -1,4 +1,4 @@
-package Ovulam.mod;
+package Ovulam.modContent;
 
 import Ovulam.entities.Item.OvulamItem;
 import mindustry.type.Item;

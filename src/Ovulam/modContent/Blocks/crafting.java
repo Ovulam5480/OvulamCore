@@ -1,4 +1,4 @@
-package Ovulam.mod.Blocks;
+package Ovulam.modContent.Blocks;
 
 import Ovulam.entities.OvulamFx;
 import Ovulam.world.block.block.ManufacturerBlock;
@@ -21,7 +21,7 @@ import mindustry.world.Block;
 
 //各种工厂及其组装方块
 //todo 不要使用MoveDefault!!!
-public class Crafting {
+public class crafting {
     public static Block
             knitter, mixer, batchFactory,
             knitterBase, mixerBase, batchFactoryBase;

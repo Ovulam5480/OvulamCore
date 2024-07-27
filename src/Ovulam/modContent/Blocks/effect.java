@@ -1,4 +1,4 @@
-package Ovulam.mod.Blocks;
+package Ovulam.modContent.Blocks;
 
 import Ovulam.world.block.defense.AblationTower;
 import Ovulam.world.block.storage.*;
@@ -6,7 +6,7 @@ import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-public class Effect {
+public class effect {
     public static Block
             //todo 幻辉科技核心
             coreMartialDragon,
