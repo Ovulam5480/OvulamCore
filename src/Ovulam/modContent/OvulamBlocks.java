@@ -25,12 +25,14 @@ public class OvulamBlocks {
         effect.load();
 
         SSSSSS = new EffectTest("QQQQQ") {{
+            requirements(Category.defense, new ItemStack[]{});
         }};
 
         SSSSS = new AerialExclusionWall("SSSSS") {{
             size = 2;
             requirements(Category.defense, new ItemStack[]{});
-        }};
+        }
+        };
 
         ((LaserTurret) Blocks.meltdown).shootType = new LaserLaserBulletType() {{
             length = 180f;

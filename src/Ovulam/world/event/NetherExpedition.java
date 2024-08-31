@@ -14,7 +14,7 @@ import static mindustry.Vars.*;
 
 //地府远征
 //达到某个条件时, 跳转到某个地图
-public class NetherExpedition extends OvulamEvent {
+public class NetherExpedition extends OvulamFlowEvent {
     public CoreBlock coreBlock = (CoreBlock) Blocks.coreShard;
     public Sector from;
     public Sector to;
@@ -26,8 +26,8 @@ public class NetherExpedition extends OvulamEvent {
         this.to = to;
 
         this.EventTime = preparationTime;
-        startAnimation = OvulamEventAnimations.selfOrganization;
 
+        startAnimation = OvulamEventAnimations.selfOrganization;
     }
 
     @Override
@@ -37,10 +37,6 @@ public class NetherExpedition extends OvulamEvent {
                 getTrigger = true;
             }
         });
-    }
-
-    public void begin() {
-        super.begin();
     }
 
     public void end() {

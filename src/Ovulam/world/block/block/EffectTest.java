@@ -2,7 +2,9 @@ package Ovulam.world.block.block;
 
 import Ovulam.UI.EventAnimation;
 import Ovulam.modContent.OvulamEventAnimations;
+import arc.Events;
 import arc.scene.ui.layout.Table;
+import arc.util.Log;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.gen.Building;
@@ -25,18 +27,19 @@ public class EffectTest extends Block {
         configurable = true;
         update = true;
         requirements(Category.defense, new ItemStack[]{});
-        clipSize = 60000;
     }
 
     public class EffectTestBuild extends Building{
 
         @Override
         public void buildConfiguration(Table table) {
-            table.button(Icon.tree, () -> A.reset());
-            table.button(Icon.tree, () -> S.reset());
-            table.button(Icon.tree, () -> W.reset());
-            table.button(Icon.tree, () -> D.reset());
+            table.button(Icon.tree, () -> {
+                Events.fire(new EffectTestEvent());
+                Log.info("fire");
+            });
 
         }
     }
+
+    public static class EffectTestEvent{}
 }

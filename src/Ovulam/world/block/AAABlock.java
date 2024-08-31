@@ -7,6 +7,7 @@ import arc.math.geom.Vec2;
 import arc.math.geom.Vec3;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
+import mindustry.ai.types.MinerAI;
 import mindustry.content.Blocks;
 import mindustry.gen.Building;
 import mindustry.graphics.Layer;
@@ -35,6 +36,7 @@ public class AAABlock extends Block {
         public Vec2 v4 = new Vec2();
 
         public float rot3D;
+
 
         public void buildConfiguration(Table table) {
             table.table(configTable -> table.table(sliders -> {

@@ -98,6 +98,15 @@ public class EventAnimation implements Scaled {
 
         childs.add(iconTable);
         childs.add(rightTable).add(leftTable);
+
+        for(Table g : giants){
+            Vars.ui.hudGroup.addChild(g);
+            g.visible = false;
+        }
+        childs.each(c -> {
+            Vars.ui.hudGroup.addChild(c);
+            c.visible = false;
+        });
     }
 
     public Table setSizeTable(boolean isRight){
@@ -113,30 +122,38 @@ public class EventAnimation implements Scaled {
     void run() {
         Events.run(EventType.Trigger.update, () -> {
             if (timer > animationTime) {
-                if(hasInit)stop();
+                stop();
+            }
+
+            if(!hasInit){
                 return;
             }
 
-            timer += Vars.state.isPaused() ? 0 : Time.delta;
+            timer += Vars.state.isPaused() || !Vars.state.isGame() ? 0 : Time.delta;
 
-            for (int i = 0; i < giantsAmount; i++) {
-                Table g = giants[i];
-
-                float x = Core.graphics.getWidth() * Mathf.pow(-1, i);
-                float y = totalHeight / giantsAmount * (i - giantsAmount / 2f) + Core.graphics.getHeight() / 2f;
-
-                giants[i] = horizontalMovement(g, x, y, curve(0, giantsEnd));
-            }
-
-            iconTable.clear();
-            iconTable.image(new TextureRegionDrawable(icon).tint(iconColor())).size(iconSize);
-
-            rightTable.clear();
-            leftTable.clear();
-
-            rightTable.add("This is right", 2).style(Styles.outlineLabel).center();
-            leftTable.add("这是右边", 2).style(Styles.outlineLabel).center();
+            updateTable();
         });
+    }
+
+    public void updateTable(){
+
+        for (int i = 0; i < giantsAmount; i++) {
+            Table g = giants[i];
+
+            float x = Core.graphics.getWidth() * Mathf.pow(-1, i);
+            float y = totalHeight / giantsAmount * (i - giantsAmount / 2f) + Core.graphics.getHeight() / 2f;
+
+            giants[i] = horizontalMovement(g, x, y, curve(0, giantsEnd));
+        }
+
+        iconTable.clear();
+        iconTable.image(new TextureRegionDrawable(icon).tint(iconColor())).size(iconSize);
+
+        rightTable.clear();
+        leftTable.clear();
+
+        rightTable.add("This is right", 2).style(Styles.outlineLabel).center();
+        leftTable.add("这是右边", 2).style(Styles.outlineLabel).center();
     }
 
     public float pad() {
@@ -156,22 +173,26 @@ public class EventAnimation implements Scaled {
     }
 
     public void reset() {
-
         if(!hasInit){
-            for(Table g : giants){
-                Vars.ui.hudGroup.addChild(g);
-            }
-            childs.each(c -> Vars.ui.hudGroup.addChild(c));
+            //todo 测试
+            timer = 0;
             hasInit = true;
+
+            updateTable();
+
+            for(Table g : giants){
+                g.visible = true;
+            }
+            childs.each(c -> c.visible = true);
         }
-        timer = 0;
     }
 
     public void stop() {
         for(Table g : giants){
-            Vars.ui.hudGroup.removeChild(g);
+            g.visible = false;
         }
-        childs.each(c -> Vars.ui.hudGroup.removeChild(c));
+        childs.each(c -> c.visible = false);
+
         hasInit = false;
     }
 

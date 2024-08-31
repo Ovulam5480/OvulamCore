@@ -1,14 +1,13 @@
 package Ovulam.world.event;
 
 import Ovulam.UI.EventAnimation;
-import arc.Events;
 import arc.util.Nullable;
 import mindustry.Vars;
-import mindustry.game.EventType;
 
 import static mindustry.Vars.state;
 
-public abstract class OvulamEvent{
+//流程事件, trigger()用于将getTrigger设为true
+public class OvulamFlowEvent{
     public float EventTime = 200f, timer;
     public boolean updating;
     public boolean getTrigger;
@@ -16,27 +15,17 @@ public abstract class OvulamEvent{
 
     public @Nullable EventAnimation startAnimation, endAnimation;
 
-    public OvulamEvent(){
-        trigger();
-        Events.run(EventType.Trigger.update, () ->{
-            if(getTrigger){
-                updating = true;
-                begin();
-            }
-
-            if(updating) update();
-        });
+    public OvulamFlowEvent(){
     }
 
-    public abstract void trigger();
-
+    public void trigger(){
+        getTrigger = true;
+    }
 
     public void begin(){
         if(startAnimation != null)startAnimation.reset();
         previousTicks = state.tick;
         timer = 0;
-
-        getTrigger = false;
     }
 
     public void end(){
@@ -46,10 +35,27 @@ public abstract class OvulamEvent{
     }
 
     public void update(){
-        timer += Vars.state.isPaused() ? 0 : (float) (state.tick - previousTicks);
-        previousTicks = state.tick;
+        timer += delta();
+
+        if(getTrigger){
+            updating = true;
+            getTrigger = false;
+            begin();
+        }
+
+        if(!updating)return;
+
 
         if(timer > EventTime)end();
     }
 
+    public float delta(){
+        float delta = Vars.state.isPaused() ? 0 : (float) (state.tick - previousTicks);
+        previousTicks = state.tick;
+        return delta;
+    }
+
+    public boolean isUpdating(){
+        return updating;
+    }
 }

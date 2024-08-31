@@ -11,7 +11,7 @@ import static mindustry.Vars.state;
 
 //失去研究进度
 //当区块丢失时, 清除某个研究的研究进度
-public class ClearResearchSchedule extends OvulamEvent{
+public class ClearResearchSchedule extends OvulamMechanicsEvent{
     public Sector sector;
     public UnlockableContent tech;
 
@@ -20,9 +20,7 @@ public class ClearResearchSchedule extends OvulamEvent{
     public ClearResearchSchedule(Sector sector, UnlockableContent content){
         this.sector = sector;
         this.tech = content;
-
-        EventTime = 0f;
-        endAnimation = OvulamEventAnimations.researchLost;
+        startAnimation = OvulamEventAnimations.researchLost;
     }
 
     @Override
@@ -33,8 +31,8 @@ public class ClearResearchSchedule extends OvulamEvent{
             }
         });
         Events.on(EventType.WorldLoadEvent.class, e -> {
-            if(lostSector){
-                getTrigger = true;
+            if(state.isCampaign() && state.getSector().planet == sector.planet && lostSector){
+                begin();
                 lostSector = false;
             }
         });
