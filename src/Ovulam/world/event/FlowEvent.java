@@ -1,25 +1,27 @@
 package Ovulam.world.event;
 
 import Ovulam.UI.EventAnimation;
+import arc.util.Log;
 import arc.util.Nullable;
 import mindustry.Vars;
 
 import static mindustry.Vars.state;
 
-//流程事件, trigger()用于将getTrigger设为true
-public class OvulamFlowEvent{
+public abstract class FlowEvent {
     public float EventTime = 200f, timer;
-    public boolean updating;
+
     public boolean getTrigger;
+    public Class<Object> eventType;
+
     public double previousTicks;
 
     public @Nullable EventAnimation startAnimation, endAnimation;
 
-    public OvulamFlowEvent(){
-    }
-
     public void trigger(){
         getTrigger = true;
+        begin();
+
+        Log.info("ti");
     }
 
     public void begin(){
@@ -31,23 +33,19 @@ public class OvulamFlowEvent{
     public void end(){
         if(endAnimation != null)endAnimation.reset();
 
-        updating = false;
+        getTrigger = false;
     }
 
     public void update(){
         timer += delta();
 
-        if(getTrigger){
-            updating = true;
-            getTrigger = false;
-            begin();
+        if(getTrigger) {
+            run();
+            if(timer > EventTime)end();
         }
-
-        if(!updating)return;
-
-
-        if(timer > EventTime)end();
     }
+    
+    public void run(){};
 
     public float delta(){
         float delta = Vars.state.isPaused() ? 0 : (float) (state.tick - previousTicks);
@@ -55,7 +53,7 @@ public class OvulamFlowEvent{
         return delta;
     }
 
-    public boolean isUpdating(){
-        return updating;
+    public boolean isRunning(){
+        return getTrigger;
     }
 }

@@ -3,11 +3,12 @@ package Ovulam.modContent;
 import Ovulam.UI.EventAnimation;
 
 public class OvulamEventAnimations {
-    public static  EventAnimation
-            researchLost,
+    public static EventAnimation
+            researchLost,netherExpedition,
             selfOrganization, selfOrganizationCollapse, selfOrganizationConfusion, selfOrganizationDecompose;
 
     public static void init() {
+        netherExpedition = new EventAnimation("Nether-Expedition");
         researchLost = new EventAnimation("Research-Lost");
         //爆发
         selfOrganization = new EventAnimation("Self-Organization");

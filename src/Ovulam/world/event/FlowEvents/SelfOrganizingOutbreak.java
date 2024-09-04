@@ -1,7 +1,8 @@
-package Ovulam.world.event;
+package Ovulam.world.event.FlowEvents;
 
 import Ovulam.UI.EventAnimation;
 import Ovulam.modContent.OvulamEventAnimations;
+import Ovulam.world.event.FlowEvent;
 import arc.struct.Seq;
 import mindustry.Vars;
 import mindustry.content.Items;
@@ -11,7 +12,7 @@ import mindustry.type.Category;
 import mindustry.world.blocks.storage.CoreBlock;
 
 //自组织爆发事件线
-public class SelfOrganizingOutbreak extends OvulamFlowEvent {
+public class SelfOrganizingOutbreak extends FlowEvent {
     public float overdriveTime = 600f, overdriveTimer;
     public EventAnimation decompose = OvulamEventAnimations.selfOrganizationDecompose;
     public EventAnimation confusion = OvulamEventAnimations.selfOrganizationConfusion;
@@ -20,7 +21,7 @@ public class SelfOrganizingOutbreak extends OvulamFlowEvent {
         startAnimation = OvulamEventAnimations.selfOrganization;
         endAnimation = OvulamEventAnimations.selfOrganizationCollapse;
         //持续三十分钟
-        EventTime = 300f;
+        EventTime = 600f;
     }
 
     public void begin() {
@@ -51,7 +52,7 @@ public class SelfOrganizingOutbreak extends OvulamFlowEvent {
             }else {
                 //结局:崩溃
                 decompose.reset();
-                updating = false;
+                getTrigger = false;
                 return;
             }
 

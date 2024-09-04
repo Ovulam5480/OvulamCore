@@ -16,7 +16,8 @@ public class OvulamMod extends Mod {
     @Override
     public void init() {
         OvulamEventAnimations.init();
-        OvulamEvents.init();
+        OvulamMechanicsEvents.init();
+        OvulamStages.init();
     }
 
     @Override
@@ -28,6 +29,7 @@ public class OvulamMod extends Mod {
         OvulamPlanets.load();
 
         OvulamBlocks.load();
+
     }
 }
 

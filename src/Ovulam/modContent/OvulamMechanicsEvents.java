@@ -1,12 +1,12 @@
 package Ovulam.modContent;
 
-import Ovulam.world.event.ClearResearchSchedule;
-import Ovulam.world.event.NetherExpedition;
+import Ovulam.world.event.MechanicsEvents.ClearResearchSchedule;
+import Ovulam.world.event.FlowEvents.NetherExpedition;
 import mindustry.content.Blocks;
 import mindustry.content.Planets;
 import mindustry.content.SectorPresets;
 
-public class OvulamEvents {
+public class OvulamMechanicsEvents {
 
     //科技清除
     public static ClearResearchSchedule frozenForest;

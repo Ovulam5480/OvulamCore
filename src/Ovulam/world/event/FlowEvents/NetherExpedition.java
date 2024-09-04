@@ -1,11 +1,11 @@
-package Ovulam.world.event;
+package Ovulam.world.event.FlowEvents;
 
 import Ovulam.modContent.OvulamEventAnimations;
-import arc.Events;
+import Ovulam.world.event.FlowEvent;
+import arc.util.Log;
 import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Blocks;
-import mindustry.game.EventType;
 import mindustry.type.ItemSeq;
 import mindustry.type.Sector;
 import mindustry.world.blocks.storage.CoreBlock;
@@ -14,7 +14,7 @@ import static mindustry.Vars.*;
 
 //地府远征
 //达到某个条件时, 跳转到某个地图
-public class NetherExpedition extends OvulamFlowEvent {
+public class NetherExpedition extends FlowEvent {
     public CoreBlock coreBlock = (CoreBlock) Blocks.coreShard;
     public Sector from;
     public Sector to;
@@ -24,19 +24,15 @@ public class NetherExpedition extends OvulamFlowEvent {
     public NetherExpedition(Sector from, Sector to, float preparationTime) {
         this.from = from;
         this.to = to;
-
         this.EventTime = preparationTime;
 
-        startAnimation = OvulamEventAnimations.selfOrganization;
+        startAnimation = OvulamEventAnimations.netherExpedition;
     }
 
     @Override
     public void trigger() {
-        Events.on(EventType.SectorCaptureEvent.class, e -> {
-            if (state.isCampaign() && e.sector == from) {
-                getTrigger = true;
-            }
-        });
+        super.trigger();
+        Log.info("AAAAAAAAAAAAAA");
     }
 
     public void end() {
