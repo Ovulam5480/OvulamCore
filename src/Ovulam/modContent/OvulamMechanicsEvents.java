@@ -7,7 +7,6 @@ import mindustry.content.Planets;
 import mindustry.content.SectorPresets;
 
 public class OvulamMechanicsEvents {
-
     //科技清除
     public static ClearResearchSchedule frozenForest;
     //发射区块

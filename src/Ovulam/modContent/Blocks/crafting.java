@@ -23,7 +23,7 @@ import mindustry.world.Block;
 //todo 不要使用MoveDefault!!!
 public class crafting {
     public static Block
-            knitter, mixer, batchFactory,
+            knitter, mixer, batchFactory, crystallizer,
             knitterBase, mixerBase, batchFactoryBase;
     public static void load(){
         batchFactory = new MultiPayloadCrafter("batch-factory") {{

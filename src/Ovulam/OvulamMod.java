@@ -29,7 +29,6 @@ public class OvulamMod extends Mod {
         OvulamPlanets.load();
 
         OvulamBlocks.load();
-
     }
 }
 

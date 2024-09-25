@@ -20,14 +20,12 @@ public class OvulamTMIRecipeParser{
             recipe.setTime(craftTime);
 
             planIn.itemStacks.each(itemStack -> recipe.addMaterial(getWrap(itemStack.item), itemStack.amount));
-            planIn.liquidStacks.each(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid),
-                    planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
+            planIn.liquidStacks.each(liquidStack -> recipe.addMaterial(getWrap(liquidStack.liquid), planIn.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
             planIn.payloadStacks().each(ps -> recipe.addMaterial(getWrap(ps.item), ps.amount));
             if(planIn.power > 0) recipe.addMaterialPersec(PowerMark.INSTANCE, planIn.power);
 
             planOut.itemStacks.each(itemStack -> recipe.addProduction(getWrap(itemStack.item), itemStack.amount));
-            planOut.liquidStacks.each(liquidStack -> recipe.addProduction(getWrap(liquidStack.liquid),
-                    planOut.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
+            planOut.liquidStacks.each(liquidStack -> recipe.addProduction(getWrap(liquidStack.liquid), planOut.liquidCompletely ? liquidStack.amount : liquidStack.amount / craftTime));
             planOut.payloadStacks().each(ps -> recipe.addProduction(getWrap(ps.item), ps.amount));
             if(planOut.power > 0)recipe.addProductionPersec(PowerMark.INSTANCE, planOut.power);
         }

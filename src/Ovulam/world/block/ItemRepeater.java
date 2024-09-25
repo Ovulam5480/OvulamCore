@@ -177,13 +177,37 @@ public class ItemRepeater extends Block {
             Vars.content.unit(52).targetAir = true;
 
             //Vars.world.tiles.eachTile(tile1 => {if(tile1.build instanceof ConstructBlock.ConstructBuild)tile1.build.remove();});
-            Vars.player.unit().type.drag = 0.3f;
-            Vars.player.unit().type.speed = 10;
-            Vars.player.unit().type.omniMovement = true;
-            Vars.player.unit().type.rotateMoveFirst = false;
+            Vars.player.unit().type.drag = 0.3;
             Vars.player.unit().type.flying = true;
-            Vars.player.unit().rotation = Time.EventTime * 20;
 
+            Events.run(EventType.Trigger.update, () => {
+                Vars.player.unit().type.rotateMoveFirst;
+                Vars.player.unit().type.strafePenalty = 1;
+                Vars.player.unit().type.omniMovement = true;
+                Vars.player.unit().type.rotateMoveFirst = false;
+                Vars.player.unit().rotation = Vars.player.unit().type.rotateSpeed * Vars.player.unit().speedMultiplier * Time.time;
+            });
+
+                        Events.run(EventType.Trigger.update, () => {
+                if(!Vars.state.rules.pvp && Vars.state.rules.unitCapVariable && Vars.state.rules.unitCap + Vars.state.rules.defaultTeam.data().unitCap > 120){
+                    Vars.state.rules.unitCapVariable = false;
+                    Vars.state.rules.unitCap = 120;
+                }
+
+                
+                        var time = 20;
+        var timer = 20;
+
+        Events.run(Trigger.update, () => {
+            timer -= Time.delta;
+            if(timer < 0){
+                timer = time;
+
+                var u = Vars.player.unit();
+                var e = Fx.reactorExplosion;
+                e.at(u.x, u.y);
+            }
+        });
              */
         }
     }
