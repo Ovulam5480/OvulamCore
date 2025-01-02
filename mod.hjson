@@ -1,0 +1,17 @@
+displayName: "水兔兔的半成品"
+
+name: "Ovulam"
+
+author: "Ovulam5480"
+
+main: "Ovulam.OvulamCore"
+
+"recipeEntry": "Ovulam.OvulamTMIRecipes"
+
+description: "作者:Ovulam, 贴图:水兔兔, 代码:Leporidae, 地图:qodhshai, 宣传:兔子食不食有猫饼, 灵感:hi9he5t, 测试:5480"
+
+version: 0.1
+
+minGameVersion: 146
+
+java: true
