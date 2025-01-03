@@ -1,5 +1,6 @@
 package Ovulam;
 
+import Ovulam.gen.EntityRegistry;
 import Ovulam.modContent.*;
 import Ovulam.world.graphics.OvulamCacheLayers;
 import Ovulam.world.graphics.OvulamShaders;
@@ -8,13 +9,12 @@ import mindustry.game.EventType;
 import mindustry.mod.Mod;
 
 
-public class OvulamCore extends Mod {
-    public static OvulamRenderer renderer = new OvulamRenderer();
+public class OvulamMod extends Mod {
 
-    public OvulamCore() {
+    public OvulamMod() {
     }
 
-    public static String OvulamCoreName() {
+    public static String modName() {
         return "ovulam-";
     }
 
@@ -24,11 +24,12 @@ public class OvulamCore extends Mod {
         //OvulamMechanicsEvents.init();
         OvulamStages.init();
 
-        Events.run(EventType.Trigger.update, renderer::apply);
     }
 
     @Override
     public void loadContent() {
+        EntityRegistry.register();
+
         OvulamShaders.init();
         OvulamCacheLayers.init();
 
@@ -38,6 +39,7 @@ public class OvulamCore extends Mod {
         OvulamPlanets.load();
 
         OvulamBlocks.load();
+
 
     }
 }

@@ -1,52 +1,47 @@
 package Ovulam.modContent;
 
-import Ovulam.OvulamCore;
-import Ovulam.entities.Unit.MultiSegment.TreeUnit;
-import Ovulam.entities.Unit.MultiSegment.TreeUnitType;
-import Ovulam.entities.Unit.MultiSegment.TreeUnitTypePart;
-import Ovulam.entities.Unit.*;
+import Ovulam.OvulamMod;
+import Ovulam.entities.units.*;
+import Ovulam.entities.units.MultiSegment.TreeUnit;
+import Ovulam.entities.units.MultiSegment.TreeUnitType;
+import Ovulam.entities.units.MultiSegment.TreeUnitTypePart;
+import Ovulam.gen.EntityRegistry;
+import Ovulam.gen.MyTankUnit;
+import Ovulam.gen.Myc;
 import arc.Core;
-import arc.func.Prov;
 import arc.graphics.Color;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.math.geom.Vec3;
 import arc.struct.IntMap;
-import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Time;
+import ent.anno.Annotations.EntityDef;
 import mindustry.Vars;
 import mindustry.content.UnitTypes;
-import mindustry.gen.EntityMapping;
-import mindustry.gen.Entityc;
-import mindustry.gen.Unit;
+import mindustry.gen.*;
 import mindustry.type.UnitType;
 
 public class OvulamUnitTypes {
-    public static UnitType delta, SSS, SS, S;
+    public static UnitType delta;
+    public static UnitType S, SS;
+    public static UnitType SSS;
     public static TreeUnitType S1, S2, S3, S4;
 
-    public static ObjectMap<Class<? extends Entityc>, Integer> ids = new ObjectMap<>();
-
-    public static int getId(Class<? extends Entityc> key) {
-        return ids.get(key);
-    }
-
-    public static void put(Class<? extends Entityc> unitClass, UnitType type, Prov prov){
-        ids.put(unitClass, EntityMapping.register(OvulamCore.OvulamCoreName() + type.name, prov));
-    }
+    public static @EntityDef({Unitc.class, Tankc.class, Myc.class}) UnitType myut;
 
     public static void load() {
-        ids.put(OvulamUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "delta", OvulamUnit::new));
-        ids.put(RotationalCubeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "S", RotationalCubeUnit::new));
-        ids.put(RotationalCubeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "SS", RotationalCubeUnit::new));
-        ids.put(RollCubeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "SSS", RollCubeUnit::new));
-        ids.put(OvulamUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "delta", OvulamUnit::new));
+        EntityRegistry.register(OvulamMod.modName() + "delta", OvulamUnit.class, OvulamUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "S", RotationalCubeUnit.class, RotationalCubeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "SS", RotationalCubeUnit.class, RotationalCubeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "SSS", RollCubeUnit.class, RollCubeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "delta", OvulamUnit.class, OvulamUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "S1", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "S2", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "S3", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "S4", TreeUnit.class, TreeUnit::new);
 
-        ids.put(TreeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "S1", TreeUnit::new));
-        ids.put(TreeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "S2", TreeUnit::new));
-        ids.put(TreeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "S3", TreeUnit::new));
-        ids.put(TreeUnit.class, EntityMapping.register(OvulamCore.OvulamCoreName() + "S4", TreeUnit::new));
+        //myut = EntityRegistry.content("myut", MyTankUnit.class, UnitType::new);
 
         SSS = new RollCubeUnitType("SSS") {{
             hitSize = 24f;
@@ -108,7 +103,7 @@ public class OvulamUnitTypes {
             drawBottom = true;
             drawCenter = true;
             flying = true;
-            }
+        }
             private final Seq<Vec3> vs = new Seq<>();
             private final Vec3 ax = new Vec3(1, 1, 0);
             private TextureRegion centerRegion;
@@ -158,16 +153,16 @@ public class OvulamUnitTypes {
                 1, Seq.with(S3part,
                         new TreeUnitTypePart(S1, 10f, 10),
                         new TreeUnitTypePart(S1, -10f, 10)),
-                        4, Seq.with(S3part,
-                                new TreeUnitTypePart(S1, 20f, 0),
-                                new TreeUnitTypePart(S1, -20f, 0)),
-                        10, Seq.with(S3part,
-                                new TreeUnitTypePart(S2, 20f, 0),
-                                new TreeUnitTypePart(S2, -20f, 0)),
-                        12, Seq.with(S3part,
-                                new TreeUnitTypePart(S1, 20f, 0),
-                                new TreeUnitTypePart(S1, -20f, 0)),
-                        14, Seq.with(S3part,
+                4, Seq.with(S3part,
+                        new TreeUnitTypePart(S1, 20f, 0),
+                        new TreeUnitTypePart(S1, -20f, 0)),
+                10, Seq.with(S3part,
+                        new TreeUnitTypePart(S2, 20f, 0),
+                        new TreeUnitTypePart(S2, -20f, 0)),
+                12, Seq.with(S3part,
+                        new TreeUnitTypePart(S1, 20f, 0),
+                        new TreeUnitTypePart(S1, -20f, 0)),
+                14, Seq.with(S3part,
                         new TreeUnitTypePart(S1, 20f, -20),
                         new TreeUnitTypePart(S1, -20f, -20))
         )){{

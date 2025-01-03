@@ -1,6 +1,6 @@
 package Ovulam.No9527垃圾堆;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
@@ -114,7 +114,7 @@ public class UnemFragment extends MenuFragment {
             TextureRegion[] logos = new TextureRegion[frames];
 
             for (int i = 0; i < frames; i++){
-                logos[i] = Core.atlas.find(OvulamCore.OvulamCoreName() + "Image" + i);
+                logos[i] = Core.atlas.find(OvulamMod.modName() + "Image" + i);
             }
 
             int index = (int) ((Time.time / 100 * 60 / frames间隔) % frames);

@@ -1,6 +1,6 @@
-package Ovulam.entities.Unit;
+package Ovulam.entities.units;
 
-import Ovulam.modContent.OvulamUnitTypes;
+import Ovulam.gen.EntityRegistry;
 import mindustry.Vars;
 import mindustry.entities.Damage;
 import mindustry.gen.UnitEntity;
@@ -17,7 +17,7 @@ public class OvulamUnit extends UnitEntity {
     }
 
     public int classId() {
-        return OvulamUnitTypes.getId(this.getClass());
+        return EntityRegistry.getID(this.getClass());
     }
 
     public void damage(float amount) {

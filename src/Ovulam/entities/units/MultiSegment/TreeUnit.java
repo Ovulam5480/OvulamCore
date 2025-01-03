@@ -1,6 +1,6 @@
-package Ovulam.entities.Unit.MultiSegment;
+package Ovulam.entities.units.MultiSegment;
 
-import Ovulam.entities.Unit.OvulamUnit;
+import Ovulam.entities.units.OvulamUnit;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Font;
 import arc.scene.ui.layout.Table;

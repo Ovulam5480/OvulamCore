@@ -1,6 +1,6 @@
 package Ovulam.world.block.block;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.Pixmap;
@@ -42,7 +42,7 @@ public class ItemBlock extends Block {
     public void load() {
         super.load();
         itemRegion = item.fullIcon;
-        region = Core.atlas.find(OvulamCore.OvulamCoreName() + "ItemBlock-" + size);
+        region = Core.atlas.find(OvulamMod.modName() + "ItemBlock-" + size);
     }
 
     public Color itemColor(){

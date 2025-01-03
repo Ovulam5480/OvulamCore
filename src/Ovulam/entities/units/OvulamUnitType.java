@@ -1,4 +1,4 @@
-package Ovulam.entities.Unit;
+package Ovulam.entities.units;
 
 import arc.graphics.Color;
 import arc.math.Angles;

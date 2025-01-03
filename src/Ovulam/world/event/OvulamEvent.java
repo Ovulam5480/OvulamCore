@@ -1,6 +1,6 @@
 package Ovulam.world.event;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import Ovulam.UI.EventAnimation;
 import arc.util.Nullable;
 
@@ -27,14 +27,14 @@ public class OvulamEvent {
     public void begin(){
         inDuration = true;
         if(startAnimation != null){
-            OvulamCore.renderer.setAnimal(startAnimation);
+            OvulamMod.renderer.setAnimal(startAnimation);
         }
     }
 
     public void finish(){
         inDuration = false;
         if(endAnimation != null){
-            OvulamCore.renderer.setAnimal(endAnimation);
+            OvulamMod.renderer.setAnimal(endAnimation);
         }
     }
 

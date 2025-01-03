@@ -1,6 +1,8 @@
 package Ovulam.modContent;
 
 import Ovulam.No9527垃圾堆.LaserLaserBulletType;
+import Ovulam.No9527垃圾堆.介绍器;
+import Ovulam.No9527垃圾堆.发散器;
 import Ovulam.modContent.Blocks.crafting;
 import Ovulam.modContent.Blocks.effect;
 import Ovulam.modContent.Blocks.turret;
@@ -30,11 +32,10 @@ public class OvulamBlocks {
             requirements(Category.defense, new ItemStack[]{});
         }};
 
-        SSSSS = new AerialExclusionWall("SSSSS") {{
+        SSSSS = new 介绍器("SSSSS") {{
             size = 2;
             requirements(Category.defense, new ItemStack[]{});
-        }
-        };
+        }};
 
         ((LaserTurret) Blocks.meltdown).shootType = new LaserLaserBulletType() {{
             length = 180f;

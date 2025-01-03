@@ -1,4 +1,4 @@
-package Ovulam.entities.Unit;
+package Ovulam.entities.units;
 
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
@@ -52,7 +52,7 @@ public class RollCubeUnit extends OvulamUnit{
         return Mathf.clamp(rollingTimer / getType().rollingTime, 0, 1);
     }
 
-    public float getVel(){
+    public float getRollingVel(){
         return getType().hitSize / getType().rollingTime;
     }
 
@@ -76,7 +76,7 @@ public class RollCubeUnit extends OvulamUnit{
     public void update() {
         super.update();
 
-        if(hasInitRolling) vel.trns(targetRot() * 90, getVel());
+        if(hasInitRolling) vel.trns(targetRot() * 90, getRollingVel());
         else {
             zeroTarget = true;
             vel.setZero();

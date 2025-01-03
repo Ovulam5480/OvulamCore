@@ -1,4 +1,4 @@
-package Ovulam.entities.Unit.MultiSegment;
+package Ovulam.entities.units.MultiSegment;
 
 import arc.func.Floatc4;
 import arc.func.Floatf;

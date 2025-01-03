@@ -1,4 +1,4 @@
-package Ovulam.entities.Unit;
+package Ovulam.entities.units;
 
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
@@ -88,9 +88,8 @@ public class RotationalCubeUnit extends OvulamUnit{
     public void update() {
         super.update();
         if(passed < len){
-            float speed = speed() * Time.delta;
-            vel.set(target).setLength(speed);
-            passed += speed;
+            vel.set(target).setLength(speed());
+            passed += speed() * Time.delta;
 
             if(passed >= len){
                 getType().effect.at(toCTile(x, cTile()) * cTile(), toCTile(y, cTile()) * cTile(), cTile());

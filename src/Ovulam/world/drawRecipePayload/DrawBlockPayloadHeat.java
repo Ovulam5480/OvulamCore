@@ -1,6 +1,6 @@
 package Ovulam.world.drawRecipePayload;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import Ovulam.math.OvulamMath;
 import arc.Core;
 import arc.graphics.g2d.Draw;
@@ -22,7 +22,7 @@ public class DrawBlockPayloadHeat extends DrawRecipePayload{
 
     @Override
     public void load(Block block) {
-        this.heat = Core.atlas.find(OvulamCore.OvulamCoreName() + "payload-heat");
+        this.heat = Core.atlas.find(OvulamMod.modName() + "payload-heat");
     }
 
     @Override

@@ -1,11 +1,9 @@
 package Ovulam.UI;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.Texture;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.scene.style.TextureRegionDrawable;
@@ -13,7 +11,6 @@ import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.Log;
 import mindustry.Vars;
-import mindustry.graphics.Drawf;
 import mindustry.ui.Styles;
 import mindustry.ui.WarningBar;
 
@@ -61,7 +58,7 @@ public class EventAnimation{
             }
         }
 
-        icon = Core.atlas.find(OvulamCore.OvulamCoreName() + name);
+        icon = Core.atlas.find(OvulamMod.modName() + name);
 
         giants = new Table[giantsAmount];
         for (int i = 0; i < giantsAmount; i++) {

@@ -1,6 +1,6 @@
 package Ovulam.world.graphics;
 
-import Ovulam.OvulamCore;
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.files.Fi;
 import arc.graphics.Texture;
@@ -25,7 +25,7 @@ public class OvulamShaders {
     }
 
     public static Texture loadTexture(String name){
-        Texture t = new Texture(Vars.mods.getMod(OvulamCore.class).root.child("textures").child(name + ".png"));
+        Texture t = new Texture(Vars.mods.getMod(OvulamMod.class).root.child("textures").child(name + ".png"));
         t.setFilter(Texture.TextureFilter.linear);
         t.setWrap(Texture.TextureWrap.repeat);
 
@@ -115,7 +115,7 @@ public class OvulamShaders {
         }
 
         public static Fi getModShaderFi(String file) {
-            return Vars.mods.getMod(OvulamCore.class).root.child("shaders").child(file + ".frag");
+            return Vars.mods.getMod(OvulamMod.class).root.child("shaders").child(file + ".frag");
         }
     }
 }

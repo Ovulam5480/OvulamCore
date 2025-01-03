@@ -1,6 +1,6 @@
-package Ovulam.entities.Unit.MultiSegment;
+package Ovulam.entities.units.MultiSegment;
 
-import Ovulam.entities.Unit.OvulamUnitType;
+import Ovulam.entities.units.OvulamUnitType;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
 import arc.struct.IntMap;
