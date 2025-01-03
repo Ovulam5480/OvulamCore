@@ -10,6 +10,7 @@ import mindustry.mod.Mod;
 
 
 public class OvulamMod extends Mod {
+    public static OvulamRenderer renderer = new OvulamRenderer();
 
     public OvulamMod() {
     }
