@@ -46,12 +46,12 @@ public class RotationalCubeUnit extends OvulamUnit{
         axis.set(read.f(), read.f(), read.f());
     }
 
-    public RotationalCubeUnitType getType(){
+    public RotationalCubeUnitType asType(){
         return (RotationalCubeUnitType) type;
     }
 
     public float cTile(){
-        return getType().cTile;
+        return asType().cTile;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class RotationalCubeUnit extends OvulamUnit{
                 chance = 0;
             }else chance += c;
 
-            if(getType().randomRoll && !isPlayer()){
+            if(asType().randomRoll && !isPlayer()){
                 if(Mathf.randomBoolean(0.1f))section++;
                 else if(Mathf.randomBoolean(0.1f))section--;
                 else if(Mathf.randomBoolean(0.05f))section = section + 2;
@@ -92,14 +92,14 @@ public class RotationalCubeUnit extends OvulamUnit{
             passed += speed() * Time.delta;
 
             if(passed >= len){
-                getType().effect.at(toCTile(x, cTile()) * cTile(), toCTile(y, cTile()) * cTile(), cTile());
+                asType().effect.at(toCTile(x, cTile()) * cTile(), toCTile(y, cTile()) * cTile(), cTile());
                 vel.setZero();
 
                 //for (WeaponMount mount : mounts()) {}
             }
         }
 
-        rot3D += (vel.len() + 0.2f) * Time.delta * getType().rotationMulti;
+        rot3D += (vel.len() + 0.2f) * Time.delta * asType().rotationMulti;
 
         for (int i = 0; i < 8; i++){
             vec3s.get(i).set(points.get(i)).rotate(axis, rot3D).scl(1 + Mathf.sin(160f, 0.1f));
@@ -108,11 +108,11 @@ public class RotationalCubeUnit extends OvulamUnit{
 
     @Override
     public float deltaX() {
-        return getType().deceiveAccurateDelay ? vel.x * getType().deceiveMulti : super.deltaX();
+        return asType().deceiveAccurateDelay ? vel.x * asType().deceiveMulti : super.deltaX();
     }
 
     @Override
     public float deltaY() {
-        return getType().deceiveAccurateDelay ? vel.y * getType().deceiveMulti : super.deltaY();
+        return asType().deceiveAccurateDelay ? vel.y * asType().deceiveMulti : super.deltaY();
     }
 }

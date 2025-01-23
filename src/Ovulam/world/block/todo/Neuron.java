@@ -1,4 +1,4 @@
-package Ovulam.world.block.distribution;
+package Ovulam.world.block.todo;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
@@ -38,8 +38,6 @@ public class Neuron extends Block {
         update = true;
         sync = true;
     }
-
-
 
     public Rect rangeRect(float x, float y, float range) {
         return new Rect(x - range, y - range, range * 2, range * 2);

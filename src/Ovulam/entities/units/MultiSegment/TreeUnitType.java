@@ -6,7 +6,10 @@ import arc.math.geom.Vec2;
 import arc.struct.IntMap;
 import arc.struct.Seq;
 import arc.util.Tmp;
+import mindustry.content.UnitTypes;
 import mindustry.gen.Unit;
+import mindustry.type.UnitType;
+import mindustry.type.Weapon;
 
 //多体节单位
 public class TreeUnitType extends OvulamUnitType {
@@ -20,6 +23,8 @@ public class TreeUnitType extends OvulamUnitType {
         flying = true;
         health = 80000f;
 
+        physics = false;
+
         this.node = node;
     }
 
@@ -27,8 +32,6 @@ public class TreeUnitType extends OvulamUnitType {
     public void load() {
         super.load();
 
-        //todo 待修改
-        //node.values().toArray().each(a -> a.each(TreeUnitTypePart::load));
     }
 
     @Override
@@ -36,25 +39,33 @@ public class TreeUnitType extends OvulamUnitType {
         super.init();
         node.values().toArray().each(a -> a.each(part -> {
             if(part.type == null)part.type = this;
+            if(part.mirrorX){
+                TreeUnitTypePart p = part.copy();
+                p.x = -p.x;
+                p.x2 = -p.x2;
+                p.mirrorX = false;
+                a.add(p);
+            }
+
+            if(part.mirrorY){
+                TreeUnitTypePart p = part.copy();
+                p.y = -p.y;
+                p.y2 = -p.y2;
+                p.mirrorY = false;
+                a.add(p);
+            }
         }));
     }
 
-    public static void setRotation(TreeUnit node, TreeUnitTypePart part, Unit root, float progress){
+    public static void setRotation(TreeUnit node, TreeUnitTypePart part, Unit root){
         float partRot = Mathf.lerp(part.rotation, part.rotation2, part.partMove ? part.progress.get(node) : 0);
         float angle = Mathf.angle(node.x - root.x, node.y - root.y);
-        float targetRot = angle + partRot;
 
-        float nodeRot = node.rotation;
-
-        if(Math.abs((targetRot - nodeRot + 360 + 180) % 360 - 180) < part.minAngle)return;
-
-        node.rotation(Mathf.slerp(nodeRot, targetRot, progress));
+        node.rotation(angle + partRot);
     }
 
-    public static void setPosition(TreeUnit node, TreeUnitTypePart part, Unit root, float progress){
-        getPartPos(part.partMove ? part.progress.get(node) : 0, part, Tmp.v1).rotate(root.rotation - 90).add(root);
-
-        node.set(lerpPolar(Tmp.v2.set(node), Tmp.v1, progress));
+    public static Vec2 getFramePos(TreeUnit node, TreeUnitTypePart part, TreeUnit root, Vec2 out){
+        return getPartPos(part.partMove ? part.progress.get(node) : 0, part, out).rotate(root.rotation - 90).add(root.framePos);
     }
 
     public static Vec2 getPartPos(float progress, TreeUnitTypePart part, Vec2 out){
@@ -67,12 +78,5 @@ public class TreeUnitType extends OvulamUnitType {
         float angle = getPartPos(part.partMove ? 0.5f : 0, part, Tmp.v1).angle();
 
         return angle + partRot + root.rotation + 180f;
-    }
-
-    public static Vec2 lerpPolar(Vec2 from, Vec2 to, float alpha){
-        float len = Mathf.lerp(from.len(), to.len(), alpha);
-        float ang = Mathf.slerp(from.angle(), to.angle(), alpha);
-        from.trns(ang, len);
-        return from;
     }
 }

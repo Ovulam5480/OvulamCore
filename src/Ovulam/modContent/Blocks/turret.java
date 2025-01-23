@@ -43,7 +43,7 @@ public abstract class turret {
 
         organize = new ItemStackTurret("organize"){{
             shootSound = Sounds.shootBig;
-            bullet = new MortarBulletType(this, 400){{
+            bullet = new MortarBulletType("organize", 400){{
                 lifetime = 240f;
                 offsideMultiplier = 2f;
                 rotateMultiplier = 3f;

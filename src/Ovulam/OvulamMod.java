@@ -4,8 +4,9 @@ import Ovulam.gen.EntityRegistry;
 import Ovulam.modContent.*;
 import Ovulam.world.graphics.OvulamCacheLayers;
 import Ovulam.world.graphics.OvulamShaders;
-import arc.Events;
-import mindustry.game.EventType;
+import mindustry.Vars;
+import mindustry.content.StatusEffects;
+import mindustry.game.Team;
 import mindustry.mod.Mod;
 
 
@@ -40,8 +41,6 @@ public class OvulamMod extends Mod {
         OvulamPlanets.load();
 
         OvulamBlocks.load();
-
-
     }
 }
 

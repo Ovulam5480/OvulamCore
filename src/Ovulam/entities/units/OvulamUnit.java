@@ -12,7 +12,7 @@ public class OvulamUnit extends UnitEntity {
     public OvulamUnit() {
     }
 
-    public OvulamUnitType getType(){
+    public OvulamUnitType asType(){
         return (OvulamUnitType) type;
     }
 
@@ -27,13 +27,13 @@ public class OvulamUnit extends UnitEntity {
     //减免固定数值伤害, 包括穿甲伤害
     @Override
     public void rawDamage(float amount) {
-        float damageReduction = getType().damageReduction;
+        float damageReduction = asType().damageReduction;
         amount = Math.max(amount - damageReduction, 0);
         super.rawDamage(amount);
     }
 
     @Override
     public void wobble() {
-        if(getType().wobble)super.wobble();
+        if(asType().wobble)super.wobble();
     }
 }

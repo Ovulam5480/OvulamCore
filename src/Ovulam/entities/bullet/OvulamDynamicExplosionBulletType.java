@@ -1,37 +1,47 @@
 package Ovulam.entities.bullet;
 
 import Ovulam.entities.OvulamDynamicExplosion;
+import Ovulam.world.type.ItemAttributes;
+import arc.struct.ObjectMap;
+import arc.util.Nullable;
+import mindustry.entities.Mover;
 import mindustry.entities.bullet.BulletType;
+import mindustry.game.Team;
 import mindustry.gen.Bullet;
+import mindustry.gen.Entityc;
+import mindustry.gen.Teamc;
+import mindustry.world.meta.Attribute;
 
 public class OvulamDynamicExplosionBulletType extends BulletType {
-    float flammability, explosiveness, radioactivity, charge;
-    public OvulamDynamicExplosionBulletType(
-            float flammability, float explosiveness,
-            float radioactivity, float charge){
-        this.flammability = flammability;
-        this.explosiveness = explosiveness;
-        this.radioactivity = radioactivity;
-        this.charge = charge;
-        lifetime = 1f;
-        speed = 1f;
-    }
-
     public OvulamDynamicExplosionBulletType(){
-        this(0,0,0,0);
+        lifetime = 0f;
+        speed = 0f;
     }
 
-    public void setAttribute(float flammability, float explosiveness,
-                             float radioactivity, float charge){
-        this.flammability = flammability;
-        this.explosiveness = explosiveness;
-        this.radioactivity = radioactivity;
-        this.charge = charge;
+    @Override
+    public @Nullable Bullet create(Bullet parent, float x, float y, float angle){
+        Bullet bullet = create(parent.owner, parent.team, x, y, angle);
+        if(parent.data instanceof ItemAttributes ia)bullet.data(ia);
+        return bullet;
+    }
+
+    @Override
+    public @Nullable Bullet create(Bullet parent, float x, float y, float angle, float velocityScl, float lifeScale){
+        Bullet bullet = create(parent.owner, parent.team, x, y, angle, velocityScl, lifeScale);
+        if(parent.data instanceof ItemAttributes ia)bullet.data(ia);
+        return bullet;
+    }
+
+    @Override
+    public @Nullable Bullet create(Bullet parent, float x, float y, float angle, float velocityScl){
+        Bullet bullet = create(parent.owner(), parent.team, x, y, angle, velocityScl);
+        if(parent.data instanceof ItemAttributes ia)bullet.data(ia);
+        return bullet;
     }
 
     @Override
     public void despawned(Bullet b){
-        new OvulamDynamicExplosion(b.x, b.y, b.team, flammability, explosiveness, radioactivity, charge);
+        if(b.data instanceof ItemAttributes ia)new OvulamDynamicExplosion(b.x, b.y, b.team, ia);
         super.despawned(b);
     }
 }

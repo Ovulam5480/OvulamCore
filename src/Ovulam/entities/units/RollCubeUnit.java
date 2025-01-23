@@ -25,7 +25,7 @@ public class RollCubeUnit extends OvulamUnit{
 
     public Vec2 target = new Vec2();
 
-    public RollCubeUnitType getType(){
+    public RollCubeUnitType asType(){
         return (RollCubeUnitType) type;
     }
 
@@ -41,7 +41,7 @@ public class RollCubeUnit extends OvulamUnit{
             else target.set(vector);
 
             float quad = target.angle() / 90 % 1;
-            float change = getType().randomRoll ? quad : quad > 0.5f ? 1 : 0;
+            float change = asType().randomRoll ? quad : quad > 0.5f ? 1 : 0;
             changeQuad = Mathf.num(Mathf.randomBoolean(change));
 
             hasInitRolling = true;
@@ -49,11 +49,11 @@ public class RollCubeUnit extends OvulamUnit{
     }
 
     public float getProgress(){
-        return Mathf.clamp(rollingTimer / getType().rollingTime, 0, 1);
+        return Mathf.clamp(rollingTimer / asType().rollingTime, 0, 1);
     }
 
     public float getRollingVel(){
-        return getType().hitSize / getType().rollingTime;
+        return asType().hitSize / asType().rollingTime;
     }
 
     public float reversal(float timer, float time){
@@ -89,12 +89,12 @@ public class RollCubeUnit extends OvulamUnit{
             //以方块当前位置为中心, 因此要额外减掉滚动进度
             int index = (i - 1) * 2;
             lengths[index] = -(Tmp.v1.x - 0.5f + getProgress());
-            lengths[index + 1] = Mathf.lerp(getType().bScl, 1, Tmp.v1.y);
+            lengths[index + 1] = Mathf.lerp(asType().bScl, 1, Tmp.v1.y);
         }
 
         //滚动并且目标速度不是0, 则进行滚动
-        if(!isRolling) intervalTimer = reversal(intervalTimer, getType().rollInterval);
-        else if(!zeroTarget) rollingTimer = reversal(rollingTimer, getType().rollingTime);
+        if(!isRolling) intervalTimer = reversal(intervalTimer, asType().rollInterval);
+        else if(!zeroTarget) rollingTimer = reversal(rollingTimer, asType().rollingTime);
 
         if((damageTimer += Time.delta) > 5f){
             float radius = hitSize / tilesize / 2f;
@@ -117,12 +117,12 @@ public class RollCubeUnit extends OvulamUnit{
 
     @Override
     public float deltaX() {
-        return getType().deceiveAccurateDelay ? vel.x * getType().deceiveMulti : super.deltaX();
+        return asType().deceiveAccurateDelay ? vel.x * asType().deceiveMulti : super.deltaX();
     }
 
     @Override
     public float deltaY() {
-        return getType().deceiveAccurateDelay ? vel.y * getType().deceiveMulti : super.deltaY();
+        return asType().deceiveAccurateDelay ? vel.y * asType().deceiveMulti : super.deltaY();
     }
 
 }

@@ -1,9 +1,11 @@
 package Ovulam.world.block.defense;
 
 import Ovulam.entities.bullet.OvulamDynamicExplosionBulletType;
+import Ovulam.world.type.ItemAttributes;
 import mindustry.content.Fx;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Building;
+import mindustry.gen.Bullet;
 import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.ui.Bar;
@@ -66,6 +68,10 @@ public class ItemStackTurret extends Turret {
             super.updateTile();
         }
 
+        @Override
+        public BulletType peekAmmo() {
+            return bullet;
+        }
 
         @Override
         public BulletType useAmmo() {
@@ -84,18 +90,13 @@ public class ItemStackTurret extends Turret {
         }
 
         @Override
-        public BulletType peekAmmo() {
-            BulletType bulletType = bullet.copy();
-            //todo
-
+        protected void handleBullet(Bullet bullet, float offsetX, float offsetY, float angleOffset) {
             float flammability = items.sum((item, amount) -> item.flammability * amount) * flammabilityMultiplier;
             float explosiveness = items.sum((item, amount) -> item.explosiveness * amount) * explosivenessMultiplier;
             float radioactivity = items.sum((item, amount) -> item.radioactivity * amount) * radioactivityMultiplier;
             float charge = items.sum((item, amount) -> item.charge * amount) * chargeMultiplier;
 
-            ((OvulamDynamicExplosionBulletType) bulletType.fragBullet).setAttribute(flammability, explosiveness, radioactivity, charge);
-
-            return bulletType;
+            bullet.data(new ItemAttributes(flammability, explosiveness, radioactivity, charge));
         }
 
         @Override

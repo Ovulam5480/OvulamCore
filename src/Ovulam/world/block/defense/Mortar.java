@@ -3,6 +3,7 @@ package Ovulam.world.block.defense;
 import Ovulam.entities.bullet.MortarBulletType;
 import Ovulam.entities.bullet.OvulamDynamicExplosionBulletType;
 import Ovulam.world.block.payload.MultiPayloadBlock;
+import Ovulam.world.type.ItemAttributes;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
@@ -39,6 +40,20 @@ public class Mortar extends MultiPayloadBlock {
     public float payloadCapacity = 64f;
     //集齐物资后的准备发射时间
     public float launchTime = 100f;
+
+    MortarBulletType pod = new MortarBulletType("mortar", range){{
+        damage = health;
+        fragBullet = new OvulamDynamicExplosionBulletType();
+        fragBullets = 1;
+        offsideMultiplier = 4f;
+        shadowOffsideMultiplier = 2f;
+        hasIcon = hasThrusters = true;
+        hitSize = Mathf.sqr(podSize);
+        lifetime = totalTime;
+        podBulletRegion = podRegion;
+        podBulletIconRegion = podIconRegion;
+        podBulletThrustersRegion = podThrustersRegion;
+    }};
 
     public Mortar(String name){
         super(name);
@@ -204,26 +219,13 @@ public class Mortar extends MultiPayloadBlock {
                 return;
             }
 
-            ///////////
-
             mortarPodLaunch.at(x, y, rotation, this);
 
             float angle = Mathf.angle(target.x() - x, target.y() - y);
 
-            MortarBulletType pod = new MortarBulletType(block, range){{
-                damage = health;
-                fragBullet = new OvulamDynamicExplosionBulletType(flammability, explosiveness, radioactivity, charge);
-                offsideMultiplier = 4f;
-                shadowOffsideMultiplier = 2f;
-                hasIcon = hasThrusters = true;
-                hitSize = Mathf.sqr(podSize);
-                lifetime = totalTime;
-                podBulletRegion = podRegion;
-                podBulletIconRegion = podIconRegion;
-                podBulletThrustersRegion = podThrustersRegion;
-            }};
+            ItemAttributes ia = new ItemAttributes(flammability, explosiveness, radioactivity, charge);
 
-            pod.create(this, team, x, y, angle, 1f, 1f, 1f, null, null, target.x(), target.y());
+            pod.create(this, team, x, y, angle, 1f, 1f, 1f, ia, null, target.x(), target.y());
 
             flammability = explosiveness = radioactivity = charge = health = podUsed = launchCounter = 0;
         }

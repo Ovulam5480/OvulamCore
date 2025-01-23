@@ -1,5 +1,6 @@
 package Ovulam.entities.bullet;
 
+import Ovulam.OvulamMod;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
@@ -50,11 +51,10 @@ public class MortarBulletType extends BulletType {
     public ObjectMap<Bullet, Float> rotations = new ObjectMap<>();
     public ObjectMap<Bullet, Vec2> beginning = new ObjectMap<>();
 
-    private final String blockName;
+    public String sprite;
 
-    public MortarBulletType(Block block, float bulletRange){
-        //用于贴图
-        this.blockName = block.name;
+    public MortarBulletType(String bulletSprite, float bulletRange){
+        sprite = OvulamMod.modName() + bulletSprite;
         hitEffect = Fx.none;
         despawnEffect = Fx.none;
         hittable = false;
@@ -67,7 +67,6 @@ public class MortarBulletType extends BulletType {
 
     @Override
     public void init(Bullet b){
-
         rotations.put(b, 0f);
         beginning.put(b, new Vec2(b.x, b.y));
 
@@ -87,9 +86,9 @@ public class MortarBulletType extends BulletType {
     @Override
     public void load(){
         super.load();
-        podBulletRegion = Core.atlas.find(blockName + "-pod");
-        if(hasIcon)podBulletIconRegion = Core.atlas.find(blockName + "-pod-icon");
-        if(hasThrusters)podBulletThrustersRegion = Core.atlas.find(blockName + "-pod-thrusters");
+        podBulletRegion = Core.atlas.find(sprite + "-pod");
+        if(hasIcon)podBulletIconRegion = Core.atlas.find(sprite + "-pod-icon");
+        if(hasThrusters)podBulletThrustersRegion = Core.atlas.find(sprite + "-pod-thrusters");
     }
 
     //子弹的进度函数, 确保这个函数在0到1的积分为0

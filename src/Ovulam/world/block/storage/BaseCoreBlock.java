@@ -25,13 +25,9 @@ public class BaseCoreBlock extends CoreBlock{
     //玩家单位重生时间
     public float spawnTime = 200f;
     //额外建造的单位数
-    public int extraSpawnAmount = 1;
-    //这个核心被摧毁时，是否直接游戏结束
+    public int extraSpawnAmount = 2;
+    //这个核心被摧毁时，是否摧毁其他核心, 直接游戏结束
     public boolean destroyGameOver = false;
-/*    //超过复活限制时,核心才能被攻击
-    public boolean spawnProtect = false;
-    //玩家复活次数限制,超过限制时,核心才能被攻击
-    public int spawnLimitation = -1;*/
 
     public static ObjectMap<Player, BlockUnitc> waitingPlayers = new ObjectMap<>();
 
@@ -57,7 +53,7 @@ public class BaseCoreBlock extends CoreBlock{
     }
 
     public class BaseCoreBuild extends CoreBuild {
-        public float unitSpawnCounter = 0, playerSpawnCounter = 0;
+        public float playerSpawnCounter, unitSpawnCounter;
         public Player spawningPlayer;
         public Building[] coreAugment = new Building[4];
 
@@ -71,14 +67,14 @@ public class BaseCoreBlock extends CoreBlock{
 
         @Override
         public float progress(){
-            return unitSpawnCounter / spawnTime;
+            return playerSpawnCounter / spawnTime;
         }
 
         @Override
         public void draw(){
             super.draw();
 
-            float spawnCounter = Math.max(playerSpawnCounter, unitSpawnCounter);
+            float spawnCounter = playerSpawnCounter;
             if(spawnCounter > 0.1f){
                 Draw.draw(Layer.blockOver, () -> Drawf.construct(x, y, unitType.fullIcon,
                         rotdeg(), spawnCounter / spawnTime, 1f, Time.time));
@@ -94,8 +90,7 @@ public class BaseCoreBlock extends CoreBlock{
                 if(!proximity.contains(b)) coreAugment[i] = null;
             }
 
-            if(spawningPlayer == null) unitSpawn();
-            else playerSpawnCounter += delta();
+            if(spawningPlayer != null) playerSpawnCounter += delta();
 
             if(playerSpawnCounter > spawnTime){
                 Player player = spawningPlayer;
@@ -142,7 +137,7 @@ public class BaseCoreBlock extends CoreBlock{
             Seq<Unit> units = team.data().units;
             int amount = units == null ? 0 : units.count(unit -> !unit.spawnedByCore());
 
-            if(amount >= extraSpawnAmount){
+            if(amount >= extraSpawnAmount || waitingPlayers.size > 0){
                 unitSpawnCounter = Mathf.approachDelta(unitSpawnCounter, 0, 5f);
                 return;
             }
@@ -155,7 +150,6 @@ public class BaseCoreBlock extends CoreBlock{
                     Unit unit = unitType.create(team);
                     unit.set(this);
                     unit.rotation = 90;
-                    //我都不知道这玩意干嘛的
                     unit.add();
                     unitSpawnCounter = 0;
                 }

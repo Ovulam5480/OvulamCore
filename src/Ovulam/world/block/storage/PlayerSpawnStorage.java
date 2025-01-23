@@ -2,11 +2,14 @@ package Ovulam.world.block.storage;
 
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Font;
+import arc.struct.ObjectMap;
 import arc.util.Align;
 import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.content.UnitTypes;
+import mindustry.gen.BlockUnitc;
+import mindustry.gen.Building;
 import mindustry.gen.Player;
 import mindustry.gen.Unit;
 import mindustry.graphics.Drawf;
@@ -19,15 +22,15 @@ public class PlayerSpawnStorage extends BaseStorageBlock{
     public UnitType unitType = UnitTypes.alpha;
     public float spawnTime = 200f;
 
-
+    public static ObjectMap<Player, BlockUnitc> waitingPlayers = new ObjectMap<>();
 
     public PlayerSpawnStorage(String name) {
         super(name);
     }
 
     public class UnitSpawnStorageBuild extends BaseStorageBuild{
-        public Player spawnPlayer;
         public float playerSpawnCounter = 0;
+        public Player spawnPlayer;
 
         public UnitType getUnitType(){
             return unitType;
@@ -47,13 +50,12 @@ public class PlayerSpawnStorage extends BaseStorageBlock{
         }
 
         public void requestSpawn(Player player){
-            if(!unitType.supportsEnv(Vars.state.rules.env) || !(spawnPlayer == null || spawnPlayer == player)) return;
-            spawnPlayer = player;
-            //请求重生需要队列里面为空
-            if(!(coreAugment() || playerSpawnCounter > spawnTime)) return;
-            playerSpawn(player);
-            spawnPlayer = null;
-            playerSpawnCounter = 0f;
+            if(!unitType.supportsEnv(Vars.state.rules.env) || waitingPlayers.containsKey(player)) return;
+
+            if(spawnPlayer == null)spawnPlayer = player;
+
+            BlockUnitc unit = (BlockUnitc) UnitTypes.block.create(team);
+            unit.tile(this);
         }
 
         @Override
@@ -61,7 +63,7 @@ public class PlayerSpawnStorage extends BaseStorageBlock{
             super.updateTile();
             if(spawnPlayer == null) return;
             if(coreAugment() || playerSpawnCounter > spawnTime){
-                requestSpawn(spawnPlayer);
+                playerSpawn(spawnPlayer);
                 return;
             }
             if(!coreAugment()) playerSpawnCounter += delta();

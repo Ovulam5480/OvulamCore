@@ -1,6 +1,7 @@
 package Ovulam.entities;
 
 import Ovulam.entities.bullet.PierceContinuousBulletType;
+import Ovulam.world.type.ItemAttributes;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Lines;
 import arc.math.Angles;
@@ -19,6 +20,10 @@ public class OvulamDynamicExplosion {
         Draw.alpha(e.fout());
         Lines.circle(e.x, e.y, e.rotation);
     });
+
+    public OvulamDynamicExplosion(float x, float y, @Nullable Team team, ItemAttributes attributes){
+        this(x, y, team, attributes.flammability, attributes.explosiveness, attributes.radioactivity, attributes.charge);
+    }
 
     public OvulamDynamicExplosion(float x, float y, @Nullable Team team,
                                   float flammability, float explosiveness,

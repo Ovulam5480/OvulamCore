@@ -1,22 +1,20 @@
 package Ovulam.modContent;
 
+import Ovulam.No9527垃圾堆.Drill9527;
 import Ovulam.No9527垃圾堆.LaserLaserBulletType;
+import Ovulam.No9527垃圾堆.liq发散器;
 import Ovulam.No9527垃圾堆.介绍器;
-import Ovulam.No9527垃圾堆.发散器;
 import Ovulam.modContent.Blocks.crafting;
 import Ovulam.modContent.Blocks.effect;
 import Ovulam.modContent.Blocks.turret;
 import Ovulam.world.block.block.EffectTest;
-import Ovulam.world.block.block.ItemBlock;
-import Ovulam.world.block.defense.AerialExclusionWall;
+import Ovulam.world.block.production.Dirll;
 import Ovulam.world.graphics.OvulamCacheLayers;
-import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.LaserTurret;
-import mindustry.world.blocks.environment.Floor;
 
 public class OvulamBlocks {
     //大型垃圾堆
@@ -32,7 +30,7 @@ public class OvulamBlocks {
             requirements(Category.defense, new ItemStack[]{});
         }};
 
-        SSSSS = new 介绍器("SSSSS") {{
+        SSSSS = new Dirll("9527") {{
             size = 2;
             requirements(Category.defense, new ItemStack[]{});
         }};

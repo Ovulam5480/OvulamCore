@@ -27,6 +27,7 @@ public class OvulamUnitTypes {
     public static UnitType S, SS;
     public static UnitType SSS;
     public static TreeUnitType S1, S2, S3, S4;
+    public static TreeUnitType snakeHead, snakeBodyA, snakeBodyB, snakeTail;
 
     public static @EntityDef({Unitc.class, Tankc.class, Myc.class}) UnitType myut;
 
@@ -40,8 +41,29 @@ public class OvulamUnitTypes {
         EntityRegistry.register(OvulamMod.modName() + "S2", TreeUnit.class, TreeUnit::new);
         EntityRegistry.register(OvulamMod.modName() + "S3", TreeUnit.class, TreeUnit::new);
         EntityRegistry.register(OvulamMod.modName() + "S4", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "蛇尾", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "蛇身乙", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "蛇身甲", TreeUnit.class, TreeUnit::new);
+        EntityRegistry.register(OvulamMod.modName() + "蛇", TreeUnit.class, TreeUnit::new);
 
         //myut = EntityRegistry.content("myut", MyTankUnit.class, UnitType::new);
+        snakeTail = new TreeUnitType("蛇尾", IntMap.of()){{
+            flying = false;
+        }};
+        snakeBodyB = new TreeUnitType("蛇身乙", IntMap.of(
+                4, Seq.with(new TreeUnitTypePart(snakeBodyB, 0f, -32)),
+                        5, Seq.with(new TreeUnitTypePart(snakeTail, 0f, -32)))){{
+            flying = false;
+        }};
+        snakeBodyA = new TreeUnitType("蛇身甲", IntMap.of(
+                6, Seq.with(new TreeUnitTypePart(snakeBodyA, 0f, -32)),
+                        7, Seq.with(new TreeUnitTypePart(snakeBodyB, 0f, -32)))){{
+            flying = false;
+        }};
+        snakeHead = new TreeUnitType("蛇", IntMap.of(
+                1, Seq.with(new TreeUnitTypePart(snakeBodyA, 0f, -32)))){{
+            flying = false;
+        }};
 
         SSS = new RollCubeUnitType("SSS") {{
             hitSize = 24f;
@@ -125,7 +147,8 @@ public class OvulamUnitTypes {
         };
 
         S4 = new TreeUnitType("S4", IntMap.of()){{
-            weapons.add(UnitTypes.toxopid.weapons.get(1));
+            hittable = false;
+            targetable = false;
         }};
 
         S1 = new TreeUnitType("S1", IntMap.of(
@@ -133,12 +156,9 @@ public class OvulamUnitTypes {
                 3, Seq.with(new TreeUnitTypePart(S4, 0f, 15))
         ));
 
-        S2 = new TreeUnitType("S2", IntMap.of(
-                1,  Seq.with(new TreeUnitTypePart(S1, 0f, 10f))));
+        S2 = new TreeUnitType("S2", IntMap.of(1,  Seq.with(new TreeUnitTypePart(S1, 0f, 10f))));
 
         TreeUnitTypePart S3part = new TreeUnitTypePart(10f, -20f){{
-            lerpProgress = 0.7f;
-
             partMove = true;
             x2 = -10f;
             y2 = -20f;
@@ -146,27 +166,32 @@ public class OvulamUnitTypes {
             rotation2 = rotation + 30f;
             rotation = rotation - 30f;
 
-            progress = (tu) -> Mathf.sin(Time.time + tu.number * 80f, 60f, 0.5f) + 0.5f;
+            progress = (tu) -> Mathf.sin(Time.time + Mathf.sqrt(32 - tu.number) * 100f, 60f, 0.5f) + 0.5f;
         }};
 
         S3 = new TreeUnitType("S3", IntMap.of(
                 1, Seq.with(S3part,
-                        new TreeUnitTypePart(S1, 10f, 10),
-                        new TreeUnitTypePart(S1, -10f, 10)),
+                        new TreeUnitTypePart(S1, 10f, 10){{
+                            mirrorX = true;
+                        }}),
                 4, Seq.with(S3part,
-                        new TreeUnitTypePart(S1, 20f, 0),
-                        new TreeUnitTypePart(S1, -20f, 0)),
+                        new TreeUnitTypePart(S1, 20f, 0) {{
+                            mirrorX = true;
+                        }}),
                 10, Seq.with(S3part,
-                        new TreeUnitTypePart(S2, 20f, 0),
-                        new TreeUnitTypePart(S2, -20f, 0)),
+                        new TreeUnitTypePart(S2, 20f, 0){{
+                            mirrorX = true;
+                        }}),
                 12, Seq.with(S3part,
-                        new TreeUnitTypePart(S1, 20f, 0),
-                        new TreeUnitTypePart(S1, -20f, 0)),
+                        new TreeUnitTypePart(S1, 20f, 0){{
+                            mirrorX = true;
+                        }}),
                 14, Seq.with(S3part,
-                        new TreeUnitTypePart(S1, 20f, -20),
-                        new TreeUnitTypePart(S1, -20f, -20))
+                        new TreeUnitTypePart(S1, 20f, -20){{
+                            mirrorX = true;
+                        }})
         )){{
-            speed = 0.5f;
+            speed = 4f;
         }};
     }
 }

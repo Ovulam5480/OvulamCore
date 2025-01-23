@@ -8,7 +8,8 @@ import arc.util.Time;
 import mindustry.graphics.Drawf;
 import mindustry.type.StatusEffect;
 
-public class TreeUnitTypePart {
+//nodeManager
+public class TreeUnitTypePart implements Cloneable{
     public TreeUnitType type;
     //部位在根单位的相对位置, 单位默认角度为相对位置的角度
     public float x, y;
@@ -25,34 +26,35 @@ public class TreeUnitTypePart {
     //循环移动的进程函数
     public Floatf<TreeUnit> progress;
 
+    //"折断"的角度差
+    public float fractureAngle = 80f;
+    //部位瞬移所需的最小角度差
+    public float minSettingAngle = 45f;
+    //在最小角度差内, 部位回归到应当位置的力度
+    public float homingLerp = 0.01f;
+    // 部位回归的角度
+    public float minHomingAngle = 10f;
 
-    //部位跟随根单位的力度
-    //todo 待改进?
-    public float lerpProgress = 0.3f;
-    //部位旋转所需的最小角度差, 最大应当为180
-    //不建议改为0, 可能会造成末端剧烈抖动
-    public float minAngle = 0.4f;
-    //部位与节点之间的链接绘制
-    public Floatc4 drawLink = (x1, y1, x2, y2) -> Drawf.dashLine(Color.pink, x1, y1, x2, y2);
-
+    //该部位存在时, 根无法成为攻击目标
+    public boolean rootTargetable;
+    public boolean rootHittable;
 
     //该部位在根单位的生成时立即生成
     public boolean immediatelyAdd = false;
-    //是否独立于核心作为跟单位
+    //是否基于核心单位作为次级核心单位
     public boolean asRoot;
     //该部位死亡或未生成时, 根单位构造该部位需要的时间,
     public float constructTime = 1 * 60f;
     //部位构造动画
     public Floatc4 drawConstruct = (x, y, rotation, progress) -> Drawf.construct(x, y, type.fullIcon, rotation, progress, progress, Time.time);
 
-
     //部位为全体单位(非核心单位直接设置的位置)提供的加成, 同种直接为加算
     //Boost, MultiBoost(加算与乘算, 先加再乘)
     public float
     //攻击
     damageMultiBoost = 0.2f,
-    //速度(虽然只有核心单位能够移动)
-    speedBoost = 0.05f, speedMultiBoost,
+    //速度(只有核心单位能获得加成)
+    speedBoost = -0.001f, speedMultiBoost,
     //血量
     healthMultiBoost,
     //护甲
@@ -68,6 +70,7 @@ public class TreeUnitTypePart {
         this.x = x;
         this.y = y;
 
+        rotation = rotation2 = y < 0 ? 180 : 0;
         load();
     }
 
@@ -94,6 +97,18 @@ public class TreeUnitTypePart {
         //float angle = Mathf.angle();
     }
 
+    public void drawLink(float x1, float y1, float x2, float y2){
+        Drawf.dashLine(Color.pink, x1, y1, x2, y2);
+    }
+
     public void load(){
+    }
+
+    public TreeUnitTypePart copy(){
+        try{
+            return (TreeUnitTypePart) clone();
+        }catch(CloneNotSupportedException suck){
+            throw new RuntimeException("man, what can i say!", suck);
+        }
     }
 }
