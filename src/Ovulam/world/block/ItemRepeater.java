@@ -2,20 +2,25 @@ package Ovulam.world.block;
 
 import Ovulam.world.block.production.MultiPayloadCrafter;
 import Ovulam.world.type.Recipe;
+import arc.Events;
 import arc.graphics.g2d.Font;
 import arc.scene.style.TextureRegionDrawable;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
+import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.content.Liquids;
+import mindustry.content.UnitTypes;
+import mindustry.game.EventType;
 import mindustry.gen.Building;
 import mindustry.gen.Tex;
+import mindustry.gen.Unit;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.type.ItemStack;
 import mindustry.ui.Fonts;
-import mindustry.ui.ItemImage;
 import mindustry.ui.ReqImage;
 import mindustry.ui.Styles;
 import mindustry.world.Block;
@@ -63,76 +68,77 @@ public class ItemRepeater extends Block {
             return new Seq<>();
         }
 
+        @Override
         public void buildConfiguration(Table table) {
-            table.setBackground(Styles.black3);
-            table.setWidth(800);
-
-            Table recipeShow = new Table(Styles.accentDrawable).top().left().marginRight(15).marginLeft(15);
-            recipeShow.setWidth(40 * 5);
-
-            Table cont = new Table(Styles.black9).top().right().marginRight(5);
-            cont.setWidth(32 * tableRows);
-
-            cont.defaults().size(40);
-
-            if(currentPlan > -1){
-                for (int j = 0; j < getInputItems().size; j++) {
-                    ItemStack itemStack = getInputItems().get(j);
-                    recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
-                    if (j % 5 == 4) recipeShow.row();
-                }
-            }
-
-            Runnable rebuild = () -> {
-                for (int i = 0; i < plans.size; i++) {
-                    int index = i;
-                    MultiPayloadCrafter.MultiPayloadPlan plan = plans.get(i);
-
-                    ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
-                            control.input.config.hideConfig()).tooltip(plan.name).get();
-
-                    button.update(() -> {
-                        button.setChecked(currentPlan == index);
-                        button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
-                        button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
-                        if(hoveredPlan != -1)return;
-                        button.hovered(() -> hoveredPlan = index);
-                    });
-                    if (i % tableRows == tableRows - 1) cont.row();
-                }
-
-                recipeShow.update(() -> {
-                    recipeShow.clear();
-                    if(hoveredPlan == -1 && currentPlan == -1)return;
-
-                    MultiPayloadCrafter.MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
-
-                    Recipe inputRecipe = plan.inputRecipe;
-
-                    for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
-                        ItemStack itemStack = inputRecipe.itemStacks.get(j);
-                        recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
-                        if (j % 5 == 4) recipeShow.row();
-                    }
-                    hoveredPlan = -1;
-
-                });
-                table.add(recipeShow).growY();
-            };
-
-            rebuild.run();
-
-            Table scrollPane = new Table();
-            ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
-            pane.setScrollingDisabled(false, false);
-
-            pane.setScrollYForce(block.selectScroll);
-            pane.update(() -> block.selectScroll = pane.getScrollY());
-
-            pane.setOverscroll(false, true);
-            scrollPane.add(pane).maxHeight(tableColumns * 40);
-
-            table.add(scrollPane);
+//            table.setBackground(Styles.black3);
+//            table.setWidth(800);
+//
+//            Table recipeShow = new Table(Styles.accentDrawable).top().left().marginRight(15).marginLeft(15);
+//            recipeShow.setWidth(40 * 5);
+//
+//            Table cont = new Table(Styles.black9).top().right().marginRight(5);
+//            cont.setWidth(32 * tableRows);
+//
+//            cont.defaults().size(40);
+//
+//            if(currentPlan > -1){
+//                for (int j = 0; j < getInputItems().size; j++) {
+//                    ItemStack itemStack = getInputItems().get(j);
+//                    recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
+//                    if (j % 5 == 4) recipeShow.row();
+//                }
+//            }
+//
+//            Runnable rebuild = () -> {
+//                for (int i = 0; i < plans.size; i++) {
+//                    int index = i;
+//                    MultiPayloadCrafter.MultiPayloadPlan plan = plans.get(i);
+//
+//                    ImageButton button = cont.button(Tex.whiteui, Styles.clearNoneTogglei, 32, () ->
+//                            control.input.config.hideConfig()).tooltip(plan.name).get();
+//
+//                    button.update(() -> {
+//                        button.setChecked(currentPlan == index);
+//                        button.getStyle().imageUp = new TextureRegionDrawable(content.units().get(1).fullIcon);
+//                        button.changed(() -> currentPlan = (button.isChecked() ? index : -1));
+//                        if(hoveredPlan != -1)return;
+//                        button.hovered(() -> hoveredPlan = index);
+//                    });
+//                    if (i % tableRows == tableRows - 1) cont.row();
+//                }
+//
+//                recipeShow.update(() -> {
+//                    recipeShow.clear();
+//                    if(hoveredPlan == -1 && currentPlan == -1)return;
+//
+//                    MultiPayloadCrafter.MultiPayloadPlan plan = plans.get(hoveredPlan > -1 ? hoveredPlan : currentPlan);
+//
+//                    Recipe inputRecipe = plan.inputRecipe;
+//
+//                    for (int j = 0; j < inputRecipe.itemStacks.size; j++) {
+//                        ItemStack itemStack = inputRecipe.itemStacks.get(j);
+//                        recipeShow.add(new ReqImage(new ItemImage(itemStack.item.uiIcon, itemStack.amount), () -> true)).top();
+//                        if (j % 5 == 4) recipeShow.row();
+//                    }
+//                    hoveredPlan = -1;
+//
+//                });
+//                table.add(recipeShow).growY();
+//            };
+//
+//            rebuild.run();
+//
+//            Table scrollPane = new Table();
+//            ScrollPane pane = new ScrollPane(cont, Styles.smallPane);
+//            pane.setScrollingDisabled(false, false);
+//
+//            pane.setScrollYForce(block.selectScroll);
+//            pane.update(() -> block.selectScroll = pane.getScrollY());
+//
+//            pane.setOverscroll(false, true);
+//            scrollPane.add(pane).maxHeight(tableColumns * 40);
+//
+//            table.add(scrollPane);
         }
 
 
@@ -156,7 +162,8 @@ public class ItemRepeater extends Block {
 
         @Override
         public void draw(){
-            Font font = Fonts.outline;
+            //Blocks.doorLarge.chainEffect = true
+            //Vars.state.teams.get(Vars.state.rules.defaultTeam).getUnits(UnitTypes.flare).each(u -> {});
 
             //Vars.state.rules.winWave = XXX;
 

@@ -1,0 +1,1 @@
+{version:1,fields:[{name:itemCapacity,type:int},{name:stack,type:mindustry.type.ItemStack},{name:x,type:float},{name:y,type:float}]}

@@ -40,6 +40,8 @@ public class MortarBulletType extends BulletType {
     //是否有推进器贴图
     public boolean hasThrusters = false;
 
+    private float offset;
+
     public TextureRegion podBulletRegion, podBulletIconRegion, podBulletThrustersRegion;
 
     public Effect podExplosion = new Effect(300, e -> {
@@ -63,6 +65,16 @@ public class MortarBulletType extends BulletType {
         collidesTiles = false;
         //总不能给影子写一个实体吧
         this.bulletRange = drawSize = bulletRange;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        for (int i = 0; i < 100; i++) {
+
+        }
+        offset = 0;
     }
 
     @Override

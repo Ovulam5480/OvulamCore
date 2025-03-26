@@ -18,13 +18,10 @@ import static mindustry.graphics.Shaders.getShaderFi;
 
 public class OvulamShaders {
     public static BlockManufacturerShader blockManufacturer;
-    public static OvulamSurfaceShader subspaceShader;
     public static Test red;
-
 
     public static void init() {
         blockManufacturer = new BlockManufacturerShader();
-        subspaceShader = new OvulamSurfaceShader("Subspace");
         red = new Test();
     }
 
@@ -39,7 +36,7 @@ public class OvulamShaders {
     ///////////////////////////////////////////////////////////
     public static class Test extends OvulamFragShader {
         public Test() {
-            super("inspire");
+            super("inspire", false);
         }
 
         @Override
@@ -57,7 +54,7 @@ public class OvulamShaders {
         public float time;
 
         public BlockManufacturerShader() {
-            super("BlockManufacturer");
+            super("BlockManufacturer", true);
         }
 
         @Override
@@ -71,52 +68,9 @@ public class OvulamShaders {
     }
 
     ///////////////////////////////////////////////////////////
-    public static class OvulamSurfaceShader extends OvulamFragShader {
-        Texture noiseTex, noiseTex2;
-
-        public OvulamSurfaceShader(String frag) {
-            super(frag);
-            loadNoise();
-        }
-
-        public void loadNoise() {
-            noiseTex = loadTexture("median");
-            noiseTex2 = loadTexture("gaussian");
-        }
-
-        @Override
-        public void apply() {
-            setUniformf("u_campos", Core.camera.position.x - Core.camera.width / 2, Core.camera.position.y - Core.camera.height / 2);
-            setUniformf("u_resolution", Core.camera.width, Core.camera.height);
-            setUniformf("u_time", Time.time);
-            setUniformf("u_offside", Tmp.v1.trns(Time.time/2, 32));
-
-            if (hasUniform("u_noise")) {
-                if (noiseTex == null) {
-                    noiseTex = Core.assets.get("sprites/noise.png", Texture.class);
-                }
-
-                noiseTex.bind(1);
-                renderer.effectBuffer.getTexture().bind(0);
-
-                setUniformi("u_noise", 1);
-
-                if (noiseTex2 == null) {
-                    noiseTex2 = Core.assets.get("sprites/noise.png", Texture.class);
-                }
-
-                noiseTex2.bind(1);
-                renderer.effectBuffer.getTexture().bind(0);
-
-                setUniformi("u_noise2", 1);
-            }
-        }
-    }
-
-    ///////////////////////////////////////////////////////////
     public static class OvulamFragShader extends Shader {
-        public OvulamFragShader(String frag) {
-            super(getShaderFi("screenspace.vert"), getModShaderFi(frag));
+        public OvulamFragShader(String frag, boolean isDefault) {
+            super(getShaderFi(isDefault ? "default.vert" : "screenspace.vert"), getModShaderFi(frag));
         }
 
         public static Fi getModShaderFi(String file) {

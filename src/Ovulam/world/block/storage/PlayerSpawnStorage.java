@@ -41,12 +41,7 @@ public class PlayerSpawnStorage extends BaseStorageBlock{
             if(!unit.isPlayer()) return;
             Player player = unit.getPlayer();
 
-            Fx.spawn.at(player);
-            if(Vars.net.client() && player == Vars.player) Vars.control.input.controlledType = null;
-
-            player.clearUnit();
-            player.deathTimer = Player.deathDelay + 1f;
-            requestSpawn(player);
+            if(player != null)requestSpawn(player);
         }
 
         public void requestSpawn(Player player){

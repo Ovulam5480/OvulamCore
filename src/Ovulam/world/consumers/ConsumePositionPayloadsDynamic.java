@@ -1,12 +1,12 @@
 package Ovulam.world.consumers;
 
+import Ovulam.UI.ContentImage;
 import Ovulam.world.block.payload.MultiPayloadBlock;
 import arc.func.Func;
 import arc.scene.ui.layout.Table;
 import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.type.PayloadStack;
-import mindustry.ui.ItemImage;
 import mindustry.ui.ReqImage;
 import mindustry.world.consumers.Consume;
 
@@ -40,7 +40,7 @@ public class ConsumePositionPayloadsDynamic extends Consume {
 
         for(PayloadStack stack : positionPayloadStack.get(build)){
             int amount = ((MultiPayloadBlock.MultiPayloadBlockBuild)build).getPayloadAmount(stack.item);
-            table.add(new ReqImage(new ItemImage(stack.item.uiIcon, amount),
+            table.add(new ReqImage(new ContentImage(stack),
                     () -> amount >= stack.amount)).size(Vars.iconMed).padRight(8);
             if(++i % 4 == 0) table.row();
         }

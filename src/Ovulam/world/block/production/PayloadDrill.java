@@ -3,7 +3,6 @@ package Ovulam.world.block.production;
 import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.Font;
 import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
@@ -20,7 +19,6 @@ import mindustry.graphics.Pal;
 import mindustry.graphics.Shaders;
 import mindustry.type.Item;
 import mindustry.ui.Bar;
-import mindustry.ui.Fonts;
 import mindustry.world.Tile;
 import mindustry.world.blocks.environment.Floor;
 import mindustry.world.blocks.payloads.BuildPayload;
@@ -55,13 +53,15 @@ public class  PayloadDrill extends PayloadBlock {
     public TextureRegion topRegion;
     public TextureRegion shadowRegion;
     public TextureRegion laserDrillRegion;
-    public float laserOffset = 11f;
+    public float laserDrillRadius = 11f;
     public TextureRegion laser;
     public TextureRegion laserEnd;
     public TextureRegion laserCenter;
 
+    public boolean hasTop = true;
+
     //todo 详细页面
-    //todo 挖石头
+    //todo 挖石头?rrrrrrrrrcs
     public PayloadDrill(String name){
         super(name);
         hasConsumers = true;
@@ -71,6 +71,7 @@ public class  PayloadDrill extends PayloadBlock {
         hasShadow = false;
         rotate = true;
         rotateDraw = false;
+        outputsPayload = true;
         //
         //outlineIcon = true;
         //outlinedIcon = 2;
@@ -81,7 +82,7 @@ public class  PayloadDrill extends PayloadBlock {
         super.load();
         region = Core.atlas.find(name);
         iconRegion = Core.atlas.find(name + "-icon");
-        topRegion = Core.atlas.find(name + "-top");
+        if(hasTop)topRegion = Core.atlas.find(name + "-top");
         shadowRegion = Core.atlas.find(name + "-shadow");
         laserDrillRegion = Core.atlas.find(name + "-laserDrill");
         laser = Core.atlas.find("laser");
@@ -253,21 +254,19 @@ public class  PayloadDrill extends PayloadBlock {
 
         @Override
         public void draw(){
-            Font font = Fonts.outline;
-            //font.apply(String.valueOf(fullTime), x, y - 40, Align.center);
-            Draw.rect(shadowRegion, x, y);
+            Drawf.shadow(shadowRegion, x, y);
             Draw.rect(region, x, y);
-            Draw.rect(outRegion, x, y, rotdeg());
+            //Draw.rect(outRegion, x, y, rotdeg());
 
             if(payload == null){
-                Drawf.shadow(x, y, oreBlock.size * tilesize * 2f, progress / oreBlock.buildCost);
+                Drawf.shadow(x, y, oreBlock.size * tilesize * 2f, progress());
                 Draw.draw(Layer.blockBuilding, () -> {
                     Draw.color(Pal.accent);
 
                     for (TextureRegion region : oreBlock.getGeneratedIcons()){
                         Shaders.blockbuild.region = region;
                         Shaders.blockbuild.time = time;
-                        Shaders.blockbuild.progress = progress / oreBlock.buildCost;
+                        Shaders.blockbuild.progress = progress();
 
                         Draw.rect(region, x, y, oreBlock.rotate ? rotdeg() : 0);
                         Draw.flush();
@@ -284,7 +283,7 @@ public class  PayloadDrill extends PayloadBlock {
             drawPayload();
 
             Draw.z(Layer.blockBuilding + 1.1f);
-            Draw.rect(topRegion, x, y);
+            if(hasTop)Draw.rect(topRegion, x, y);
             int trns = oreBlock.size * tilesize / 2;
             //激光发射的目标位置
             float lx = progress() * trns * Mathf.sin(progress() * 6 * 3.14f) + x;
@@ -292,8 +291,8 @@ public class  PayloadDrill extends PayloadBlock {
             float width = (laserWidth + Mathf.absin(time + 5 + (id % 9) * 9, glowScl, pulseIntensity)) * warmup;
             for (int i = 0; i < 4; i++){
                 //各激光炮台的位置
-                float px = x + Geometry.d8edge(i).x * laserOffset;
-                float py = y + Geometry.d8edge(i).y * laserOffset;
+                float px = x + Geometry.d8edge(i).x * laserDrillRadius;
+                float py = y + Geometry.d8edge(i).y * laserDrillRadius;
                 float angle = (float) Math.toDegrees(Math.atan((ly - py) / (lx - px))) + 90 * Geometry.d8edge(i).x;
 
                 wangle[i] = Mathf.lerpDelta(wangle[i], angle, 0.05f);

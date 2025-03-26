@@ -1,15 +1,8 @@
 package Ovulam.modContent;
 
-import Ovulam.No9527垃圾堆.Drill9527;
 import Ovulam.No9527垃圾堆.LaserLaserBulletType;
-import Ovulam.No9527垃圾堆.liq发散器;
-import Ovulam.No9527垃圾堆.介绍器;
-import Ovulam.modContent.Blocks.crafting;
-import Ovulam.modContent.Blocks.effect;
-import Ovulam.modContent.Blocks.turret;
-import Ovulam.world.block.block.EffectTest;
-import Ovulam.world.block.production.Dirll;
-import Ovulam.world.graphics.OvulamCacheLayers;
+import Ovulam.modContent.Blocks.*;
+import Ovulam.world.block.distribution.CompositeConveyor;
 import mindustry.content.Blocks;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
@@ -22,25 +15,23 @@ public class OvulamBlocks {
     public static Block SSSSS, SSSSSS;
 
     public static void load() {
-        turret.load();
-        crafting.load();
-        effect.load();
+        Environment.load();
+        Turret.load();
+        Production.load();
+        Distribution.load();
+        Crafting.load();
+        Effect.load();
 
-        SSSSSS = new EffectTest("QQQQQ") {{
+        SSSSSS = new CompositeConveyor("QQQQQ") {{
             requirements(Category.defense, new ItemStack[]{});
-        }};
-
-        SSSSS = new Dirll("9527") {{
-            size = 2;
-            requirements(Category.defense, new ItemStack[]{});
+            size = 16;
+            itemsSpeed = 4f;
         }};
 
         ((LaserTurret) Blocks.meltdown).shootType = new LaserLaserBulletType() {{
             length = 180f;
             drawSize = 420f;
         }};
-
-        Blocks.arkyciteFloor.cacheLayer = OvulamCacheLayers.subspaceCacheLayer;
 
 /*        itemBlocks = new Block[Vars.content.items().size];
         for (int i = 0; i < Vars.content.items().size; i++) {

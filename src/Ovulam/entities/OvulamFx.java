@@ -4,6 +4,7 @@ import Ovulam.math.OvulamMath;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Angles;
 import arc.math.Mathf;
 import mindustry.entities.Effect;
@@ -47,6 +48,27 @@ public class OvulamFx {
         Angles.randLenVectors(e.id, size * 2, size * 8 / 4f, size * 8 / 2f, ((x, y) -> {
             Fill.circle(e.x + x, e.y + y, 4);
         }));
+    }),
+
+     fracturedEffect = new Effect(120f, e -> {
+         if(!(e.data instanceof TextureRegion region))return;
+
+         int index = Mathf.floor(e.time / 2f);
+         float progress = e.time / 2f - index;
+
+         Angles.randLenVectors(e.id + index, 1, 3, ((x1, y1) ->
+                 Angles.randLenVectors(e.id + index + 1, 1, 3, (x2, y2) -> {
+                     float rx = e.x + Mathf.lerp(x1, x2, progress) * e.foutpowdown();
+                     float ry = e.y + Mathf.lerp(y1, y2, progress) * e.foutpowdown();
+
+                     //Draw.mixcol(Color.white, e.foutpowdown());
+                     Draw.scl(4 / e.rotation);
+                     Draw.alpha(e.foutpow());
+                     Draw.mixcol(Color.white, e.foutpow());
+
+                     Draw.rect(region, rx, ry);
+                     Draw.reset();
+                 })));
     });
 
 

@@ -85,7 +85,7 @@ public class TeamChangeTower extends Block {
         public void updateTile(){
             nearBuildings(Team.derelict, maxCapital, t -> {
                 cprogress.put(t.pos(), 0f);
-                if(cprogress.get(t.pos()) >= t.block.buildCost){
+                if(cprogress.get(t.pos()) >= t.block.buildTime){
                     t.changeTeam(this.team);
                     t.enabled = true;
                     cprogress.remove(t.pos());
@@ -104,7 +104,7 @@ public class TeamChangeTower extends Block {
                     return;
                 }
 
-                if(cprogress.get(t.pos()) >= t.block.buildCost){
+                if(cprogress.get(t.pos()) >= t.block.buildTime){
                     t.block.placeEffect.at(t.x, t.y, t.block.size);
                 }
 
@@ -113,7 +113,7 @@ public class TeamChangeTower extends Block {
 
                     Shaders.blockbuild.region = t.block.fullIcon;
                     Shaders.blockbuild.time = time;
-                    Shaders.blockbuild.progress = cprogress.get(t.pos()) / t.block.buildCost;
+                    Shaders.blockbuild.progress = cprogress.get(t.pos()) / t.block.buildTime;
 
                     Draw.rect(t.block.fullIcon, t.x, t.y, t.rotation);
                     Draw.flush();

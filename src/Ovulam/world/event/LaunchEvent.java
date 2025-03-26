@@ -29,7 +29,7 @@ public class LaunchEvent extends OvulamEvent {
     public void finish() {
         if (Vars.state.isCampaign() && Vars.state.getSector() == from) {
             //todo
-            Vars.renderer.showLaunch(coreBlock);
+            //Vars.renderer.showLaunch(coreBlock);
             Time.runTask(coreLandDuration - 8f, () -> Vars.control.playSector(from, to));
         }
         universe.updateLaunchResources(itemSeq);

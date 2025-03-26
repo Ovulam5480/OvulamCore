@@ -32,7 +32,7 @@ public class TreeUnitTypePart implements Cloneable{
     public float minSettingAngle = 45f;
     //在最小角度差内, 部位回归到应当位置的力度
     public float homingLerp = 0.01f;
-    // 部位回归的角度
+    //部位回归的角度
     public float minHomingAngle = 10f;
 
     //该部位存在时, 根无法成为攻击目标

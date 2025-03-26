@@ -3,6 +3,7 @@ package Ovulam.world.block.block;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Mathf;
 import mindustry.Vars;
 import mindustry.gen.Building;
 import mindustry.type.Item;
@@ -21,11 +22,21 @@ public class PayloadOre extends Block {
         super(name);
         hasItems = true;
         solid = true;
-        update = false;
         destructible = true;
         allowResupply = true;
         separateItemCapacity = false;
-        itemCapacity = 1000;
+        absorbLasers = true;
+        itemCapacity = -1;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        if(itemCapacity == -1){
+            itemCapacity = 32 * Mathf.pow(size, 2);
+        }
+        //todo 物品石头
+        //requirements = new ItemStack[]{new ItemStack(item, 72 * Mathf.pow(size, 3))};
     }
 
     @Override
@@ -38,9 +49,8 @@ public class PayloadOre extends Block {
         }
     }
 
-
     @Override
-    public boolean outputsItems(){
+    public boolean outputsItems() {
         return false;
     }
 
@@ -52,7 +62,7 @@ public class PayloadOre extends Block {
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            return true;
+            return false;
         }
 
         public void isFulled(){

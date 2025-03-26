@@ -46,7 +46,7 @@ public class DrawKnitter extends DrawBlock {
         topRegion = Core.atlas.find(block.name + "-top");
         spindleRegion = Core.atlas.find(block.name + "-spindle");
         iconRegion = Core.atlas.find(block.name + "-icon");
-        nodeRegion = Core.atlas.find(block.name + "-nodeUnit");
+        nodeRegion = Core.atlas.find(block.name + "-node");
     }
     @Override
     public void draw(Building build){

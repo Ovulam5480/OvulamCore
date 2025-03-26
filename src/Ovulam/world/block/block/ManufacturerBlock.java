@@ -31,8 +31,8 @@ import static mindustry.world.blocks.ConstructBlock.constructed;
 
 public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
     public Block targetBlock = Blocks.router;
-    public Seq<ManufacturerStage> stages = new Seq<>(5);
-    public TextureRegion[] stageRegion = new TextureRegion[5];
+    public Seq<ManufacturerStage> stages;
+    public TextureRegion[] stageRegion;
 
     public ManufacturerBlock(String name) {
         super(name);
@@ -159,6 +159,7 @@ public class ManufacturerBlock extends ConsumeMultiPayloadBlock {
                     if (i == currentStage) stageProgress = progress();
                     //todo 测试!!!
                     else stageProgress = Mathf.num(i < currentStage);
+
                     Draw.shader(OvulamShaders.blockManufacturer);
 
                     Draw.color(Pal.accent);

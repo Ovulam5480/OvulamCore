@@ -3,6 +3,7 @@ package Ovulam.entities.units.MultiSegment;
 import Ovulam.entities.units.OvulamUnit;
 import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.Texture;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Font;
 import arc.graphics.g2d.Lines;
@@ -26,11 +27,13 @@ import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.ui.Fonts;
 
+import static Ovulam.entities.OvulamFx.fracturedEffect;
+
 
 public class TreeUnit extends OvulamUnit {
     public ObjectMap<TreeUnit, TreeUnitTypePart> nodes = new ObjectMap<>();
-
     public ObjectMap<TreeUnitTypePart, Float> constructingPart = new ObjectMap<>();
+    public Seq<Unit> fractureds = new Seq<>();
 
     public Seq<TreeUnitTypePart> nodeParts;
 
@@ -50,19 +53,6 @@ public class TreeUnit extends OvulamUnit {
 
     public FrameBuffer buffer;
     public TextureRegion fractureRegion = new TextureRegion();
-    public static Effect fractured = new Effect(120f, e -> {
-        if(!(e.data instanceof TextureRegion region))return;
-
-        Draw.alpha(e.fout());
-        //Draw.scl(4 / Vars.renderer.getDisplayScale());
-
-        Draw.scl(4);
-        Draw.rect(region, e.x, e.y);
-        Lines.line(e.x + region.u, e.y + region.v, e.x + region.u2, e.y + region.v2);
-
-        Draw.scl();
-        Draw.reset();
-    });
 
     @Override
     public TreeUnitType asType() {
@@ -149,35 +139,25 @@ public class TreeUnit extends OvulamUnit {
         damageMulti = speedBoost = speedMulti = healthMulti = armorBoost = repairAmount = repairPercent = 0;
 
         nodes.each((unit, part) -> {
+            if(unit.dead)return;
             Tmp.v1.set(unit).sub(this);
             TreeUnitType.getFramePos(unit, part, this, Tmp.v2).sub(this);
 
             float deltaAngle = Tmp.v1.angle(Tmp.v2);
 
-            if(Math.abs(deltaAngle) > part.fractureAngle){
-                if(buffer == null){
-                    buffer = new FrameBuffer();
+            //todo 多人游戏可能会造成卡顿?
+            if (Math.abs(deltaAngle) > part.fractureAngle && !unit.dead) {
+                if(fractureds.contains(unit)){
+                    Vars.ui.announce("如果出现此条请报告模组作者");
                 }
-                buffer.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
-                buffer.begin(Color.clear);
-
-                unit.draw();
-
-                buffer.end();
-
-                fractureRegion.set(Draw.wrap(buffer.getTexture()));
-                fractureRegion.flip(false, true);
-
-                fractured.at(0, 0, 0, fractureRegion);
-
+                fractureds.add(unit);
                 unit.kill();
-
                 return;
             }
 
             float angle = Math.abs(deltaAngle) > part.minSettingAngle ? part.minSettingAngle : Mathf.lerp(Math.abs(deltaAngle), part.minHomingAngle, part.homingLerp);
             unit.framePos.set(this).add(Tmp.v2.rotate(Mathf.sign(deltaAngle < 0) * angle));
-            if(unit.canPass(World.toTile(unit.framePos.x), World.toTile(unit.framePos.y)))unit.set(unit.framePos);
+            if (unit.canPass(World.toTile(unit.framePos.x), World.toTile(unit.framePos.y))) unit.set(unit.framePos);
 
             TreeUnitType.setRotation(unit, part, this);
         });
@@ -224,12 +204,34 @@ public class TreeUnit extends OvulamUnit {
 
         //nodes.each((u, p) -> p.drawLink(x, y, u.x, u.y));
 
-        Draw.z(Layer.flyingUnit + 3);
+        Draw.z(Draw.z() + 3);
         nodes.each((unit, part) -> {
             TreeUnitType.getPartPos(part.partMove ? part.progress.get(unit) : 0, part, Tmp.v1).rotate(rotation - 90).add(this);
 
-            Drawf.line(Color.cyan, x, y, Tmp.v1.x, Tmp.v1.y);
+            Drawf.line(Color.acid, x, y, Tmp.v1.x, Tmp.v1.y);
         });
+
+        if (fractureds.size > 0) {
+            fractureds.each(unit -> {
+                if (buffer == null) {
+                    buffer = new FrameBuffer();
+                }
+
+                buffer.resize(Core.graphics.getWidth(), Core.graphics.getHeight());
+
+                buffer.begin(Color.clear);
+                unit.draw();
+                buffer.end();
+
+                buffer.getTexture().setFilter(Texture.TextureFilter.linear);
+                fractureRegion.set(Draw.wrap(buffer.getTexture()));
+                fractureRegion.flip(false, true);
+
+                fracturedEffect.layer = Draw.z();
+                fracturedEffect.at(Core.camera.position.x, Core.camera.position.y, Vars.renderer.getDisplayScale(), fractureRegion);
+            });
+            fractureds.clear();
+        }
 
         Draw.draw(Layer.flyingUnit, () -> {
             constructingPart.each((part, time) -> {

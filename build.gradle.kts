@@ -38,6 +38,8 @@ val androidSdkVersion: String by project
 val androidBuildVersion: String by project
 val androidMinVersion: String by project
 
+val gamePath: String by project
+
 val useJitpack = property("mindustryBE").toString().toBooleanStrict()
 
 fun arc(module: String): String{
@@ -50,6 +52,10 @@ fun mindustry(module: String): String{
 
 fun entity(module: String): String{
     return "com.github.GlennFolker.EntityAnno$module:$entVersion"
+}
+
+fun tmi(): String{
+    return "com.github.EB-wilson:TooManyItems:2.5"
 }
 
 allprojects{
@@ -116,6 +122,8 @@ project(":"){
 
         compileOnly(mindustry(":core"))
         compileOnly(arc(":arc-core"))
+
+        //compileOnly("com.github.EB-wilson:TooManyItems:2.5")
     }
 
     val jar = tasks.named<Jar>("jar"){
@@ -215,5 +223,12 @@ project(":"){
 
             logger.lifecycle("Copied :jar output to $folder.")
         }
+    }
+
+    tasks.register<Exec>("runGame") {
+        group = "test in game"
+
+        dependsOn("install")
+        commandLine = listOf("cmd", "/c", "java", "-jar", gamePath)
     }
 }
